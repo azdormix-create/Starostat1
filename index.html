@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Старостат | Портал группы</title>
-  <!-- Официальный SDK Telegram Mini Apps -->
+  <title>Старостат | НГИЭУ</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    /* ПЕРЕМЕННЫЕ И ТЕМЫ ОФОРМЛЕНИЯ */
     :root, [data-theme="indigo"] {
       --bg-deep: #070913;
       --bg-card: rgba(22, 27, 46, 0.78);
@@ -28,7 +26,6 @@
       --radius-lg: 20px;
       --radius-md: 14px;
     }
-
     [data-theme="emerald"] {
       --bg-deep: #06110d;
       --bg-card: rgba(18, 38, 30, 0.78);
@@ -41,7 +38,6 @@
       --grad-subtle: linear-gradient(135deg, rgba(16,185,129,0.22), rgba(6,182,212,0.14));
       --shadow-glow: 0 8px 25px -4px rgba(16, 185, 129, 0.45);
     }
-
     [data-theme="sunset"] {
       --bg-deep: #140a07;
       --bg-card: rgba(38, 22, 16, 0.78);
@@ -54,7 +50,6 @@
       --grad-subtle: linear-gradient(135deg, rgba(249,115,22,0.22), rgba(236,72,153,0.14));
       --shadow-glow: 0 8px 25px -4px rgba(249, 115, 22, 0.45);
     }
-
     [data-theme="crimson"] {
       --bg-deep: #13070a;
       --bg-card: rgba(38, 16, 22, 0.78);
@@ -67,7 +62,6 @@
       --grad-subtle: linear-gradient(135deg, rgba(225,29,72,0.24), rgba(124,58,237,0.15));
       --shadow-glow: 0 8px 25px -4px rgba(225, 29, 72, 0.45);
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -75,7 +69,6 @@
       -webkit-tap-highlight-color: transparent;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     }
-
     body {
       background-color: var(--bg-deep);
       color: var(--text-main);
@@ -84,656 +77,210 @@
       overflow-x: hidden;
       position: relative;
     }
+    body.student-mode .admin-only { display: none !important; }
+    body.student-mode .status-chip { pointer-events: none; opacity: 0.9; }
 
-    /* СКРЫТИЕ АДМИНСКИХ ЭЛЕМЕНТОВ В РЕЖИМЕ СТУДЕНТА */
-    body.student-mode .admin-only {
-      display: none !important;
-    }
-    body.student-mode .status-chip {
-      pointer-events: none;
-      opacity: 0.9;
-    }
-
-    /* ФОНОВОЕ СВЕЧЕНИЕ */
-    .ambient-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      pointer-events: none;
-    }
+    .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
     .blob {
-      position: absolute;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.32;
-      transition: background 0.4s ease;
+      position: absolute; width: 320px; height: 320px; border-radius: 50%;
+      filter: blur(90px); opacity: 0.32; transition: background 0.4s ease;
       animation: floatBlob 12s infinite alternate ease-in-out;
     }
     .blob-1 { background: var(--accent-1); top: -100px; left: -80px; }
     .blob-2 { background: var(--accent-2); bottom: 8%; right: -90px; animation-delay: -5s; }
-
     @keyframes floatBlob {
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(25px, 35px) scale(1.12); }
     }
 
-    /* ОНБОРДИНГ ПРИ ПЕРВОМ ЗАПУСКЕ */
     #onboardingOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(7, 9, 19, 0.96);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 500;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      position: fixed; inset: 0; background: rgba(7, 9, 19, 0.96);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      z-index: 500; display: none; align-items: center; justify-content: center; padding: 16px;
     }
-    #onboardingOverlay.active {
-      display: flex;
-      animation: fadeIn 0.3s ease;
-    }
+    #onboardingOverlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .onboard-box {
-      background: var(--bg-card);
-      border: 1px solid rgba(var(--accent-rgb), 0.4);
-      border-radius: 26px;
-      padding: 26px 20px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: var(--shadow-glow);
-      text-align: center;
+      background: var(--bg-card); border: 1px solid rgba(var(--accent-rgb), 0.4);
+      border-radius: 26px; padding: 22px 18px; width: 100%; max-width: 440px;
+      box-shadow: var(--shadow-glow); text-align: center; max-height: 92vh; overflow-y: auto;
     }
 
-    /* МОДАЛЬНЫЕ ОКНА */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 300;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      z-index: 300; display: none; align-items: flex-end; justify-content: center;
     }
-    .modal-backdrop.active {
-      display: flex;
-      animation: fadeIn 0.2s ease;
-    }
+    .modal-backdrop.active { display: flex; animation: fadeIn 0.2s ease; }
     .modal-sheet {
-      background: #131829;
-      border-top: 1px solid rgba(var(--accent-rgb), 0.45);
-      border-radius: 24px 24px 0 0;
-      padding: 20px 18px 28px;
-      width: 100%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
+      background: #131829; border-top: 1px solid rgba(var(--accent-rgb), 0.45);
+      border-radius: 24px 24px 0 0; padding: 20px 18px 28px; width: 100%;
+      max-width: 600px; max-height: 90vh; overflow-y: auto;
       animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    @keyframes slideUpSheet {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* ШАПКА */
     header {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      background: rgba(7, 9, 19, 0.85);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border-glass);
-      padding: 11px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      position: sticky; top: 0; z-index: 60; background: rgba(7, 9, 19, 0.85);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-glass); padding: 11px 14px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-
-    .brand-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      min-width: 0;
-    }
-
+    .brand-box { display: flex; align-items: center; gap: 10px; cursor: pointer; min-width: 0; }
     .brand-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      background: var(--grad-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.15rem;
-      box-shadow: var(--shadow-glow);
-      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 12px; background: var(--grad-main);
+      display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+      box-shadow: var(--shadow-glow); flex-shrink: 0;
     }
-
-    .brand-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+    .brand-title { font-size: 1.02rem; font-weight: 900; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .uni-pill {
+      font-size: 0.62rem; padding: 2px 7px; border-radius: 20px;
+      background: var(--grad-main); color: #fff; font-weight: 800; text-transform: uppercase;
     }
-
-    .pro-pill {
-      font-size: 0.62rem;
-      padding: 2px 7px;
-      border-radius: 20px;
-      background: var(--grad-main);
-      color: #fff;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .hdr-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
+    .hdr-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .theme-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      background: var(--bg-glass);
-      padding: 5px 8px;
-      border-radius: 20px;
-      border: 1px solid var(--border-glass);
+      display: flex; gap: 6px; align-items: center; background: var(--bg-glass);
+      padding: 5px 8px; border-radius: 20px; border: 1px solid var(--border-glass);
     }
-
-    .theme-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.2s, border-color 0.2s;
-    }
+    .theme-dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
     .theme-dot.active { transform: scale(1.2); border-color: #fff; }
 
-    /* ПАНЕЛЬ СТАТУСА РОЛИ И ОБЛАКА */
     .role-bar {
-      max-width: 600px;
-      margin: 10px auto 0;
-      padding: 0 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      max-width: 600px; margin: 10px auto 0; padding: 0 16px;
+      display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;
     }
-
-    /* КОНТЕНТ */
-    main {
-      padding: 12px 16px 16px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .tab-pane {
-      display: none;
-      animation: tabSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    main { padding: 12px 16px 16px; max-width: 600px; margin: 0 auto; }
+    .tab-pane { display: none; animation: tabSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
     .tab-pane.active { display: block; }
+    @keyframes tabSlideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes tabSlideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* КАРТОЧКИ */
     .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-glass);
-      border-radius: var(--radius-lg);
-      padding: 15px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      background: var(--bg-card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass); border-radius: var(--radius-lg);
+      padding: 15px; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
     }
-
-    .card-hero {
-      background: var(--grad-subtle);
-      border: 1px solid rgba(var(--accent-rgb), 0.35);
-    }
-
+    .card-hero { background: var(--grad-subtle); border: 1px solid rgba(var(--accent-rgb), 0.35); }
     .section-head {
-      font-size: 0.78rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-muted);
-      margin: 18px 4px 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--text-muted); margin: 18px 4px 10px; display: flex; justify-content: space-between; align-items: center;
     }
-
-    /* МЕТРИКИ */
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
     .metric-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: var(--radius-md);
-      padding: 13px 8px;
-      text-align: center;
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md); padding: 13px 8px; text-align: center;
     }
-
     .metric-val {
-      font-size: 1.5rem;
-      font-weight: 900;
-      background: var(--grad-main);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 1.5rem; font-weight: 900; background: var(--grad-main);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
+    .metric-lbl { font-size: 0.7rem; color: var(--text-muted); margin-top: 3px; font-weight: 600; }
+    .progress-track { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: var(--grad-main); border-radius: 10px; transition: width 0.4s ease; }
 
-    .metric-lbl {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 3px;
-      font-weight: 600;
-    }
-
-    /* ПРОГРЕСС-БАР */
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--grad-main);
-      border-radius: 10px;
-      transition: width 0.4s ease, background 0.3s ease;
-    }
-
-    /* КНОПКИ И ПОЛЯ ВВОДА */
     button {
-      border: none;
-      border-radius: 12px;
-      padding: 11px 15px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      border: none; border-radius: 12px; padding: 11px 15px; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.25s ease;
     }
     button:active { transform: scale(0.95); }
-
-    .btn-grad {
-      background: var(--grad-main);
-      color: #fff;
-      box-shadow: var(--shadow-glow);
-    }
-    .btn-glass {
-      background: var(--bg-glass);
-      color: var(--text-main);
-      border: 1px solid var(--border-glass);
-    }
-    .btn-accent-outline {
-      background: rgba(var(--accent-rgb), 0.14);
-      color: #fff;
-      border: 1px solid rgba(var(--accent-rgb), 0.45);
-    }
-    .btn-danger {
-      background: rgba(244, 63, 94, 0.16);
-      color: #fb7185;
-      border: 1px solid rgba(244, 63, 94, 0.32);
-    }
+    .btn-grad { background: var(--grad-main); color: #fff; box-shadow: var(--shadow-glow); }
+    .btn-glass { background: var(--bg-glass); color: var(--text-main); border: 1px solid var(--border-glass); }
+    .btn-accent-outline { background: rgba(var(--accent-rgb), 0.14); color: #fff; border: 1px solid rgba(var(--accent-rgb), 0.45); }
+    .btn-danger { background: rgba(244, 63, 94, 0.16); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.32); }
     .btn-sm { padding: 7px 11px; font-size: 0.75rem; border-radius: 10px; }
     .btn-block { width: 100%; }
 
     input, select, textarea {
-      width: 100%;
-      background: rgba(10, 14, 28, 0.85);
-      border: 1px solid var(--border-glass);
-      color: var(--text-main);
-      padding: 11px 13px;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      margin-bottom: 10px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%; background: rgba(10, 14, 28, 0.85); border: 1px solid var(--border-glass);
+      color: var(--text-main); padding: 11px 13px; border-radius: 12px; font-size: 0.92rem;
+      margin-bottom: 10px; outline: none; transition: border-color 0.2s;
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent-1);
-      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
-    }
-
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-1); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2); }
     .row { display: flex; gap: 8px; align-items: center; }
     .between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .wrap-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
 
-    /* БЕЙДЖИ */
     .badge {
-      font-size: 0.7rem;
-      padding: 4px 9px;
-      border-radius: 20px;
-      font-weight: 700;
-      background: var(--bg-glass);
-      color: var(--text-muted);
-      border: 1px solid var(--border-glass);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      font-size: 0.7rem; padding: 4px 9px; border-radius: 20px; font-weight: 700;
+      background: var(--bg-glass); color: var(--text-muted); border: 1px solid var(--border-glass);
+      display: inline-flex; align-items: center; gap: 4px;
     }
-    .badge-accent {
-      background: rgba(var(--accent-rgb), 0.22);
-      color: #fff;
-      border-color: rgba(var(--accent-rgb), 0.45);
-    }
+    .badge-accent { background: rgba(var(--accent-rgb), 0.22); color: #fff; border-color: rgba(var(--accent-rgb), 0.45); }
     .badge-ok { background: rgba(16,185,129,0.18); color: #34d399; border-color: rgba(16,185,129,0.35); }
     .badge-warn { background: rgba(245,158,11,0.18); color: #fbbf24; border-color: rgba(245,158,11,0.35); }
     .badge-err { background: rgba(244,63,94,0.18); color: #fb7185; border-color: rgba(244,63,94,0.35); }
 
-    /* ПЕРЕКЛЮЧАТЕЛИ */
     .pill-group {
-      display: flex;
-      background: rgba(10, 14, 28, 0.8);
-      padding: 4px;
-      border-radius: 14px;
-      border: 1px solid var(--border-glass);
-      margin-bottom: 14px;
-      gap: 4px;
+      display: flex; background: rgba(10, 14, 28, 0.8); padding: 4px;
+      border-radius: 14px; border: 1px solid var(--border-glass); margin-bottom: 14px; gap: 4px;
     }
-    .pill-group button {
-      flex: 1;
-      background: transparent;
-      color: var(--text-muted);
-      padding: 8px 6px;
-      font-size: 0.76rem;
-      border-radius: 10px;
-      box-shadow: none;
-    }
-    .pill-group button.active {
-      background: var(--grad-main);
-      color: #fff;
-      box-shadow: var(--shadow-glow);
-    }
+    .pill-group button { flex: 1; background: transparent; color: var(--text-muted); padding: 8px 6px; font-size: 0.76rem; border-radius: 10px; box-shadow: none; }
+    .pill-group button.active { background: var(--grad-main); color: #fff; box-shadow: var(--shadow-glow); }
 
-    /* ЭЛЕМЕНТЫ ВНУТРИ ПАРЫ: ЗАМЕТКА И ДЗ */
     .class-note-box {
-      margin-top: 10px;
-      padding: 9px 11px;
-      background: rgba(var(--accent-rgb), 0.1);
-      border-left: 3px solid var(--accent-1);
-      border-radius: 8px;
-      font-size: 0.82rem;
-      color: var(--text-main);
-      white-space: pre-wrap;
+      margin-top: 10px; padding: 9px 11px; background: rgba(var(--accent-rgb), 0.1);
+      border-left: 3px solid var(--accent-1); border-radius: 8px; font-size: 0.82rem; color: var(--text-main); white-space: pre-wrap;
     }
-
     .hw-inline-item {
-      margin-top: 8px;
-      padding: 9px 11px;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      margin-top: 8px; padding: 9px 11px; background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-    .hw-inline-item.done {
-      opacity: 0.55;
-      background: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.25);
-      text-decoration: line-through;
-    }
+    .hw-inline-item.done { opacity: 0.55; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.25); text-decoration: line-through; }
 
-    /* СТРОКИ СТУДЕНТОВ */
     .stu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 13px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      margin-bottom: 8px;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center; padding: 12px 13px;
+      background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; margin-bottom: 8px; gap: 8px;
     }
-
     .stu-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      background: var(--grad-subtle);
-      border: 1px solid rgba(var(--accent-rgb), 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.84rem;
-      color: #fff;
-      margin-right: 11px;
-      flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 11px; background: var(--grad-subtle);
+      border: 1px solid rgba(var(--accent-rgb), 0.35); display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 0.84rem; color: #fff; margin-right: 11px; flex-shrink: 0;
     }
-
-    .status-chip {
-      min-width: 94px;
-      padding: 9px 11px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.8rem;
-      text-align: center;
-      user-select: none;
-    }
+    .status-chip { min-width: 94px; padding: 9px 11px; border-radius: 12px; font-weight: 800; font-size: 0.8rem; text-align: center; user-select: none; }
     .st-P { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .st-N { background: rgba(244, 63, 94, 0.22); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.5); }
     .st-U { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
     .st-O { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); }
 
-    /* БАННЕР БОЛЬШОГО ПЕРЕРЫВА МЕЖДУ ПАРАМИ */
     .break-banner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 7px 12px;
-      margin: -4px 0 10px;
-      border-radius: 12px;
-      background: rgba(245, 158, 11, 0.14);
-      border: 1px dashed rgba(245, 158, 11, 0.45);
-      color: #fbbf24;
-      font-size: 0.76rem;
-      font-weight: 800;
+      display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 12px;
+      margin: -4px 0 10px; border-radius: 12px; background: rgba(245, 158, 11, 0.14);
+      border: 1px dashed rgba(245, 158, 11, 0.45); color: #fbbf24; font-size: 0.76rem; font-weight: 800;
     }
+    .roulette-display { background: rgba(7, 9, 19, 0.85); border: 1px solid var(--border-glass); border-radius: 14px; padding: 15px 12px; text-align: center; margin-top: 10px; }
+    .roulette-name { font-size: 1.15rem; font-weight: 900; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* РУЛЕТКА */
-    .roulette-display {
-      background: rgba(7, 9, 19, 0.85);
-      border: 1px solid var(--border-glass);
-      border-radius: 14px;
-      padding: 15px 12px;
-      text-align: center;
-      margin-top: 10px;
-    }
-    .roulette-name {
-      font-size: 1.15rem;
-      font-weight: 900;
-      background: var(--grad-main);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    .days-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 14px; }
+    .day-pill { background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-muted); padding: 9px 0; border-radius: 12px; font-size: 0.8rem; font-weight: 800; }
+    .day-pill.active { background: var(--grad-main); color: #fff; border-color: transparent; box-shadow: var(--shadow-glow); }
 
-    /* ДНИ НЕДЕЛИ */
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-    .day-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      color: var(--text-muted);
-      padding: 9px 0;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 800;
-    }
-    .day-pill.active {
-      background: var(--grad-main);
-      color: #fff;
-      border-color: transparent;
-      box-shadow: var(--shadow-glow);
-    }
-
-    /* ПЛАВАЮЩИЙ ДОК НАВИГАЦИИ */
     nav.floating-dock {
-      position: fixed;
-      bottom: 12px;
-      left: 12px;
-      right: 12px;
-      max-width: 560px;
-      margin: 0 auto;
-      background: rgba(13, 18, 34, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 22px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      padding: 6px;
-      z-index: 100;
+      position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 560px; margin: 0 auto;
+      background: rgba(13, 18, 34, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 22px;
+      display: grid; grid-template-columns: repeat(5, 1fr); padding: 6px; z-index: 100;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65);
     }
-
-    .dock-btn {
-      background: transparent;
-      color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-size: 0.67rem;
-      font-weight: 700;
-      padding: 7px 2px;
-      border-radius: 16px;
-    }
+    .dock-btn { background: transparent; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.67rem; font-weight: 700; padding: 7px 2px; border-radius: 16px; }
     .dock-btn .ico { font-size: 1.18rem; transition: transform 0.2s; }
-    .dock-btn.active {
-      color: #fff;
-      background: var(--grad-main);
-      box-shadow: var(--shadow-glow);
-    }
+    .dock-btn.active { color: #fff; background: var(--grad-main); box-shadow: var(--shadow-glow); }
 
-    /* ТОСТ */
     #toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--grad-main);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 0.83rem;
-      font-weight: 800;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.25s ease;
-      z-index: 600;
-      box-shadow: var(--shadow-glow);
-      white-space: nowrap;
-      max-width: 92vw;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--grad-main); color: #fff; padding: 10px 20px; border-radius: 30px;
+      font-size: 0.83rem; font-weight: 800; opacity: 0; pointer-events: none; transition: 0.25s ease;
+      z-index: 600; box-shadow: var(--shadow-glow); white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis;
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .empty-box {
-      text-align: center;
-      padding: 20px 14px;
-      color: var(--text-muted);
-      font-size: 0.84rem;
-      background: var(--bg-glass);
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--border-glass);
-    }
-
-    .preview-img {
-      max-width: 100%;
-      max-height: 180px;
-      border-radius: 12px;
-      margin-top: 10px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .chip-template {
-      background: rgba(var(--accent-rgb), 0.16);
-      border: 1px solid rgba(var(--accent-rgb), 0.35);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 16px;
-      font-size: 0.74rem;
-      cursor: pointer;
-      display: inline-block;
-      margin: 3px 4px 3px 0;
-    }
-
-    .link-box {
-      background: rgba(7, 9, 19, 0.9);
-      border: 1px solid var(--border-glass);
-      border-radius: 14px;
-      padding: 11px 12px;
-      margin-bottom: 10px;
-    }
-    .link-url {
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: #a5b4fc;
-      word-break: break-all;
-      margin: 5px 0 8px;
-      padding: 7px 9px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 8px;
-    }
-
-    .code-snippet {
-      background: #090d1a;
-      border: 1px solid var(--border-glass);
-      border-radius: 10px;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 0.73rem;
-      color: #a5b4fc;
-      overflow-x: auto;
-      white-space: pre;
-      margin-bottom: 10px;
-    }
+    .empty-box { text-align: center; padding: 20px 14px; color: var(--text-muted); font-size: 0.84rem; background: var(--bg-glass); border-radius: var(--radius-lg); border: 1px dashed var(--border-glass); }
+    .preview-img { max-width: 100%; max-height: 180px; border-radius: 12px; margin-top: 10px; object-fit: cover; display: block; }
+    .chip-template { background: rgba(var(--accent-rgb), 0.16); border: 1px solid rgba(var(--accent-rgb), 0.35); color: #fff; padding: 5px 10px; border-radius: 16px; font-size: 0.74rem; cursor: pointer; display: inline-block; margin: 3px 4px 3px 0; }
+    .link-box { background: rgba(7, 9, 19, 0.9); border: 1px solid var(--border-glass); border-radius: 14px; padding: 11px 12px; margin-bottom: 10px; }
+    .link-url { font-family: monospace; font-size: 0.74rem; color: #a5b4fc; word-break: break-all; margin: 5px 0 8px; padding: 7px 9px; background: rgba(255,255,255,0.04); border-radius: 8px; }
+    .code-snippet { background: #090d1a; border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px; font-family: monospace; font-size: 0.72rem; color: #a5b4fc; overflow-x: auto; white-space: pre; margin-bottom: 10px; }
+    .group-chip-btn { background: rgba(var(--accent-rgb), 0.18); border: 1px solid rgba(var(--accent-rgb), 0.45); color: #fff; padding: 7px 12px; border-radius: 12px; font-size: 0.78rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin: 3px; }
   </style>
 </head>
 <body>
@@ -743,81 +290,108 @@
     <div class="blob blob-2"></div>
   </div>
 
-  <!-- ОНБОРДИНГ ПРИ ПЕРВОЙ УСТАНОВКЕ -->
+  <!-- ЕДИНЫЙ ПОРТАЛ ВЫБОРА И СОЗДАНИЯ ГРУППЫ: СТАРОСТАТ | НГИЭУ -->
   <div id="onboardingOverlay">
     <div class="onboard-box">
-      <div class="brand-logo" style="width:58px; height:58px; font-size:1.8rem; margin:0 auto 14px; border-radius:18px;">🎓</div>
-      <h2 style="font-size:1.35rem; font-weight:900; margin-bottom:6px;">Добро пожаловать!</h2>
-      <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:18px;">
-        Настройте портал группы. Данные синхронизируются с облаком и доступны одногруппникам по ссылке.
+      <div class="brand-logo" style="width:54px; height:54px; font-size:1.6rem; margin:0 auto 10px; border-radius:16px;">🏛️</div>
+      <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:4px;">
+        <h2 style="font-size:1.35rem; font-weight:900;">Старостат</h2>
+        <span class="uni-pill">НГИЭУ</span>
+      </div>
+      <p style="font-size:0.79rem; color:var(--text-muted); margin-bottom:14px;">
+        Единая платформа учебных групп НГИЭУ. Выберите свою группу или создайте новую.
       </p>
 
-      <div style="text-align:left;">
-        <label style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">НОМЕР ГРУППЫ (ОБЯЗАТЕЛЬНО) *</label>
+      <div class="pill-group" style="margin-bottom:14px;">
+        <button type="button" id="obTabStudent" class="active" onclick="switchOnboardMode('student')">🎓 Я студент</button>
+        <button type="button" id="obTabLeader" onclick="switchOnboardMode('leader')">👑 Я староста</button>
+      </div>
+
+      <!-- Вкладка 1: Вход для студента любой группы НГИЭУ -->
+      <div id="obStudentPane" style="text-align:left;">
+        <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">АКТИВНЫЕ ГРУППЫ НГИЭУ В ОБЛАКЕ:</label>
+        <div id="obExistingGroupsList" style="margin:6px 0 12px; max-height:125px; overflow-y:auto; padding:8px; background:rgba(0,0,0,0.28); border-radius:12px; border:1px solid var(--border-glass); text-align:center;">
+          <span style="font-size:0.76rem; color:var(--text-muted);">Загрузка списка групп...</span>
+        </div>
+
+        <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">ИЛИ ВВЕДИТЕ НОМЕР ГРУППЫ ВРУЧНУЮ *</label>
+        <input type="text" id="obStudentGroupInput" placeholder="Например: Б-26БиО" style="margin-top:4px;">
+
+        <button class="btn-grad btn-block" style="padding:13px; font-size:0.95rem;" onclick="enterAsStudent()">
+          🎓 Открыть расписание группы
+        </button>
+      </div>
+
+      <!-- Вкладка 2: Создание или вход старосты группы НГИЭУ -->
+      <div id="obLeaderPane" style="display:none; text-align:left;">
+        <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">НОМЕР ВАШЕЙ ГРУППЫ НГИЭУ *</label>
         <input type="text" id="obGroupName" placeholder="Например: Б-26БиО" style="margin-top:4px;">
 
-        <label style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">ВАШЕ ФИО (СТАРОСТА)</label>
+        <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">ВАШЕ ФИО (СТАРОСТА)</label>
         <input type="text" id="obLeaderName" placeholder="Например: Гафуров Аяз" style="margin-top:4px;">
 
-        <label style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">ТЕКУЩАЯ НЕДЕЛЯ</label>
-        <select id="obWeekType" style="margin-top:4px;">
-          <option value="odd">Нечетная (I неделя)</option>
-          <option value="even">Четная (II неделя)</option>
-        </select>
+        <div class="row">
+          <div style="flex:1;">
+            <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">КЛЮЧ СТАРОСТЫ *</label>
+            <input type="text" id="obLeaderSecret" placeholder="b26leader" value="b26leader" style="margin-top:4px;">
+          </div>
+          <div style="flex:1;">
+            <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">НЕДЕЛЯ</label>
+            <select id="obWeekType" style="margin-top:4px;">
+              <option value="odd">I (Нечетная)</option>
+              <option value="even">II (Четная)</option>
+            </select>
+          </div>
+        </div>
 
-        <label style="font-size:0.75rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:8px;">ТЕМА ОФОРМЛЕНИЯ</label>
-        <div class="pill-group" style="margin-bottom:18px;">
+        <label style="font-size:0.7rem; font-weight:800; color:var(--text-muted); display:block; margin-bottom:6px;">ТЕМА ОФОРМЛЕНИЯ</label>
+        <div class="pill-group" style="margin-bottom:14px;">
           <button type="button" class="active" onclick="previewOnboardTheme('indigo', this)">Индиго</button>
           <button type="button" onclick="previewOnboardTheme('emerald', this)">Изумруд</button>
           <button type="button" onclick="previewOnboardTheme('sunset', this)">Закат</button>
           <button type="button" onclick="previewOnboardTheme('crimson', this)">Алый</button>
         </div>
-      </div>
 
-      <button class="btn-grad btn-block" style="padding:14px; font-size:1rem;" onclick="completeOnboarding()">
-        🚀 Начать работу
-      </button>
+        <button class="btn-grad btn-block" style="padding:13px; font-size:0.95rem;" onclick="completeLeaderOnboarding()">
+          👑 Войти как Староста группы
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: ДВЕ ССЫЛКИ ДОСТУПА И НАСТРОЙКА ОБЛАКА SUPABASE -->
+  <!-- МОДАЛЬНОЕ ОКНО: ДВЕ ССЫЛКИ ГРУППЫ И НАСТРОЙКА ОБЛАКА -->
   <div id="cloudModal" class="modal-backdrop" onclick="if(event.target===this) closeCloudModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
-        <div style="font-weight:900; font-size:1.05rem;">🔗 Ссылки доступа и Облако</div>
+        <div style="font-weight:900; font-size:1.05rem;">🔗 Ссылки группы и Облако НГИЭУ</div>
         <button class="btn-glass btn-sm" onclick="closeCloudModal()">✕</button>
       </div>
 
-      <!-- БЛОК ГЕНЕРАТОРА ДВУХ ССЫЛОК (ДЛЯ СТУДЕНТОВ И ДЛЯ СТАРОСТЫ) -->
-      <div style="margin-bottom:14px;">
+      <div style="margin-bottom:12px;">
         <div class="row">
           <div style="flex:1;">
             <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">СЕКРЕТНЫЙ КЛЮЧ СТАРОСТЫ</label>
             <input type="text" id="cfgAdminSecret" placeholder="b26leader" oninput="renderAccessLinksPreview()" style="margin-bottom:6px;">
           </div>
           <div style="flex:1;">
-            <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">ЮЗЕРНЕЙМ БОТА (БЕЗ @)</label>
-            <input type="text" id="cfgBotUsername" placeholder="b26bio_bot" oninput="renderAccessLinksPreview()" style="margin-bottom:6px;">
+            <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">БОТ В TELEGRAM</label>
+            <input type="text" id="cfgBotUsername" placeholder="Starostatikabot" oninput="renderAccessLinksPreview()" style="margin-bottom:6px;">
           </div>
         </div>
 
-        <!-- Ссылка 1: Для студентов -->
+        <!-- Ссылка 1: Для студентов этой группы -->
         <div class="link-box">
-          <div class="between">
-            <span style="font-size:0.78rem; font-weight:800; color:#34d399;">🎓 1. Ссылка для одногруппников (Только чтение + ДЗ)</span>
-          </div>
+          <span style="font-size:0.76rem; font-weight:800; color:#34d399;">🎓 1. Ссылка для одногруппников (<span id="lblLinkGrp1">группа</span>):</span>
           <div class="link-url" id="studentWebLinkPreview">...</div>
           <div class="row">
             <button type="button" class="btn-glass btn-sm" style="flex:1;" onclick="copyTextQuick(document.getElementById('studentWebLinkPreview').textContent, 'Web-ссылка студента')">📋 Web-ссылка</button>
-            <button type="button" class="btn-accent-outline btn-sm" style="flex:1;" onclick="copyStudentTgLink()">✈️ Ссылка в ТГ-бота</button>
+            <button type="button" class="btn-accent-outline btn-sm" style="flex:1;" onclick="copyStudentTgLink()">✈️ ТГ-ссылка студента</button>
           </div>
         </div>
 
-        <!-- Ссылка 2: Для старосты -->
+        <!-- Ссылка 2: Для старосты этой группы -->
         <div class="link-box" style="border-color: rgba(var(--accent-rgb), 0.5);">
-          <div class="between">
-            <span style="font-size:0.78rem; font-weight:800; color:#c084fc;">👑 2. Секретная ссылка Старосты (Полный доступ)</span>
-          </div>
+          <span style="font-size:0.76rem; font-weight:800; color:#c084fc;">👑 2. Секретная ссылка Старосты (<span id="lblLinkGrp2">группа</span>):</span>
           <div class="link-url" id="adminWebLinkPreview">...</div>
           <div class="row">
             <button type="button" class="btn-grad btn-sm" style="flex:1;" onclick="copyTextQuick(document.getElementById('adminWebLinkPreview').textContent, 'Секретная Web-ссылка старосты')">📋 Web-ссылка Старосты</button>
@@ -826,36 +400,39 @@
         </div>
       </div>
 
-      <label style="font-size:0.7rem; color:var(--text-muted); font-weight:800;">SUPABASE PROJECT URL</label>
-      <input type="text" id="cfgSupaUrl" placeholder="https://xxxxxxxxxxxx.supabase.co">
-
-      <label style="font-size:0.7rem; color:var(--text-muted); font-weight:800;">SUPABASE ANON PUBLIC KEY</label>
-      <input type="text" id="cfgSupaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
-
-      <div class="row">
-        <div style="flex:1;">
-          <label style="font-size:0.7rem; color:var(--text-muted); font-weight:800;">КОД ГРУППЫ В БАЗЕ</label>
-          <input type="text" id="cfgGroupId" placeholder="b26bio">
-        </div>
-        <div style="flex:1;">
-          <label style="font-size:0.7rem; color:var(--text-muted); font-weight:800;">ID ЧАТА ГРУППЫ В ТГ</label>
-          <input type="text" id="cfgChatId" placeholder="-100123456789">
-        </div>
-      </div>
-
-      <label style="font-size:0.7rem; color:var(--text-muted); font-weight:800;">BOT TOKEN (ОТ @BotFather — ДЛЯ ОТПРАВКИ ФАЙЛОВ И СВОДОК)</label>
-      <input type="password" id="cfgBotToken" placeholder="123456789:AAH_xxxxxxxxxxxxxxxxxxxx">
-
       <details style="margin-bottom:12px; font-size:0.78rem; color:var(--text-muted);">
-        <summary style="cursor:pointer; font-weight:800; color:var(--text-main); margin-bottom:6px;">📄 SQL-запрос для создания таблицы в Supabase (нажмите)</summary>
+        <summary style="cursor:pointer; font-weight:800; color:var(--text-main); margin-bottom:8px;">⚙️ Настройки API Supabase и Telegram-бота</summary>
+        <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">SUPABASE PROJECT URL</label>
+        <input type="text" id="cfgSupaUrl" placeholder="https://grkefffovuisfvqgwugj.supabase.co">
+
+        <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">SUPABASE ANON KEY</label>
+        <input type="text" id="cfgSupaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+
+        <div class="row">
+          <div style="flex:1;">
+            <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">ID ГРУППЫ В БАЗЕ</label>
+            <input type="text" id="cfgGroupId" placeholder="b-26bio">
+          </div>
+          <div style="flex:1;">
+            <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">ID ЧАТА ГРУППЫ В ТГ</label>
+            <input type="text" id="cfgChatId" placeholder="-100123456789">
+          </div>
+        </div>
+
+        <label style="font-size:0.68rem; color:var(--text-muted); font-weight:800;">BOT TOKEN</label>
+        <input type="password" id="cfgBotToken" placeholder="9076066218:AAH1q...">
+
+        <p style="margin:6px 0 4px;">Если таблица <b>group_store</b> в Supabase еще не создана, выполните в <b>SQL Editor</b> этот запрос:</p>
         <div class="code-snippet" id="sqlSnippetText">create table if not exists public.group_store (
   id text primary key,
   state_json jsonb not null,
   updated_at timestamptz default now()
 );
 alter table public.group_store enable row level security;
+drop policy if exists "Public access" on public.group_store;
 create policy "Public access" on public.group_store
-  for all using (true) with check (true);</div>
+  for all using (true) with check (true);
+grant all on table public.group_store to anon, authenticated, service_role;</div>
         <button type="button" class="btn-glass btn-sm" onclick="copyTextQuick(document.getElementById('sqlSnippetText').textContent, 'SQL-запрос')">📋 Скопировать SQL</button>
       </details>
 
@@ -867,18 +444,21 @@ create policy "Public access" on public.group_store
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ВВОДА КЛЮЧА СТАРОСТЫ (ЕСЛИ ЗАШЛИ ПО ОБЫЧНОЙ ССЫЛКЕ) -->
+  <!-- МОДАЛЬНОЕ ОКНО РАЗБЛОКИРОВКИ СТАРОСТЫ -->
   <div id="unlockAdminModal" class="modal-backdrop" onclick="if(event.target===this) closeUnlockAdminModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
-        <div style="font-weight:900; font-size:1.05rem;">🔐 Вход для Старосты</div>
+        <div style="font-weight:900; font-size:1.05rem;">🔐 Вход для Старосты группы</div>
         <button class="btn-glass btn-sm" onclick="closeUnlockAdminModal()">✕</button>
       </div>
       <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
-        Введите секретный ключ старосты или просто откройте приложение по вашей персональной ссылке старосты.
+        Введите секретный ключ старосты группы <b><span id="unlockModalGrpName"></span></b> или перейдите по секретной ссылке старосты.
       </p>
-      <input type="password" id="unlockSecretInput" placeholder="Секретный ключ (напр. b26leader)">
-      <button class="btn-grad btn-block" onclick="submitUnlockSecret()">👑 Активировать режим Старосты</button>
+      <input type="password" id="unlockSecretInput" placeholder="Ключ старосты (по умолч. b26leader)">
+      <div class="row">
+        <button class="btn-grad btn-block" onclick="submitUnlockSecret()">👑 Войти как Староста</button>
+        <button class="btn-glass btn-block" onclick="closeUnlockAdminModal(); openGroupSwitcher();">🔄 Сменить группу</button>
+      </div>
     </div>
   </div>
 
@@ -891,7 +471,6 @@ create policy "Public access" on public.group_store
       </div>
       <textarea id="cnModalTextarea" rows="4" placeholder="Тема лекции, что принести, кабинет переноса..."></textarea>
       <div style="margin-bottom:12px;">
-        <span style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:4px;">Быстрые теги:</span>
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Контрольная работа на паре! ')">⚠️ Контрольная</span>
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Отметить присутствующих. ')">📋 Явка</span>
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Принести ноутбуки / методички. ')">💻 Ноутбуки</span>
@@ -933,7 +512,7 @@ create policy "Public access" on public.group_store
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ ДАННЫХ ОДНОГРУППНИКА -->
+  <!-- МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ ОДНОГРУППНИКА -->
   <div id="stuEditModal" class="modal-backdrop" onclick="if(event.target===this) closeStuEditModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
@@ -968,7 +547,7 @@ create policy "Public access" on public.group_store
 
       <div class="between" style="margin: 4px 0 8px;">
         <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">ПОДГРУППА (ПО НАЖАТИЮ)</span>
-        <button type="button" class="btn-glass btn-sm" id="edToggleSubBtn" onclick="toggleEditSubgroupBox()">👥 Выбрать подгруппу</button>
+        <button type="button" class="btn-glass btn-sm" onclick="toggleEditSubgroupBox()">👥 Выбрать подгруппу</button>
       </div>
 
       <div id="edSubgroupBox" style="display:none; margin-bottom:12px;">
@@ -983,23 +562,23 @@ create policy "Public access" on public.group_store
     </div>
   </div>
 
-  <!-- ШАПКА -->
+  <!-- ШАПКА: СТАРОСТАТ | НГИЭУ -->
   <header>
-    <div class="brand-box" onclick="if(isAdminEffective()) renameGroupPrompt()">
-      <div class="brand-logo">⚡</div>
+    <div class="brand-box" onclick="openGroupSwitcher()" title="Нажмите, чтобы сменить учебную группу НГИЭУ">
+      <div class="brand-logo">🏛️</div>
       <div style="min-width:0;">
         <div class="brand-title">
-          <span id="hdrGroupName">Группа</span>
-          <span class="pro-pill">TMA</span>
+          <span>Старостат</span>
+          <span class="uni-pill" id="hdrGroupName">Б-26БиО</span>
         </div>
         <div style="font-size:0.68rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="hdrSubStatus">
-          Синхронизация...
+          НГИЭУ • Подключение к облаку...
         </div>
       </div>
     </div>
 
     <div class="hdr-actions">
-      <button class="btn-glass btn-sm" id="btnCloudSync" onclick="handleCloudBtnClick()" title="Ссылки доступа и Облако">🔗</button>
+      <button class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Две ссылки группы и настройки">🔗</button>
       <div class="theme-dots" title="Сменить дизайн">
         <div class="theme-dot active" data-t="indigo" style="background: linear-gradient(135deg,#6366f1,#ec4899);" onclick="setTheme('indigo')"></div>
         <div class="theme-dot" data-t="emerald" style="background: linear-gradient(135deg,#10b981,#06b6d4);" onclick="setTheme('emerald')"></div>
@@ -1009,11 +588,12 @@ create policy "Public access" on public.group_store
     </div>
   </header>
 
-  <!-- ПАНЕЛЬ РОЛИ (СТАРОСТА / СТУДЕНТ + ПЕРЕКЛЮЧАТЕЛЬ ПРЕДПРОСМОТРА) -->
+  <!-- ПАНЕЛЬ РОЛИ И СМЕНЫ ГРУППЫ -->
   <div class="role-bar">
-    <div class="row" style="gap:6px;">
-      <span class="badge badge-accent" id="roleBadgeText" onclick="if(!isTrueAdmin()) openUnlockAdminModal()" style="cursor:pointer;">👑 Режим Старосты</span>
-      <span class="badge" id="cloudStateBadge" onclick="pullFromCloud(true)" style="cursor:pointer;">🔄 Обновить</span>
+    <div class="row" style="gap:6px; flex-wrap:wrap;">
+      <span class="badge badge-accent" id="roleBadgeText" onclick="if(!isTrueAdmin()) openUnlockAdminModal()" style="cursor:pointer;">👑 Староста</span>
+      <span class="badge" id="cloudStateBadge" onclick="pullFromCloud(true)" style="cursor:pointer;">☁️ Синхр.</span>
+      <span class="badge" onclick="openGroupSwitcher()" style="cursor:pointer;">🔄 Группы НГИЭУ</span>
     </div>
     <button class="btn-glass btn-sm" id="btnPreviewStudent" style="display:none; padding:5px 10px; font-size:0.7rem;" onclick="togglePreviewAsStudent()">
       👁️ Вид студента
@@ -1021,7 +601,7 @@ create policy "Public access" on public.group_store
   </div>
 
   <main>
-    <!-- ВКЛАДКА 1: ЦЕНТР (ДАШБОРД) -->
+    <!-- ВКЛАДКА 1: ЦЕНТР -->
     <section id="pane-home" class="tab-pane active">
       <div class="card card-hero">
         <div class="between">
@@ -1034,7 +614,6 @@ create policy "Public access" on public.group_store
           <div class="progress-fill" id="liveClassProgress" style="width: 0%;"></div>
         </div>
 
-        <!-- Ручное управление большим перерывом 55 минут (только для старосты) -->
         <div class="admin-only" style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border-glass);">
           <div style="font-size:0.72rem; color:var(--text-muted); font-weight:800; margin-bottom:6px;">
             ☕ БОЛЬШОЙ ПЕРЕРЫВ 55 МИНУТ (ВРУЧНУЮ):
@@ -1062,28 +641,24 @@ create policy "Public access" on public.group_store
         </div>
       </div>
 
-      <!-- Напоминания о днях рождения -->
       <div class="section-head">
         <span>🎂 Дни рождения одногруппников</span>
         <button class="btn-glass btn-sm" onclick="openTab('vault', document.querySelectorAll('.dock-btn')[4]); switchVaultSub('group');">👥 В группу</button>
       </div>
       <div id="dashBirthdaysBox"></div>
 
-      <!-- Ближайшие ДЗ на дашборде -->
       <div class="section-head">
         <span>🔥 Ближайшие дедлайны ДЗ</span>
         <button class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', null, null)">+ Добавить ДЗ</button>
       </div>
       <div id="dashHomeworkBox"></div>
 
-      <!-- Расписание на сегодня -->
       <div class="section-head">
         <span>📅 Пары сегодня (<span id="dashDayName"></span>)</span>
         <span class="badge badge-accent" id="dashWeekBadge">I неделя</span>
       </div>
       <div id="dashScheduleBox"></div>
 
-      <!-- Рулетка -->
       <div class="card" style="margin-top:16px;">
         <div class="between">
           <div>
@@ -1104,7 +679,7 @@ create policy "Public access" on public.group_store
       <div id="pinnedDashboardBox"></div>
     </section>
 
-    <!-- ВКЛАДКА 2: ЖУРНАЛ Н-ОК -->
+    <!-- ВКЛАДКА 2: ЖУРНАЛ -->
     <section id="pane-journal" class="tab-pane">
       <div class="card">
         <div class="row">
@@ -1126,7 +701,6 @@ create policy "Public access" on public.group_store
         </div>
         <input type="text" id="jSubject" class="admin-only" placeholder="Предмет (для рапортички)" style="margin-top:8px; margin-bottom:10px;" oninput="saveJournalSubject()">
 
-        <!-- Фильтр подгрупп скрыт по умолчанию и открывается по нажатию -->
         <div id="journalSubgroupFilterBox" style="display:none; margin-bottom:10px; margin-top:8px;">
           <div class="pill-group" style="margin-bottom:0;">
             <button class="active" id="subFilterAll" onclick="setSubgroupFilter('all')">Вся группа</button>
@@ -1165,7 +739,6 @@ create policy "Public access" on public.group_store
         <button id="btnWeekEven" onclick="switchScheduleWeek('even')">Четная (II неделя)</button>
       </div>
 
-      <!-- Настройка перерыва прямо в расписании (только для старосты) -->
       <div class="card admin-only" style="padding:12px 14px;">
         <div style="font-size:0.74rem; color:var(--text-muted); font-weight:800; margin-bottom:6px;">
           ☕ БОЛЬШОЙ ПЕРЕРЫВ (55 МИН) НА СЕГОДНЯ:
@@ -1180,14 +753,12 @@ create policy "Public access" on public.group_store
       <div class="days-grid" id="schedDaysBar"></div>
       <div id="schedCardsList"></div>
 
-      <!-- Раздел домашних заданий -->
       <div class="section-head" style="margin-top:22px;">
         <span>📚 Все домашние задания (личный чек-лист)</span>
         <button class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', state.selectedDay, state.currentWeekType)">+ Новое ДЗ</button>
       </div>
       <div id="allHomeworksList"></div>
 
-      <!-- Добавление пары (только для старосты) -->
       <div class="card admin-only" style="margin-top:18px;">
         <div style="font-weight:800; margin-bottom:10px;">➕ Добавить пару на <span id="addSchedDayLbl">ПН</span></div>
         <div class="row">
@@ -1256,7 +827,6 @@ create policy "Public access" on public.group_store
         <button id="vBtnGroup" onclick="switchVaultSub('group')">👥 Группа</button>
       </div>
 
-      <!-- Заметки -->
       <div id="vaultNotesBox">
         <div class="card admin-only">
           <div style="font-weight:800; margin-bottom:8px;">Новое объявление / заметка для группы</div>
@@ -1273,7 +843,6 @@ create policy "Public access" on public.group_store
         <div id="vaultNotesList"></div>
       </div>
 
-      <!-- Файлы -->
       <div id="vaultFilesBox" style="display:none;">
         <div class="card admin-only">
           <div style="font-weight:800; margin-bottom:6px;">Локальное хранилище файлов</div>
@@ -1287,9 +856,7 @@ create policy "Public access" on public.group_store
         <div id="vaultFilesList"></div>
       </div>
 
-      <!-- Состав группы -->
       <div id="vaultGroupBox" style="display:none;">
-        <!-- Календарь дней рождения в разделе Группа -->
         <div class="section-head" style="margin-top:4px;">
           <span>🎂 Календарь дней рождения</span>
         </div>
@@ -1319,7 +886,6 @@ create policy "Public access" on public.group_store
             <input type="text" id="gStuRole" placeholder="Пометка / роль" style="width:48%;">
           </div>
 
-          <!-- Поле выбора подгруппы скрыто по умолчанию -->
           <div id="addStuSubgroupWrap" style="display:none; margin-bottom:10px;">
             <select id="gStuSub" style="margin-bottom:0;">
               <option value="">Без подгруппы</option>
@@ -1344,11 +910,11 @@ create policy "Public access" on public.group_store
         <div id="vaultStudentsList"></div>
 
         <div class="section-head admin-only" style="margin-top:22px;">
-          <span>💾 Экспорт в Telegram и резервная копия</span>
+          <span>💾 Выгрузка через @Starostatikabot и бэкап</span>
         </div>
         <div class="card admin-only">
           <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
-            Если настроен <b>Bot Token</b>, файлы мгновенно придут вам в личные сообщения от бота в Telegram.
+            Бот <b>@Starostatikabot</b> мгновенно пришлет готовый файл вам в личные сообщения в Telegram.
           </p>
           <div class="row" style="margin-bottom:10px;">
             <button class="btn-grad btn-block" onclick="exportBackupJSON()">⬇ Бэкап (.json)</button>
@@ -1363,7 +929,6 @@ create policy "Public access" on public.group_store
 
   <div id="toast">Готово</div>
 
-  <!-- НАВИГАЦИОННАЯ ПАНЕЛЬ -->
   <nav class="floating-dock">
     <button class="dock-btn active" onclick="openTab('home', this)">
       <span class="ico">🏠</span>
@@ -1388,22 +953,21 @@ create policy "Public access" on public.group_store
   </nav>
 
   <script>
-    // ================= 0. НАСТРОЙКИ ОБЛАКА И СИСТЕМЫ ДВУХ ССЫЛОК =================
-    // Вставьте сюда Project URL и anon public key из Supabase перед загрузкой на GitHub Pages:
+    // ================= 0. ПРЕДНАСТРОЕННЫЕ КЛЮЧИ SUPABASE И TELEGRAM БОТА =================
     const DEFAULT_CLOUD_CONFIG = {
-      supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co/rest/v1/',          // Напр.: 'https://xyzcompany.supabase.co'
-      supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU',          // Напр.: 'eyJhbGciOiJIUzI1NiIsInR5cCI6...' (anon public key)
-      groupId: 'b26bio',        // Код группы в базе Supabase
-      adminSecret: 'b26leader', // Секретный ключ для ссылки старосты (?key=b26leader или ?startapp=b26leader)
-      botUsername: 'Starostatikabot',          // Юзернейм вашего бота без @ (напр. 'b26bio_portal_bot')
-      botToken: '9076066218:AAH1qA5MpifL9EUi3E0X9uAsECcIE-nnwIM',             // Токен от @BotFather (для отправки .csv/.json и анонсов)
-      chatId: ''                // ID группового чата в ТГ (если нужна публикация в чат)
+      supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co',
+      supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU',
+      groupId: 'b26bio',
+      adminSecret: 'b26leader',
+      botUsername: 'Starostatikabot',
+      botToken: '9076066218:AAH1qA5MpifL9EUi3E0X9uAsECcIE-nnwIM',
+      chatId: ''
     };
 
     const STORAGE_KEY = 'starosta_local_v1';
     const CLOUD_CFG_KEY = 'starosta_cloud_cfg_v1';
-    const ADMIN_UNLOCK_KEY = 'starosta_admin_unlocked_v1'; // Хранит активацию ссылки старосты
-    const PERSONAL_HW_KEY = 'starosta_my_hw_done_v1';      // Личные галочки ДЗ каждого студента
+    const ADMIN_UNLOCK_MAP_KEY = 'starostat_ngieu_unlocks_v1';
+    const PERSONAL_HW_KEY = 'starosta_my_hw_done_v1';
     const DAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
     let cloudCfg = Object.assign({}, DEFAULT_CLOUD_CONFIG);
@@ -1412,29 +976,55 @@ create policy "Public access" on public.group_store
     let tgUser = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) ? tgApp.initDataUnsafe.user : null;
     let previewAsStudent = false;
 
-    // ================= 1. БАЗОВОЕ СОСТОЯНИЕ И РАСПИСАНИЕ ЗВОНКОВ =================
-    let state = {
-      isSetupCompleted: false,
-      theme: 'indigo',
-      groupName: 'Б-26БиО',
-      currentWeekType: 'odd',
-      selectedDay: 'ПН',
-      subgroupFilter: 'all',
-      bigBreakAfter: 0, // 0 — все перемены по 10 мин, 2 — 55 мин после 2-й пары, 3 — 55 мин после 3-й пары
-      subgroupsMigratedV2: false,
-      students: [],
-      attendance: {},
-      schedule: [
-        { id: 'sc1', week: 'odd', day: 'ПН', num: '1', subject: 'Информационные системы', type: 'Лекция', room: 'Ауд. 304', teacher: '', classNote: '' },
-        { id: 'sc2', week: 'odd', day: 'ПН', num: '2', subject: 'Высшая математика', type: 'Практика', room: 'Ауд. 212', teacher: '', classNote: '' }
-      ],
-      homeworks: [],
-      notes: [
-        { id: 'n1', title: 'Памятка группы', body: 'Добро пожаловать в единый портал группы! Здесь всегда актуальное расписание, перерывы и домашние задания.', pinned: true, date: 'Сегодня' }
-      ],
-      collections: []
+    // Автоматическая очистка URL от лишнего /rest/v1/, который вызывал ошибку связи!
+    function cleanSupabaseUrl(rawUrl) {
+      if (!rawUrl) return DEFAULT_CLOUD_CONFIG.supabaseUrl;
+      return rawUrl.trim()
+        .replace(/\/rest\/v1\/?$/i, '')
+        .replace(/\/+$/, '');
+    }
+
+    // Нормализация названия любой группы НГИЭУ в безопасный ID для базы (с поддержкой совместимости b26bio)
+    const CYR_MAP = {
+      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y',
+      'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
+      'х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
     };
 
+    function groupNameToId(name) {
+      if (!name) return 'b26bio';
+      const lower = name.trim().toLowerCase();
+      let slug = '';
+      for (const ch of lower) {
+        if (CYR_MAP[ch] !== undefined) slug += CYR_MAP[ch];
+        else if (/[a-z0-9]/.test(ch)) slug += ch;
+      }
+      return slug || 'b26bio';
+    }
+
+    function getDefaultStateForGroup(gName = 'Б-26БиО') {
+      return {
+        isSetupCompleted: true,
+        theme: 'indigo',
+        groupName: gName,
+        leaderSecret: 'b26leader',
+        currentWeekType: 'odd',
+        selectedDay: 'ПН',
+        subgroupFilter: 'all',
+        bigBreakAfter: 0,
+        subgroupsMigratedV2: true,
+        students: [],
+        attendance: {},
+        schedule: [],
+        homeworks: [],
+        notes: [
+          { id: 'n1', title: 'Старостат | НГИЭУ', body: 'Добро пожаловать в портал учебной группы! Здесь публикуется актуальное расписание, перерывы и домашние задания.', pinned: true, date: 'Сегодня' }
+        ],
+        collections: []
+      };
+    }
+
+    let state = getDefaultStateForGroup('Б-26БиО');
     let showSubgroupControlsInGroup = false;
     let showSubgroupFilterInJournal = false;
     let editingStudentId = null;
@@ -1447,38 +1037,74 @@ create policy "Public access" on public.group_store
       if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
     }
 
-    // ================= СИСТЕМА ДВУХ ССЫЛОК (АВТОРИЗАЦИЯ БЕЗ TELEGRAM ID) =================
-    function getEffectiveSecret() {
-      return (cloudCfg.adminSecret || DEFAULT_CLOUD_CONFIG.adminSecret || 'b26leader').trim();
+    // ================= 1. МУЛЬТИ-ГРУППОВАЯ АВТОРИЗАЦИЯ И СИСТЕМА ДВУХ ССЫЛОК =================
+    function getGroupSecret() {
+      return (state.leaderSecret || cloudCfg.adminSecret || DEFAULT_CLOUD_CONFIG.adminSecret || 'b26leader').trim();
+    }
+
+    function getUnlockedGroupsMap() {
+      try {
+        return JSON.parse(localStorage.getItem(ADMIN_UNLOCK_MAP_KEY) || '{}');
+      } catch (e) { return {}; }
+    }
+
+    function saveGroupUnlock(grpId, secretVal) {
+      const map = getUnlockedGroupsMap();
+      map[grpId] = secretVal;
+      localStorage.setItem(ADMIN_UNLOCK_MAP_KEY, JSON.stringify(map));
     }
 
     function checkLinkRoleOnLaunch() {
       const params = new URLSearchParams(window.location.search);
-      const urlKey = params.get('key') || params.get('admin') || params.get('tgWebAppStartParam') || '';
-      const tgStartParam = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.start_param)
+      const urlGroup = params.get('group') || params.get('g') || '';
+      const urlKey = params.get('key') || params.get('admin') || '';
+      const tgStart = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.start_param)
         ? String(tgApp.initDataUnsafe.start_param)
-        : '';
+        : (params.get('tgWebAppStartParam') || '');
 
-      const secret = getEffectiveSecret();
-
-      // Если перешли по ссылке с параметром ?role=student — принудительно включаем вид студента
-      if (params.get('role') === 'student' || tgStartParam === 'student') {
-        previewAsStudent = true;
-        return;
+      if (urlGroup) {
+        state.groupName = urlGroup.trim();
+        cloudCfg.groupId = groupNameToId(state.groupName);
       }
 
-      // Если перешли по секретной ссылке Старосты (?key=b26leader или ?startapp=b26leader)
-      if ((urlKey && urlKey === secret) || (tgStartParam && tgStartParam === secret)) {
-        localStorage.setItem(ADMIN_UNLOCK_KEY, secret);
+      // Разбор параметра startapp из ссылки вида https://t.me/Starostatikabot/app?startapp=...
+      if (tgStart) {
+        if (tgStart.startsWith('adm__')) {
+          const parts = tgStart.split('__');
+          if (parts[1]) cloudCfg.groupId = parts[1];
+          if (parts[2]) {
+            cloudCfg.adminSecret = parts[2];
+            saveGroupUnlock(cloudCfg.groupId, parts[2]);
+            previewAsStudent = false;
+            setTimeout(() => toast('👑 Режим Старосты активирован по ссылке!'), 500);
+          }
+        } else if (tgStart.startsWith('stu__')) {
+          const parts = tgStart.split('__');
+          if (parts[1]) cloudCfg.groupId = parts[1];
+          previewAsStudent = true;
+        } else if (tgStart === getGroupSecret()) {
+          saveGroupUnlock(cloudCfg.groupId, tgStart);
+          previewAsStudent = false;
+        }
+      }
+
+      if (urlKey) {
+        cloudCfg.adminSecret = urlKey.trim();
+        saveGroupUnlock(cloudCfg.groupId, urlKey.trim());
         previewAsStudent = false;
-        setTimeout(() => toast('👑 Режим Старосты активирован по вашей ссылке!'), 450);
+        setTimeout(() => toast('👑 Режим Старосты активирован!'), 500);
       }
+
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
     }
 
     function isTrueAdmin() {
-      const secret = getEffectiveSecret();
-      const savedUnlock = localStorage.getItem(ADMIN_UNLOCK_KEY);
-      return savedUnlock === secret;
+      const map = getUnlockedGroupsMap();
+      const secret = getGroupSecret();
+      if (map[cloudCfg.groupId] && map[cloudCfg.groupId] === secret) return true;
+      // Совместимость со старым ключом разблокировки
+      if (localStorage.getItem('starosta_admin_unlocked_v1') === secret) return true;
+      return false;
     }
 
     function isAdminEffective() {
@@ -1503,11 +1129,11 @@ create policy "Public access" on public.group_store
       }
 
       if (effAdm) {
-        roleBadge.textContent = '👑 Режим Старосты';
+        roleBadge.textContent = `👑 Староста (${state.groupName})`;
         roleBadge.className = 'badge badge-accent';
       } else {
         const uName = tgUser ? (tgUser.first_name || tgUser.username || 'Студент') : 'Студент';
-        roleBadge.textContent = `🎓 ${uName} (Просмотр и ДЗ)`;
+        roleBadge.textContent = `🎓 ${uName} • Вход старосты 🔐`;
         roleBadge.className = 'badge badge-ok';
       }
     }
@@ -1522,11 +1148,12 @@ create policy "Public access" on public.group_store
       renderCollections();
       renderVaultNotes();
       renderVaultGroup();
-      toast(previewAsStudent ? '👁️ Включен предпросмотр глазами студента' : '👑 Вы вернулись в режим Старосты');
+      toast(previewAsStudent ? '👁️ Включен вид глазами студента' : '👑 Вы вернулись в режим Старосты');
     }
 
     function openUnlockAdminModal() {
       haptic(10);
+      document.getElementById('unlockModalGrpName').textContent = state.groupName || cloudCfg.groupId;
       document.getElementById('unlockSecretInput').value = '';
       document.getElementById('unlockAdminModal').classList.add('active');
       setTimeout(() => document.getElementById('unlockSecretInput').focus(), 100);
@@ -1538,9 +1165,10 @@ create policy "Public access" on public.group_store
 
     function submitUnlockSecret() {
       const val = document.getElementById('unlockSecretInput').value.trim();
-      const secret = getEffectiveSecret();
+      const secret = getGroupSecret();
       if (val && val === secret) {
-        localStorage.setItem(ADMIN_UNLOCK_KEY, secret);
+        saveGroupUnlock(cloudCfg.groupId, secret);
+        localStorage.setItem('starosta_admin_unlocked_v1', secret);
         previewAsStudent = false;
         closeUnlockAdminModal();
         applyRoleUI();
@@ -1550,48 +1178,46 @@ create policy "Public access" on public.group_store
         renderCollections();
         renderVaultNotes();
         renderVaultGroup();
-        toast('👑 Доступ Старосты разблокирован!');
+        toast(`👑 Вы вошли как Староста группы ${state.groupName}!`);
       } else {
-        toast('❌ Неверный ключ старосты');
+        toast('❌ Неверный ключ старосты этой группы');
       }
     }
 
-    // Генерация двух ссылок в модальном окне
+    // Генерация двух ссылок для текущей группы НГИЭУ
     function getCleanBaseUrl() {
       return window.location.origin + window.location.pathname;
     }
 
     function renderAccessLinksPreview() {
-      const secret = (document.getElementById('cfgAdminSecret').value || getEffectiveSecret()).trim();
+      const secret = (document.getElementById('cfgAdminSecret').value || getGroupSecret()).trim();
       const baseUrl = getCleanBaseUrl();
-      document.getElementById('studentWebLinkPreview').textContent = baseUrl;
-      document.getElementById('adminWebLinkPreview').textContent = `${baseUrl}?key=${encodeURIComponent(secret)}`;
+      const grpName = state.groupName || 'Б-26БиО';
+      document.getElementById('lblLinkGrp1').textContent = grpName;
+      document.getElementById('lblLinkGrp2').textContent = grpName;
+
+      document.getElementById('studentWebLinkPreview').textContent =
+        `${baseUrl}?group=${encodeURIComponent(grpName)}`;
+      document.getElementById('adminWebLinkPreview').textContent =
+        `${baseUrl}?group=${encodeURIComponent(grpName)}&key=${encodeURIComponent(secret)}`;
     }
 
     function copyStudentTgLink() {
-      const botUser = (document.getElementById('cfgBotUsername').value || cloudCfg.botUsername || '').replace(/^@/, '').trim();
-      if (!botUser) {
-        toast('Сначала укажите юзернейм бота в поле выше!');
-        document.getElementById('cfgBotUsername').focus();
-        return;
-      }
-      const link = `https://t.me/${botUser}/app`;
+      const botUser = (document.getElementById('cfgBotUsername').value || cloudCfg.botUsername || 'Starostatikabot').replace(/^@/, '').trim();
+      const grpId = cloudCfg.groupId || groupNameToId(state.groupName);
+      const link = `https://t.me/${botUser}/app?startapp=stu__${encodeURIComponent(grpId)}`;
       copyTextQuick(link, 'ТГ-ссылка для студентов');
     }
 
     function copyAdminTgLink() {
-      const botUser = (document.getElementById('cfgBotUsername').value || cloudCfg.botUsername || '').replace(/^@/, '').trim();
-      const secret = (document.getElementById('cfgAdminSecret').value || getEffectiveSecret()).trim();
-      if (!botUser) {
-        toast('Сначала укажите юзернейм бота в поле выше!');
-        document.getElementById('cfgBotUsername').focus();
-        return;
-      }
-      const link = `https://t.me/${botUser}/app?startapp=${encodeURIComponent(secret)}`;
+      const botUser = (document.getElementById('cfgBotUsername').value || cloudCfg.botUsername || 'Starostatikabot').replace(/^@/, '').trim();
+      const secret = (document.getElementById('cfgAdminSecret').value || getGroupSecret()).trim();
+      const grpId = cloudCfg.groupId || groupNameToId(state.groupName);
+      const link = `https://t.me/${botUser}/app?startapp=adm__${encodeURIComponent(grpId)}__${encodeURIComponent(secret)}`;
       copyTextQuick(link, 'Секретная ТГ-ссылка Старосты');
     }
 
-    // ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ SUPABASE =================
+    // ================= 2. ОБЛАКО SUPABASE И СПИСОК ВСЕХ ГРУПП НГИЭУ =================
     function loadCloudConfig() {
       const raw = localStorage.getItem(CLOUD_CFG_KEY);
       if (raw) {
@@ -1600,9 +1226,14 @@ create policy "Public access" on public.group_store
           cloudCfg = Object.assign({}, DEFAULT_CLOUD_CONFIG, parsed);
         } catch (e) {}
       }
-      Object.keys(DEFAULT_CLOUD_CONFIG).forEach(k => {
-        if (!cloudCfg[k] && DEFAULT_CLOUD_CONFIG[k]) cloudCfg[k] = DEFAULT_CLOUD_CONFIG[k];
-      });
+      // Принудительно исправляем URL и пустые ключи на рабочие значения
+      cloudCfg.supabaseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl || DEFAULT_CLOUD_CONFIG.supabaseUrl);
+      if (!cloudCfg.supabaseKey) cloudCfg.supabaseKey = DEFAULT_CLOUD_CONFIG.supabaseKey;
+      if (!cloudCfg.botUsername) cloudCfg.botUsername = DEFAULT_CLOUD_CONFIG.botUsername;
+      if (!cloudCfg.botToken) cloudCfg.botToken = DEFAULT_CLOUD_CONFIG.botToken;
+      if (!cloudCfg.groupId) cloudCfg.groupId = DEFAULT_CLOUD_CONFIG.groupId;
+
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
 
       const rawMyHw = localStorage.getItem(PERSONAL_HW_KEY);
       if (rawMyHw) {
@@ -1619,20 +1250,17 @@ create policy "Public access" on public.group_store
       const badge = document.getElementById('cloudStateBadge');
       if (sub) sub.textContent = text;
       if (badge) {
-        badge.textContent = isCloudConfigured() ? '☁️ Синхр.' : '📱 Локально';
-        badge.className = isCloudConfigured() ? (isOk ? 'badge badge-ok' : 'badge badge-warn') : 'badge';
+        badge.textContent = isOk ? '☁️ Онлайн' : '⚠️ Кэш';
+        badge.className = isOk ? 'badge badge-ok' : 'badge badge-warn';
       }
     }
 
     async function pullFromCloud(showToastMsg = false) {
-      if (!isCloudConfigured()) {
-        updateCloudHeaderStatus('Локальный режим (нажмите 🔗)', false);
-        if (showToastMsg) toast('Облако еще не подключено');
-        return;
-      }
+      if (!isCloudConfigured()) return;
+      const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       try {
-        updateCloudHeaderStatus('☁️ Загрузка из облака...', true);
-        const url = `${cloudCfg.supabaseUrl.replace(/\/$/, '')}/rest/v1/group_store?id=eq.${encodeURIComponent(cloudCfg.groupId)}&select=state_json,updated_at`;
+        updateCloudHeaderStatus(`☁️ Синхронизация (${state.groupName})...`, true);
+        const url = `${baseUrl}/rest/v1/group_store?id=eq.${encodeURIComponent(cloudCfg.groupId)}&select=state_json,updated_at`;
         const res = await fetch(url, {
           method: 'GET',
           headers: {
@@ -1640,16 +1268,26 @@ create policy "Public access" on public.group_store
             'Authorization': `Bearer ${cloudCfg.supabaseKey}`
           }
         });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            updateCloudHeaderStatus('⚠️ Создайте таблицу group_store в SQL Editor', false);
+            if (showToastMsg) toast('Таблица group_store еще не создана в Supabase (см. 🔗)');
+            return;
+          }
+          throw new Error('HTTP ' + res.status);
+        }
+
         const rows = await res.json();
         if (Array.isArray(rows) && rows.length > 0 && rows[0].state_json) {
           const remoteState = rows[0].state_json;
           const localTheme = state.theme;
-          state = Object.assign(state, remoteState);
+          state = Object.assign(getDefaultStateForGroup(remoteState.groupName || state.groupName), remoteState);
           state.theme = localTheme || state.theme || 'indigo';
           state.isSetupCompleted = true;
+          localStorage.setItem(STORAGE_KEY + '_' + cloudCfg.groupId, JSON.stringify(state));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-          document.getElementById('onboardingOverlay').classList.remove('active');
+          applyRoleUI();
           syncBreakButtonsUI();
           populateSchedulePairSelect();
           refreshDashboard();
@@ -1657,25 +1295,24 @@ create policy "Public access" on public.group_store
           renderScheduleView();
           renderCollections();
           renderVaultGroup();
-          updateCloudHeaderStatus('☁️ Синхронизировано с облаком', true);
-          if (showToastMsg) toast('☁️ Данные обновлены из облака!');
+          updateCloudHeaderStatus(`НГИЭУ • Облако синхронизировано`, true);
+          if (showToastMsg) toast(`☁️ Данные группы ${state.groupName} обновлены!`);
         } else {
-          if (isTrueAdmin()) {
-            await pushToCloud(false);
-          }
-          updateCloudHeaderStatus('☁️ Облако подключено', true);
+          // Если этой группы еще нет в облаке — сразу создаем запись в Supabase
+          await pushToCloud(false);
+          updateCloudHeaderStatus(`НГИЭУ • Группа ${state.groupName} в облаке`, true);
         }
       } catch (err) {
-        updateCloudHeaderStatus('⚠️ Офлайн (кэш устройства)', false);
-        if (showToastMsg) toast('Ошибка связи с облаком. Работаем из кэша');
+        updateCloudHeaderStatus('⚠️ Офлайн (работаем из памяти устройства)', false);
+        if (showToastMsg) toast('Нет ответа от Supabase. Проверьте таблицу group_store');
       }
     }
 
     async function pushToCloud(showToastMsg = false) {
-      if (!isCloudConfigured() || !isTrueAdmin()) return;
+      if (!isCloudConfigured()) return;
+      const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       try {
-        updateCloudHeaderStatus('☁️ Сохранение в облако...', true);
-        const url = `${cloudCfg.supabaseUrl.replace(/\/$/, '')}/rest/v1/group_store`;
+        const url = `${baseUrl}/rest/v1/group_store`;
         const payload = {
           id: cloudCfg.groupId,
           state_json: state,
@@ -1692,12 +1329,129 @@ create policy "Public access" on public.group_store
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        updateCloudHeaderStatus('☁️ Все изменения в облаке', true);
-        if (showToastMsg) toast('☁️ База выгружена в облако!');
+        updateCloudHeaderStatus(`НГИЭУ • Сохранено в облаке`, true);
+        if (showToastMsg) toast(`☁️ Группа ${state.groupName} выгружена в облако!`);
       } catch (err) {
-        updateCloudHeaderStatus('⚠️ Ошибка выгрузки в облако', false);
-        if (showToastMsg) toast('Не удалось выгрузить в облако. Проверьте URL и Key');
+        updateCloudHeaderStatus('⚠️ Ошибка сохранения в облако', false);
+        if (showToastMsg) toast('Ошибка записи в Supabase (проверьте SQL-таблицу group_store)');
       }
+    }
+
+    // Загрузка списка всех существующих групп НГИЭУ из Supabase для экрана выбора группы
+    async function fetchAllUniversityGroups() {
+      const box = document.getElementById('obExistingGroupsList');
+      const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
+      try {
+        const res = await fetch(`${baseUrl}/rest/v1/group_store?select=id,state_json&order=updated_at.desc&limit=50`, {
+          headers: {
+            'apikey': cloudCfg.supabaseKey,
+            'Authorization': `Bearer ${cloudCfg.supabaseKey}`
+          }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const rows = await res.json();
+        if (!Array.isArray(rows) || !rows.length) {
+          box.innerHTML = `<span style="font-size:0.76rem; color:var(--text-muted);">Пока нет созданных групп. Введите номер ниже или создайте во вкладке «Я староста».</span>`;
+          return;
+        }
+        box.innerHTML = rows.map(r => {
+          const gTitle = (r.state_json && r.state_json.groupName) ? r.state_json.groupName : r.id;
+          const stuCount = (r.state_json && Array.isArray(r.state_json.students)) ? r.state_json.students.length : 0;
+          return `<button type="button" class="group-chip-btn" onclick="selectExistingUniversityGroup('${esc(r.id)}', '${esc(gTitle)}')">🏛️ ${esc(gTitle)} <span style="opacity:0.7; font-size:0.68rem;">(${stuCount})</span></button>`;
+        }).join('');
+      } catch (e) {
+        box.innerHTML = `<span style="font-size:0.75rem; color:var(--text-muted);">Введите номер вашей группы НГИЭУ в поле ниже:</span>`;
+      }
+    }
+
+    function openGroupSwitcher() {
+      haptic(10);
+      document.getElementById('obStudentGroupInput').value = state.groupName || '';
+      document.getElementById('obGroupName').value = state.groupName || '';
+      document.getElementById('obLeaderSecret').value = getGroupSecret();
+      document.getElementById('onboardingOverlay').classList.add('active');
+      fetchAllUniversityGroups();
+    }
+
+    function switchOnboardMode(mode) {
+      haptic(8);
+      document.getElementById('obTabStudent').classList.toggle('active', mode === 'student');
+      document.getElementById('obTabLeader').classList.toggle('active', mode === 'leader');
+      document.getElementById('obStudentPane').style.display = mode === 'student' ? 'block' : 'none';
+      document.getElementById('obLeaderPane').style.display = mode === 'leader' ? 'block' : 'none';
+    }
+
+    async function selectExistingUniversityGroup(grpId, grpName) {
+      haptic(15);
+      cloudCfg.groupId = grpId;
+      state = getDefaultStateForGroup(grpName);
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
+      document.getElementById('onboardingOverlay').classList.remove('active');
+      applyRoleUI();
+      await pullFromCloud(true);
+    }
+
+    async function enterAsStudent() {
+      const gName = document.getElementById('obStudentGroupInput').value.trim();
+      if (!gName) {
+        toast('⚠️ Введите или выберите номер группы НГИЭУ!');
+        return;
+      }
+      cloudCfg.groupId = groupNameToId(gName);
+      state = getDefaultStateForGroup(gName);
+      previewAsStudent = false;
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
+      document.getElementById('onboardingOverlay').classList.remove('active');
+      applyRoleUI();
+      await pullFromCloud(true);
+    }
+
+    async function completeLeaderOnboarding() {
+      const gName = document.getElementById('obGroupName').value.trim();
+      const lName = document.getElementById('obLeaderName').value.trim();
+      const secret = document.getElementById('obLeaderSecret').value.trim() || 'b26leader';
+      const wType = document.getElementById('obWeekType').value;
+
+      if (!gName) {
+        toast('⚠️ Введите номер вашей группы НГИЭУ!');
+        document.getElementById('obGroupName').focus();
+        return;
+      }
+
+      const newGrpId = groupNameToId(gName);
+      const isSameGroup = (newGrpId === cloudCfg.groupId && state.groupName.toLowerCase() === gName.toLowerCase());
+      cloudCfg.groupId = newGrpId;
+      cloudCfg.adminSecret = secret;
+
+      if (!isSameGroup) {
+        state = getDefaultStateForGroup(gName);
+      }
+      state.groupName = gName;
+      state.leaderSecret = secret;
+      state.currentWeekType = wType;
+      state.isSetupCompleted = true;
+
+      saveGroupUnlock(newGrpId, secret);
+      localStorage.setItem('starosta_admin_unlocked_v1', secret);
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
+      previewAsStudent = false;
+
+      if (lName && !state.students.some(s => s.name.toLowerCase() === lName.toLowerCase())) {
+        state.students.unshift({
+          id: 's_' + Date.now(),
+          name: lName,
+          subgroup: '',
+          birthDate: '',
+          phone: '',
+          username: tgUser && tgUser.username ? '@' + tgUser.username : '',
+          note: 'Староста ⭐'
+        });
+      }
+
+      document.getElementById('onboardingOverlay').classList.remove('active');
+      applyRoleUI();
+      saveState();
+      toast(`👑 Группа ${gName} активна!`);
     }
 
     function handleCloudBtnClick() {
@@ -1710,11 +1464,11 @@ create policy "Public access" on public.group_store
     }
 
     function openCloudModal() {
-      document.getElementById('cfgAdminSecret').value = getEffectiveSecret();
-      document.getElementById('cfgBotUsername').value = cloudCfg.botUsername || '';
-      document.getElementById('cfgSupaUrl').value = cloudCfg.supabaseUrl || '';
+      document.getElementById('cfgAdminSecret').value = getGroupSecret();
+      document.getElementById('cfgBotUsername').value = cloudCfg.botUsername || 'Starostatikabot';
+      document.getElementById('cfgSupaUrl').value = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       document.getElementById('cfgSupaKey').value = cloudCfg.supabaseKey || '';
-      document.getElementById('cfgGroupId').value = cloudCfg.groupId || 'b26bio';
+      document.getElementById('cfgGroupId').value = cloudCfg.groupId || groupNameToId(state.groupName);
       document.getElementById('cfgChatId').value = cloudCfg.chatId || '';
       document.getElementById('cfgBotToken').value = cloudCfg.botToken || '';
       renderAccessLinksPreview();
@@ -1726,22 +1480,22 @@ create policy "Public access" on public.group_store
     }
 
     async function saveCloudConfigModal() {
-      cloudCfg.adminSecret = document.getElementById('cfgAdminSecret').value.trim() || 'b26leader';
-      cloudCfg.botUsername = document.getElementById('cfgBotUsername').value.replace(/^@/, '').trim();
-      cloudCfg.supabaseUrl = document.getElementById('cfgSupaUrl').value.trim();
+      const newSecret = document.getElementById('cfgAdminSecret').value.trim() || 'b26leader';
+      cloudCfg.adminSecret = newSecret;
+      state.leaderSecret = newSecret;
+      cloudCfg.botUsername = document.getElementById('cfgBotUsername').value.replace(/^@/, '').trim() || 'Starostatikabot';
+      cloudCfg.supabaseUrl = cleanSupabaseUrl(document.getElementById('cfgSupaUrl').value);
       cloudCfg.supabaseKey = document.getElementById('cfgSupaKey').value.trim();
-      cloudCfg.groupId = document.getElementById('cfgGroupId').value.trim() || 'b26bio';
+      cloudCfg.groupId = document.getElementById('cfgGroupId').value.trim() || groupNameToId(state.groupName);
       cloudCfg.chatId = document.getElementById('cfgChatId').value.trim();
       cloudCfg.botToken = document.getElementById('cfgBotToken').value.trim();
 
+      saveGroupUnlock(cloudCfg.groupId, newSecret);
       localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
-      localStorage.setItem(ADMIN_UNLOCK_KEY, cloudCfg.adminSecret);
       closeCloudModal();
       applyRoleUI();
+      saveState();
       toast('Настройки и ссылки сохранены!');
-      if (isCloudConfigured()) {
-        await pushToCloud(true);
-      }
     }
 
     async function sendTelegramBotMessage(text) {
@@ -1750,10 +1504,7 @@ create policy "Public access" on public.group_store
           const res = await fetch(`https://api.telegram.org/bot${cloudCfg.botToken}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: cloudCfg.chatId,
-              text: text
-            })
+            body: JSON.stringify({ chat_id: cloudCfg.chatId, text })
           });
           const data = await res.json();
           if (data.ok) {
@@ -1774,7 +1525,7 @@ create policy "Public access" on public.group_store
       if (!cloudCfg.botToken || !targetChat) return false;
 
       try {
-        toast('⏳ Отправка файла в Telegram...');
+        toast('⏳ Отправка файла через @Starostatikabot...');
         const blob = new Blob([contentStr], { type: mimeType });
         const formData = new FormData();
         formData.append('chat_id', String(targetChat));
@@ -1787,14 +1538,14 @@ create policy "Public access" on public.group_store
         });
         const data = await res.json();
         if (data.ok) {
-          toast('📥 Файл отправлен вам в Telegram!');
+          toast('📥 Файл отправлен вам в личку @Starostatikabot!');
           return true;
         }
       } catch (e) {}
       return false;
     }
 
-    // ================= РАСПИСАНИЕ ЗВОНКОВ С 08:00 И БОЛЬШОЙ ПЕРЕРЫВ 55 МИН =================
+    // ================= 3. РАСПИСАНИЕ ЗВОНКОВ С 08:00 И ПЕРЕРЫВ 55 МИН =================
     function minsToHHMM(totalMins) {
       const h = Math.floor(totalMins / 60);
       const m = totalMins % 60;
@@ -1808,7 +1559,7 @@ create policy "Public access" on public.group_store
 
       for (let num = 1; num <= 6; num++) {
         const startMin = currentMin;
-        const endMin = startMin + 90; // Пара длится 1 ч 30 мин (90 мин)
+        const endMin = startMin + 90;
         const breakAfter = (num === bigAfter) ? 55 : 10;
         schedule.push({
           num,
@@ -1832,11 +1583,7 @@ create policy "Public access" on public.group_store
       populateSchedulePairSelect();
       updateLiveBellRadar();
       renderScheduleView();
-      if (state.bigBreakAfter === 0) {
-        toast('Перерывы между всеми парами: 10 мин');
-      } else {
-        toast(`Большой перерыв 55 мин после ${state.bigBreakAfter}-й пары`);
-      }
+      toast(state.bigBreakAfter === 0 ? 'Все перемены по 10 мин' : `Большой перерыв 55 мин после ${state.bigBreakAfter}-й пары`);
     }
 
     function syncBreakButtonsUI() {
@@ -1859,8 +1606,6 @@ create policy "Public access" on public.group_store
 
     function loadState() {
       loadCloudConfig();
-      checkLinkRoleOnLaunch();
-
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         try {
@@ -1871,6 +1616,12 @@ create policy "Public access" on public.group_store
           if (typeof state.bigBreakAfter === 'undefined') state.bigBreakAfter = 0;
         } catch (e) {}
       }
+
+      if (state.groupName) {
+        cloudCfg.groupId = groupNameToId(state.groupName);
+      }
+
+      checkLinkRoleOnLaunch();
 
       if (!state.subgroupsMigratedV2 && Array.isArray(state.students)) {
         const hasSecondSub = state.students.some(s => s.subgroup === '2 подгруппа');
@@ -1888,14 +1639,11 @@ create policy "Public access" on public.group_store
       applyRoleUI();
       syncBreakButtonsUI();
       populateSchedulePairSelect();
-
-      if (isAdminEffective() && !isCloudConfigured() && (!state.isSetupCompleted || !state.groupName)) {
-        document.getElementById('onboardingOverlay').classList.add('active');
-      }
     }
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(STORAGE_KEY + '_' + cloudCfg.groupId, JSON.stringify(state));
       refreshDashboard();
       if (isAdminEffective() && isCloudConfigured()) {
         pushToCloud(false);
@@ -1931,50 +1679,7 @@ create policy "Public access" on public.group_store
       btn.classList.add('active');
     }
 
-    function completeOnboarding() {
-      const gName = document.getElementById('obGroupName').value.trim();
-      const lName = document.getElementById('obLeaderName').value.trim();
-      const wType = document.getElementById('obWeekType').value;
-
-      if (!gName) {
-        toast('⚠️ Введите номер группы!');
-        document.getElementById('obGroupName').focus();
-        return;
-      }
-
-      state.groupName = gName;
-      state.currentWeekType = wType;
-      state.isSetupCompleted = true;
-      localStorage.setItem(ADMIN_UNLOCK_KEY, getEffectiveSecret());
-
-      if (lName && !state.students.some(s => s.name.toLowerCase() === lName.toLowerCase())) {
-        state.students.unshift({
-          id: 's_' + Date.now(),
-          name: lName,
-          subgroup: '',
-          birthDate: '',
-          phone: '',
-          username: tgUser && tgUser.username ? '@' + tgUser.username : '',
-          note: 'Староста ⭐'
-        });
-      }
-
-      document.getElementById('onboardingOverlay').classList.remove('active');
-      applyRoleUI();
-      saveState();
-      toast(`Группа ${gName} сохранена!`);
-    }
-
-    function renameGroupPrompt() {
-      const val = prompt('Изменить номер группы:', state.groupName);
-      if (val && val.trim()) {
-        state.groupName = val.trim();
-        state.isSetupCompleted = true;
-        saveState();
-      }
-    }
-
-    // ================= 2. РАСЧЕТ ДНЕЙ РОЖДЕНИЯ И НАПОМИНАНИЙ =================
+    // ================= 4. ДНИ РОЖДЕНИЯ ОДНОГРУППНИКОВ =================
     function getBirthdayInfo(birthDateStr) {
       if (!birthDateStr) return null;
       const parts = birthDateStr.split('-').map(Number);
@@ -2017,9 +1722,7 @@ create policy "Public access" on public.group_store
       const list = [];
       state.students.forEach(s => {
         const info = getBirthdayInfo(s.birthDate);
-        if (info) {
-          list.push({ student: s, info });
-        }
+        if (info) list.push({ student: s, info });
       });
       return list.sort((a, b) => a.info.diffDays - b.info.diffDays);
     }
@@ -2040,7 +1743,7 @@ create policy "Public access" on public.group_store
       }
     }
 
-    // ================= 3. ЗАМЕТКИ К ПАРАМ И ЛИЧНЫЙ ЧЕК-ЛИСТ ДЗ =================
+    // ================= 5. ЗАМЕТКИ К ПАРАМ И ЛИЧНЫЙ ЧЕК-ЛИСТ ДЗ =================
     let activeClassIdForNote = null;
     let hwContext = { subject: '', fromDay: null, fromWeek: null, mode: 'next' };
 
@@ -2113,16 +1816,12 @@ create policy "Public access" on public.group_store
 
       if (mode === 'next') {
         if (matches.length >= 1) return matches[0];
-        const fallback1 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
-        return fallback1.toISOString().slice(0, 10);
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7).toISOString().slice(0, 10);
       }
-
       if (mode === 'skip') {
         if (matches.length >= 2) return matches[1];
-        const fallback2 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14);
-        return fallback2.toISOString().slice(0, 10);
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14).toISOString().slice(0, 10);
       }
-
       return now.toISOString().slice(0, 10);
     }
 
@@ -2134,10 +1833,6 @@ create policy "Public access" on public.group_store
       document.getElementById('hwTaskInput').value = '';
       selectHwDeadlineMode('next');
       document.getElementById('hwModal').classList.add('active');
-      setTimeout(() => {
-        if (subject) document.getElementById('hwTaskInput').focus();
-        else document.getElementById('hwSubjectInput').focus();
-      }, 100);
     }
 
     function closeHwModal() {
@@ -2178,10 +1873,7 @@ create policy "Public access" on public.group_store
       const task = document.getElementById('hwTaskInput').value.trim();
       const dueDate = document.getElementById('hwDueDateInput').value || new Date().toISOString().slice(0, 10);
 
-      if (!subject || !task) {
-        toast('Укажите предмет и задание!');
-        return;
-      }
+      if (!subject || !task) return toast('Укажите предмет и задание!');
 
       const modeLabel = hwContext.mode === 'next' ? 'К след. паре' : (hwContext.mode === 'skip' ? 'Через пару' : 'К дате');
       state.homeworks.unshift({
@@ -2208,11 +1900,9 @@ create policy "Public access" on public.group_store
     function toggleHwDone(hwId) {
       haptic(15);
       const idx = myDoneHwIds.indexOf(hwId);
-      if (idx === -1) {
-        myDoneHwIds.push(hwId);
-      } else {
-        myDoneHwIds.splice(idx, 1);
-      }
+      if (idx === -1) myDoneHwIds.push(hwId);
+      else myDoneHwIds.splice(idx, 1);
+
       const item = state.homeworks.find(h => h.id === hwId);
       if (item && item.done) item.done = false;
 
@@ -2250,7 +1940,7 @@ create policy "Public access" on public.group_store
       el.focus();
     }
 
-    // ================= 4. ТАЙМЕР ПАРЫ (С 08:00) И РУЛЕТКА =================
+    // ================= 6. ТАЙМЕР ПАРЫ И РУЛЕТКА =================
     function updateLiveBellRadar() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
@@ -2274,13 +1964,10 @@ create policy "Public access" on public.group_store
 
       for (let i = 0; i < bells.length; i++) {
         const b = bells[i];
-        const sMin = b.startMin;
-        const eMin = b.endMin;
-
-        if (curMin >= sMin && curMin < eMin) {
-          const passed = curMin - sMin;
-          const total = eMin - sMin;
-          const left = eMin - curMin;
+        if (curMin >= b.startMin && curMin < b.endMin) {
+          const passed = curMin - b.startMin;
+          const total = b.endMin - b.startMin;
+          const left = b.endMin - curMin;
           const pct = Math.min(100, Math.round((passed / total) * 100));
           statusEl.textContent = `Идет ${b.num} пара • осталось ${left} мин.`;
           subEl.textContent = `${b.start} – ${b.end} (${pct}% завершено) • Перемена после: ${b.breakAfter} мин.`;
@@ -2289,10 +1976,9 @@ create policy "Public access" on public.group_store
         }
         if (i < bells.length - 1) {
           const nextB = bells[i + 1];
-          const nextStart = nextB.startMin;
-          if (curMin >= eMin && curMin < nextStart) {
+          if (curMin >= b.endMin && curMin < nextB.startMin) {
             const isBig = (b.breakAfter === 55);
-            statusEl.textContent = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${nextStart - curMin} мин.`;
+            statusEl.textContent = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${nextB.startMin - curMin} мин.`;
             subEl.textContent = `Следующая пара: ${nextB.start} – ${nextB.end}`;
             progEl.style.width = '100%';
             return;
@@ -2342,7 +2028,7 @@ create policy "Public access" on public.group_store
       }, 60);
     }
 
-    // ================= 5. ХРАНИЛИЩЕ ФАЙЛОВ INDEXEDDB =================
+    // ================= 7. ФАЙЛЫ INDEXEDDB =================
     let db = null;
     const DB_NAME = 'StarostaFilesDB';
     const STORE_NAME = 'files';
@@ -2415,8 +2101,7 @@ create policy "Public access" on public.group_store
     }
 
     function removeFileFromDB(id) {
-      if (!isAdminEffective()) return;
-      if (!confirm('Удалить файл?')) return;
+      if (!isAdminEffective() || !confirm('Удалить файл?')) return;
       const tx = db.transaction(STORE_NAME, 'readwrite');
       tx.objectStore(STORE_NAME).delete(id);
       tx.oncomplete = () => { renderVaultFiles(); refreshDashboard(); toast('Файл удален'); };
@@ -2452,7 +2137,7 @@ create policy "Public access" on public.group_store
       }).join('');
     }
 
-    // ================= 6. КАРТОЧКИ ПАР И ДАШБОРД =================
+    // ================= 8. КАРТОЧКИ ПАР И ДАШБОРД =================
     function openTab(tabName, btnEl) {
       haptic(10);
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -2501,10 +2186,8 @@ create policy "Public access" on public.group_store
             ${allowDelete ? `<button class="btn-danger btn-sm admin-only" onclick="removeSchedItem('${c.id}')">✕</button>` : ''}
           </div>
           ${c.teacher ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">👨‍🏫 ${esc(c.teacher)}</div>` : ''}
-
           ${c.classNote ? `<div class="class-note-box">💬 <b>Заметка к паре:</b> ${esc(c.classNote)}</div>` : ''}
           ${hwHtml}
-
           <div class="row admin-only" style="margin-top:11px;">
             <button class="btn-glass btn-sm" style="flex:1;" onclick="openClassNoteModal('${c.id}')">
               💬 ${c.classNote ? 'Изм. заметку' : 'Заметка к паре'}
@@ -2519,14 +2202,14 @@ create policy "Public access" on public.group_store
     }
 
     async function refreshDashboard() {
-      document.getElementById('hdrGroupName').textContent = state.groupName || 'Группа';
+      document.getElementById('hdrGroupName').textContent = state.groupName || 'НГИЭУ';
       document.getElementById('mTotalStudents').textContent = state.students.length;
       syncBreakButtonsUI();
+      applyRoleUI();
 
       const activeHw = (state.homeworks || []).filter(h => !isHwDoneByMe(h));
       document.getElementById('mActiveHwCount').textContent = activeHw.length;
 
-      // Явка сегодня
       const todayStr = new Date().toISOString().slice(0, 10);
       let absentCount = 0, pairsCounted = 0;
       Object.keys(state.attendance).forEach(k => {
@@ -2544,7 +2227,6 @@ create policy "Public access" on public.group_store
         document.getElementById('mTodayAttendance').textContent = pct + '%';
       }
 
-      // Блок дней рождения на главном экране
       const bdayBox = document.getElementById('dashBirthdaysBox');
       const upcomingBdays = getUpcomingBirthdaysList();
       if (!upcomingBdays.length) {
@@ -2570,7 +2252,6 @@ create policy "Public access" on public.group_store
         }).join('');
       }
 
-      // Ближайшие ДЗ
       const hwBox = document.getElementById('dashHomeworkBox');
       if (!activeHw.length) {
         hwBox.innerHTML = '<div class="empty-box">Все домашние задания выполнены! 🎉</div>';
@@ -2594,7 +2275,6 @@ create policy "Public access" on public.group_store
         }).join('');
       }
 
-      // Пары сегодня
       const jsDay = new Date().getDay();
       const dayCode = jsDay === 0 ? 'ПН' : DAYS[jsDay - 1];
       document.getElementById('dashDayName').textContent = jsDay === 0 ? 'План на ПН' : dayCode;
@@ -2609,7 +2289,6 @@ create policy "Public access" on public.group_store
         ? classes.map(c => buildClassCardHTML(c, false)).join('')
         : '<div class="empty-box">На этот день пар в расписании нет.</div>';
 
-      // Закрепленные элементы
       const pinnedNotes = state.notes.filter(n => n.pinned);
       const files = await fetchAllFiles();
       const pinnedFiles = files.filter(f => f.pinned);
@@ -2646,7 +2325,7 @@ create policy "Public access" on public.group_store
       }
     }
 
-    // ================= 7. РАСПИСАНИЕ И СПИСОК ВСЕХ ДЗ =================
+    // ================= 9. РАСПИСАНИЕ И ДЗ =================
     function switchScheduleWeek(w) {
       haptic(10);
       state.currentWeekType = w;
@@ -2738,7 +2417,7 @@ create policy "Public access" on public.group_store
       renderScheduleView();
     }
 
-    // ================= 8. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
+    // ================= 10. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
     const ST_CYCLE = ['P', 'N', 'U', 'O'];
     const ST_META = {
       'P': { label: '✓ Был', cls: 'st-P' },
@@ -2887,7 +2566,7 @@ create policy "Public access" on public.group_store
         if (recs[s.id] === 'U') listU.push(`${s.name} (уваж.)`);
       });
 
-      let txt = `📋 Рапортичка группы ${state.groupName}\n📅 ${d} | ${p} пара${subj ? ' (' + subj + ')' : ''}\n`;
+      let txt = `📋 Рапортичка группы ${state.groupName} (НГИЭУ)\n📅 ${d} | ${p} пара${subj ? ' (' + subj + ')' : ''}\n`;
       txt += `👥 По списку: ${state.students.length} | Присутствует: ${state.students.length - listN.length - listU.length}\n`;
       txt += (!listN.length && !listU.length)
         ? `✅ Явка 100%, отсутствующих нет.`
@@ -2902,11 +2581,10 @@ create policy "Public access" on public.group_store
     }
 
     async function sendReportToGroupChat() {
-      const txt = buildReportText();
-      await sendTelegramBotMessage(txt);
+      await sendTelegramBotMessage(buildReportText());
     }
 
-    // ================= 9. КАЗНА И КОМАНДЫ =================
+    // ================= 11. КАЗНА И КОМАНДЫ =================
     function switchLabMode(mode) {
       haptic(10);
       document.getElementById('btnLabMoney').classList.toggle('active', mode === 'collections');
@@ -2940,8 +2618,7 @@ create policy "Public access" on public.group_store
     }
 
     function deleteCollection(colId) {
-      if (!isAdminEffective()) return;
-      if (!confirm('Удалить эту ведомость?')) return;
+      if (!isAdminEffective() || !confirm('Удалить эту ведомость?')) return;
       state.collections = state.collections.filter(c => c.id !== colId);
       saveState();
       renderCollections();
@@ -3025,7 +2702,7 @@ create policy "Public access" on public.group_store
       `).join('');
     }
 
-    // ================= 10. БАЗА: ЗАМЕТКИ, ОДНОГРУППНИКИ, ПОДГРУППЫ И ЭКСПОРТ В ТГ =================
+    // ================= 12. БАЗА: ЗАМЕТКИ, СПИСОК ГРУППЫ И ЭКСПОРТ =================
     function switchVaultSub(sub) {
       haptic(10);
       document.getElementById('vBtnNotes').classList.toggle('active', sub === 'notes');
@@ -3103,9 +2780,7 @@ create policy "Public access" on public.group_store
       showSubgroupControlsInGroup = !showSubgroupControlsInGroup;
       document.getElementById('btnManageSubgroups').classList.toggle('btn-accent-outline', showSubgroupControlsInGroup);
       renderVaultGroup();
-      if (showSubgroupControlsInGroup) {
-        toast('Нажимайте на значок подгруппы у студента для смены');
-      }
+      if (showSubgroupControlsInGroup) toast('Нажимайте на значок подгруппы у студента для смены');
     }
 
     function cycleStudentSubgroup(stuId) {
@@ -3114,8 +2789,7 @@ create policy "Public access" on public.group_store
       const s = state.students.find(x => x.id === stuId);
       if (!s) return;
       const order = ['', '1 подгруппа', '2 подгруппа'];
-      const nextIdx = (order.indexOf(s.subgroup || '') + 1) % order.length;
-      s.subgroup = order[nextIdx];
+      s.subgroup = order[(order.indexOf(s.subgroup || '') + 1) % order.length];
       saveState();
       renderVaultGroup();
     }
@@ -3235,8 +2909,7 @@ create policy "Public access" on public.group_store
     }
 
     function removeStudent(id) {
-      if (!isAdminEffective()) return;
-      if (!confirm('Удалить студента из списка?')) return;
+      if (!isAdminEffective() || !confirm('Удалить студента из списка?')) return;
       state.students = state.students.filter(s => s.id !== id);
       saveState();
       renderVaultGroup();
@@ -3291,19 +2964,13 @@ create policy "Public access" on public.group_store
           badges.push(`<span class="badge" onclick="cycleStudentSubgroup('${s.id}')" style="cursor:pointer; border-style:dashed;">+ Назначить подгруппу</span>`);
         }
 
-        if (bInfo) {
-          badges.push(`<span class="badge ${bInfo.badgeCls}">${bInfo.label}</span>`);
-        }
-        if (s.phone) {
-          badges.push(`<span class="badge" onclick="copyTextQuick('${esc(s.phone)}', 'Телефон')" style="cursor:pointer;">📞 ${esc(s.phone)}</span>`);
-        }
+        if (bInfo) badges.push(`<span class="badge ${bInfo.badgeCls}">${bInfo.label}</span>`);
+        if (s.phone) badges.push(`<span class="badge" onclick="copyTextQuick('${esc(s.phone)}', 'Телефон')" style="cursor:pointer;">📞 ${esc(s.phone)}</span>`);
         if (s.username) {
           const cleanUser = s.username.startsWith('@') ? s.username : '@' + s.username;
           badges.push(`<span class="badge" onclick="copyTextQuick('${esc(cleanUser)}', 'Юзернейм')" style="cursor:pointer;">✈️ ${esc(cleanUser)}</span>`);
         }
-        if (s.note) {
-          badges.push(`<span class="badge">📌 ${esc(s.note)}</span>`);
-        }
+        if (s.note) badges.push(`<span class="badge">📌 ${esc(s.note)}</span>`);
 
         return `
           <div class="stu-item">
@@ -3322,7 +2989,7 @@ create policy "Public access" on public.group_store
 
     async function exportBackupJSON() {
       const str = JSON.stringify(state, null, 2);
-      const fn = `starosta_pro_${state.groupName || 'backup'}.json`;
+      const fn = `starostat_${state.groupName || 'backup'}.json`;
 
       const sentToTg = await sendDocumentViaTelegramBot(str, fn, 'application/json', `💾 Резервная копия базы (${state.groupName})`);
       if (sentToTg) return;
@@ -3330,7 +2997,7 @@ create policy "Public access" on public.group_store
       navigator.clipboard.writeText(str).then(() => toast('JSON скопирован в буфер обмена!'));
       if (navigator.canShare) {
         const file = new File([str], fn, { type: 'application/json' });
-        if (navigator.canShare({ files: [file] })) { await navigator.share({ title: 'Бэкап Староста PRO', files: [file] }); return; }
+        if (navigator.canShare({ files: [file] })) { await navigator.share({ title: 'Бэкап Старостат', files: [file] }); return; }
       }
       const a = document.createElement('a');
       a.href = "data:text/json;charset=utf-8," + encodeURIComponent(str);
@@ -3348,9 +3015,10 @@ create policy "Public access" on public.group_store
           if (data.students) {
             state = Object.assign(state, data);
             state.isSetupCompleted = true;
+            if (state.groupName) cloudCfg.groupId = groupNameToId(state.groupName);
             saveState();
             renderVaultGroup();
-            toast('База восстановлена!');
+            toast('База восстановлена и отправлена в облако!');
           }
         } catch (err) { alert('Ошибка чтения файла'); }
       };
@@ -3375,7 +3043,6 @@ create policy "Public access" on public.group_store
       if (sentToTg) return;
 
       navigator.clipboard.writeText(csv).then(() => toast('Таблица CSV скопирована в буфер!'));
-
       if (navigator.canShare) {
         const file = new File([csv], fn, { type: 'text/csv;charset=utf-8' });
         if (navigator.canShare({ files: [file] })) { await navigator.share({ title: 'Журнал посещаемости', files: [file] }); return; }
@@ -3410,6 +3077,10 @@ create policy "Public access" on public.group_store
       refreshDashboard();
       checkBirthdayStartupReminder();
 
+      // Если у тебя уже есть 21 студент в локальном кэше, сразу выгружаем их в облако при старте
+      if (isTrueAdmin() && state.students && state.students.length > 0) {
+        await pushToCloud(false);
+      }
       await pullFromCloud(false);
     });
   </script>
