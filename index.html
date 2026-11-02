@@ -70,7 +70,6 @@
     body.student-mode .admin-only { display: none !important; }
     body.student-mode .status-chip { pointer-events: none; opacity: 0.9; }
 
-    /* Шапка */
     header {
       position: sticky;
       top: 0;
@@ -139,7 +138,6 @@
     }
     .hdr-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
-    /* Компактная строка статуса и роли */
     .sub-bar {
       max-width: 580px;
       margin: 8px auto 0;
@@ -148,6 +146,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     main {
@@ -160,7 +159,6 @@
     .tab-pane.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Карточки и секции */
     .card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -184,7 +182,6 @@
       align-items: center;
     }
 
-    /* Метрики */
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -224,7 +221,6 @@
       transition: width 0.35s ease;
     }
 
-    /* Кнопки */
     button {
       border: none;
       border-radius: var(--radius-md);
@@ -247,7 +243,6 @@
     .btn-sm { padding: 6px 10px; font-size: 0.74rem; border-radius: var(--radius-sm); }
     .btn-block { width: 100%; }
 
-    /* Поля ввода */
     input, select, textarea {
       width: 100%;
       background: var(--bg-main);
@@ -260,9 +255,7 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
     label.field-lbl {
       display: block;
       font-size: 0.68rem;
@@ -276,7 +269,6 @@
     .between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .wrap-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 
-    /* Бейджи */
     .badge {
       font-size: 0.68rem;
       padding: 3px 8px;
@@ -294,7 +286,6 @@
     .badge-warn { background: rgba(245, 158, 11, 0.14); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
     .badge-err { background: rgba(244, 63, 94, 0.14); color: #fb7185; border-color: rgba(244, 63, 94, 0.3); }
 
-    /* Переключатели (Pills) */
     .pill-group {
       display: flex;
       background: var(--bg-main);
@@ -318,7 +309,6 @@
       border: 1px solid var(--border-accent);
     }
 
-    /* Элементы расписания и ДЗ */
     .class-note-box {
       margin-top: 8px;
       padding: 8px 10px;
@@ -347,7 +337,6 @@
       text-decoration: line-through;
     }
 
-    /* Список студентов */
     .stu-item {
       display: flex;
       justify-content: space-between;
@@ -424,7 +413,6 @@
       border-color: transparent;
     }
 
-    /* Модальные окна */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -450,7 +438,6 @@
     }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    /* Оверлей выбора / смены группы */
     #onboardingOverlay {
       position: fixed;
       inset: 0;
@@ -475,7 +462,6 @@
       overflow-y: auto;
     }
 
-    /* Нижняя навигация */
     nav.floating-dock {
       position: fixed;
       bottom: 10px;
@@ -507,12 +493,8 @@
       border-radius: 12px;
     }
     .dock-btn .ico { font-size: 1.1rem; }
-    .dock-btn.active {
-      color: #fff;
-      background: var(--accent);
-    }
+    .dock-btn.active { color: #fff; background: var(--accent); }
 
-    /* Уведомления (Тост) */
     #toast {
       position: fixed;
       bottom: 82px;
@@ -625,7 +607,7 @@
 </head>
 <body>
 
-  <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА И УПРАВЛЕНИЯ ГРУППОЙ (С КНОПКОЙ ОТМЕНЫ И ЗАЩИТОЙ) -->
+  <!-- ВЫБОР И УПРАВЛЕНИЕ ГРУППОЙ -->
   <div id="onboardingOverlay" onclick="if(event.target===this) closeGroupSwitcher()">
     <div class="onboard-box">
       <div class="between" style="margin-bottom: 12px;">
@@ -636,7 +618,7 @@
             <div style="font-size:0.7rem; color:var(--text-muted);">Выберите группу или войдите как староста</div>
           </div>
         </div>
-        <button type="button" class="btn-glass btn-sm" onclick="closeGroupSwitcher()" title="Вернуться назад">✕ Отмена</button>
+        <button type="button" class="btn-glass btn-sm" onclick="closeGroupSwitcher()">✕ Отмена</button>
       </div>
 
       <div class="pill-group">
@@ -644,7 +626,6 @@
         <button type="button" id="obTabLeader" onclick="switchOnboardMode('leader')">👑 Старостат</button>
       </div>
 
-      <!-- Вкладка 1: Чистый селектор существующих в облаке групп -->
       <div id="obStudentPane">
         <label class="field-lbl">ВЫБЕРИТЕ ВАШУ ГРУППУ ИЗ СПИСКА В ОБЛАКЕ:</label>
         <select id="obGroupSelectDropdown" onchange="onSelectDropdownGroup(this.value)" style="margin-bottom: 10px;">
@@ -661,7 +642,6 @@
         </div>
       </div>
 
-      <!-- Вкладка 2: Вход старосты или создание новой группы по мастер-паролю -->
       <div id="obLeaderPane" style="display:none;">
         <div class="pill-group" style="margin-bottom:10px;">
           <button type="button" id="ldrModeLoginBtn" class="active" onclick="switchLeaderSubMode('login')">🔐 Войти в существующую</button>
@@ -706,15 +686,14 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: ССЫЛКИ ГРУППЫ, ОБЛАКО И УДАЛЕНИЕ ГРУППЫ -->
+  <!-- МОДАЛЬНОЕ ОКНО: ССЫЛКИ, ОБЛАКО И НАСТРОЙКИ СИНХРОНИЗАЦИИ НГИЭУ -->
   <div id="cloudModal" class="modal-backdrop" onclick="if(event.target===this) closeCloudModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
-        <div style="font-weight:800; font-size:1rem;">🔗 Ссылки и управление группой</div>
+        <div style="font-weight:800; font-size:1rem;">🔗 Ссылки и синхронизация НГИЭУ</div>
         <button class="btn-glass btn-sm" onclick="closeCloudModal()">✕ Закрыть</button>
       </div>
 
-      <!-- Ссылка 1: Студенческая -->
       <div class="link-box">
         <span style="font-size:0.75rem; font-weight:700; color:#34d399;">🎓 1. Ссылка для студентов (<span id="lblLinkGrp1"></span>):</span>
         <div class="link-url" id="studentWebLinkPreview">...</div>
@@ -724,7 +703,6 @@
         </div>
       </div>
 
-      <!-- Ссылка 2: Секретная ссылка старосты -->
       <div class="link-box" style="border-color: var(--border-accent);">
         <span style="font-size:0.75rem; font-weight:700; color:#a5b4fc;">👑 2. Секретная ссылка Старосты (<span id="lblLinkGrp2"></span>):</span>
         <div class="link-url" id="adminWebLinkPreview">...</div>
@@ -745,13 +723,27 @@
         </div>
       </div>
 
+      <!-- Кнопка быстрой синхронизации с API НГИЭУ -->
+      <div style="margin-bottom:12px; padding:10px; border-radius:var(--radius-md); background:var(--accent-soft); border:1px solid var(--border-accent);">
+        <div class="between" style="margin-bottom:4px;">
+          <span style="font-weight:700; font-size:0.84rem; color:#fff;">⚡ Онлайн расписание НГИЭУ</span>
+          <span class="badge badge-accent">groupId: <span id="ngieuGrpIdDisplay">93</span></span>
+        </div>
+        <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">
+          Автоматически загружает пары, кабинеты, преподавателей и оперативные замены напрямую из официального сервиса НГИЭУ.
+        </p>
+        <button type="button" class="btn-grad btn-block" onclick="syncScheduleFromNgieuApi(true)">
+          🔄 Загрузить расписание из НГИЭУ сейчас
+        </button>
+      </div>
+
       <div class="row" style="margin-bottom:10px;">
-        <button class="btn-glass btn-block" onclick="pullFromCloud(true)">⬇ Загрузить из облака</button>
-        <button class="btn-accent-outline btn-block" onclick="pushToCloud(true)">⬆ Выгрузить в облако</button>
+        <button class="btn-glass btn-block" onclick="pullFromCloud(true)">⬇ Загрузить из базы</button>
+        <button class="btn-accent-outline btn-block" onclick="pushToCloud(true)">⬆ Сохранить в базе</button>
       </div>
 
       <details style="margin-bottom:12px; font-size:0.76rem; color:var(--text-muted);">
-        <summary style="cursor:pointer; font-weight:700; color:var(--text-main); padding:6px 0;">⚙️ Параметры подключения и удаление группы</summary>
+        <summary style="cursor:pointer; font-weight:700; color:var(--text-main); padding:6px 0;">⚙️ Расширенные настройки API и удаление</summary>
         <div style="margin-top:8px;">
           <label class="field-lbl">SUPABASE URL</label>
           <input type="text" id="cfgSupaUrl">
@@ -770,10 +762,9 @@
           <label class="field-lbl">BOT TOKEN</label>
           <input type="password" id="cfgBotToken">
 
-          <!-- Блок защищенного удаления группы -->
           <div style="margin-top:10px; padding:10px; border-radius:var(--radius-md); background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.25);">
             <div style="font-weight:700; color:#fb7185; margin-bottom:4px;">🗑️ Удаление группы из базы НГИЭУ</div>
-            <p style="font-size:0.72rem; margin-bottom:8px;">Удалить группу может только администратор при вводе мастер-пароля старостата.</p>
+            <p style="font-size:0.72rem; margin-bottom:8px;">Требуется ввод мастер-пароля старостата.</p>
             <button type="button" class="btn-danger btn-sm btn-block" onclick="deleteCurrentGroupFromCloud()">Удалить группу «<span id="delGroupBtnName"></span>»</button>
           </div>
         </div>
@@ -786,7 +777,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ВХОДА СТАРОСТЫ -->
+  <!-- ВХОД СТАРОСТЫ -->
   <div id="unlockAdminModal" class="modal-backdrop" onclick="if(event.target===this) closeUnlockAdminModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
@@ -804,18 +795,18 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: ЗАМЕТКА К ПАРЕ -->
+  <!-- ЗАМЕТКА К ПАРЕ -->
   <div id="classNoteModal" class="modal-backdrop" onclick="if(event.target===this) closeClassNoteModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
         <div style="font-weight:800; font-size:0.98rem;" id="cnModalTitle">💬 Заметка к паре</div>
         <button class="btn-glass btn-sm" onclick="closeClassNoteModal()">✕ Отмена</button>
       </div>
-      <textarea id="cnModalTextarea" rows="3" placeholder="Тема занятия, что принести, перенос аудитории..."></textarea>
+      <textarea id="cnModalTextarea" rows="3" placeholder="Тема занятия, что принести, кабинет переноса..."></textarea>
       <div style="margin-bottom:12px;">
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Контрольная работа! ')">⚠️ Контрольная</span>
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Проверка посещаемости. ')">📋 Явка</span>
-        <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Взять ноутбуки / тетради. ')">💻 Ноутбуки</span>
+        <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Взять ноутбуки. ')">💻 Ноутбуки</span>
       </div>
       <div class="row">
         <button class="btn-glass btn-block" onclick="closeClassNoteModal()">Отмена</button>
@@ -824,7 +815,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ ДЗ -->
+  <!-- ДОМАШНЕЕ ЗАДАНИЕ -->
   <div id="hwModal" class="modal-backdrop" onclick="if(event.target===this) closeHwModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
@@ -836,7 +827,7 @@
       <input type="text" id="hwSubjectInput" placeholder="Название дисциплины">
 
       <label class="field-lbl">ЗАДАНИЕ</label>
-      <textarea id="hwTaskInput" rows="3" placeholder="Что нужно подготовить к паре..."></textarea>
+      <textarea id="hwTaskInput" rows="3" placeholder="Что нужно подготовить к занятию..."></textarea>
 
       <label class="field-lbl">ДЕДЛАЙН</label>
       <div class="pill-group" style="margin-bottom:8px;">
@@ -857,7 +848,7 @@
     </div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО: КАРТОЧКА ОДНОГРУППНИКА -->
+  <!-- КАРТОЧКА ОДНОГРУППНИКА -->
   <div id="stuEditModal" class="modal-backdrop" onclick="if(event.target===this) closeStuEditModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
@@ -910,10 +901,10 @@
     </div>
   </div>
 
-  <!-- ШАПКА ПРИЛОЖЕНИЯ -->
+  <!-- ШАПКА -->
   <header>
     <div class="header-inner">
-      <div class="brand-box" onclick="openGroupSwitcher()" title="Нажмите для смены учебной группы">
+      <div class="brand-box" onclick="openGroupSwitcher()" title="Сменить учебную группу">
         <div class="brand-logo">🏛️</div>
         <div style="min-width:0;">
           <div class="brand-title">
@@ -925,7 +916,7 @@
       </div>
 
       <div class="hdr-actions">
-        <button class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Ссылки группы и облако">🔗</button>
+        <button class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Ссылки и синхронизация">🔗</button>
         <div class="theme-dots" title="Тема оформления">
           <div class="theme-dot active" data-t="indigo" style="background:#6366f1;" onclick="setTheme('indigo')"></div>
           <div class="theme-dot" data-t="emerald" style="background:#10b981;" onclick="setTheme('emerald')"></div>
@@ -936,11 +927,14 @@
     </div>
   </header>
 
-  <!-- КОМПАКТНАЯ СТРОКА РОЛИ И СИНХРОНИЗАЦИИ -->
+  <!-- СТРОКА СТАТУСА -->
   <div class="sub-bar">
     <div class="row" style="gap:6px;">
       <span class="badge badge-accent" id="roleBadgeText" onclick="if(!isTrueAdmin()) openUnlockAdminModal()" style="cursor:pointer;">👑 Староста</span>
       <span class="badge" id="cloudStateBadge" onclick="pullFromCloud(true)" style="cursor:pointer;">☁️ Синхр.</span>
+      <button class="btn-accent-outline btn-sm" style="padding:3px 8px; font-size:0.68rem;" onclick="syncScheduleFromNgieuApi(true)">
+        🔄 Синхр. с НГИЭУ
+      </button>
     </div>
     <div class="row" style="gap:6px;">
       <button class="btn-glass btn-sm" id="btnPreviewStudent" style="display:none; padding:4px 8px; font-size:0.7rem;" onclick="togglePreviewAsStudent()">
@@ -1017,7 +1011,7 @@
       <div id="pinnedDashboardBox"></div>
     </section>
 
-    <!-- ВКЛАДКА 2: ЖУРНАЛ ПОСЕЩАЕМОСТИ -->
+    <!-- ВКЛАДКА 2: ЖУРНАЛ -->
     <section id="pane-journal" class="tab-pane">
       <div class="card">
         <div class="row">
@@ -1059,22 +1053,23 @@
         </div>
       </div>
 
-      <div class="section-head">
-        <span>Отметка явки</span>
-      </div>
+      <div class="section-head"><span>Отметка явки</span></div>
       <div id="journalStudentsList"></div>
 
-      <div class="section-head" style="margin-top:20px;">
-        <span>🚨 Радар прогулов (лимит 36 ч.)</span>
-      </div>
+      <div class="section-head" style="margin-top:20px;"><span>🚨 Радар прогулов (лимит 36 ч.)</span></div>
       <div id="riskRadarBox"></div>
     </section>
 
     <!-- ВКЛАДКА 3: ПАРЫ И ДЗ -->
     <section id="pane-schedule" class="tab-pane">
-      <div class="pill-group">
-        <button id="btnWeekOdd" class="active" onclick="switchScheduleWeek('odd')">I Неделя (Нечетная)</button>
-        <button id="btnWeekEven" onclick="switchScheduleWeek('even')">II Неделя (Четная)</button>
+      <div class="between" style="margin-bottom:8px;">
+        <div class="pill-group" style="margin-bottom:0; flex:1;">
+          <button id="btnWeekOdd" class="active" onclick="switchScheduleWeek('odd')">I Неделя (Нечетная)</button>
+          <button id="btnWeekEven" onclick="switchScheduleWeek('even')">II Неделя (Четная)</button>
+        </div>
+        <button class="btn-accent-outline btn-sm" style="margin-left:8px;" onclick="syncScheduleFromNgieuApi(true)" title="Синхронизировать сетку с сервером НГИЭУ">
+          🔄 Обновить
+        </button>
       </div>
 
       <div class="card admin-only" style="padding:10px 12px;">
@@ -1091,10 +1086,9 @@
       <div class="days-grid" id="schedDaysBar"></div>
       <div id="schedCardsList"></div>
 
-      <!-- Свернутая форма добавления пары для чистоты интерфейса -->
       <details class="clean-collapse admin-only" style="margin-top:12px;">
         <summary>
-          <span>➕ Добавить пару на <span id="addSchedDayLbl">ПН</span></span>
+          <span>➕ Ручное добавление пары на <span id="addSchedDayLbl">ПН</span></span>
           <span class="badge">Развернуть</span>
         </summary>
         <div style="margin-top:12px;">
@@ -1163,7 +1157,7 @@
       </div>
     </section>
 
-    <!-- ВКЛАДКА 5: БАЗА (ГРУППА, ЗАМЕТКИ, ФАЙЛЫ) -->
+    <!-- ВКЛАДКА 5: БАЗА -->
     <section id="pane-vault" class="tab-pane">
       <div class="pill-group">
         <button id="vBtnGroup" class="active" onclick="switchVaultSub('group')">👥 Группа</button>
@@ -1171,7 +1165,6 @@
         <button id="vBtnFiles" onclick="switchVaultSub('files')">📎 Файлы</button>
       </div>
 
-      <!-- Секция: Группа и карточки одногруппников -->
       <div id="vaultGroupBox">
         <details class="clean-collapse admin-only">
           <summary>
@@ -1208,7 +1201,7 @@
             <button class="btn-grad btn-block" onclick="addSingleStudent()">Добавить студента</button>
 
             <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
-              <label class="field-lbl">⚡ ИЛИ БЫСТРЫЙ ИМПОРТ СПИСКОМ (КАЖДЫЙ С НОВОЙ СТРОКИ)</label>
+              <label class="field-lbl">⚡ ИЛИ БЫСТРЫЙ ИМПОРТ СПИСКОМ</label>
               <textarea id="gBulkText" rows="3" placeholder="Иванов Иван&#10;Петров Петр..."></textarea>
               <button class="btn-glass btn-block" onclick="addBulkStudents()">Загрузить список</button>
             </div>
@@ -1221,19 +1214,17 @@
         </div>
         <div id="vaultStudentsList"></div>
 
-        <div class="section-head">
-          <span>🎂 Календарь дней рождения</span>
-        </div>
+        <div class="section-head"><span>🎂 Календарь дней рождения</span></div>
         <div id="groupBirthdaysSummaryBox"></div>
 
         <details class="clean-collapse admin-only" style="margin-top:14px;">
           <summary>
-            <span>💾 Бэкап (.json) и выгрузка журнала (.csv)</span>
+            <span>💾 Бэкап (.json) и журнал (.csv)</span>
             <span class="badge">Экспорт</span>
           </summary>
           <div style="margin-top:10px;">
             <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">
-              Файлы отправляются вам через <b>@Starostatikabot</b> или скачиваются на устройство.
+              Файлы отправляются через <b>@Starostatikabot</b> или скачиваются на устройство.
             </p>
             <div class="row" style="margin-bottom:8px;">
               <button class="btn-grad btn-block" onclick="exportBackupJSON()">⬇ Бэкап (.json)</button>
@@ -1245,7 +1236,6 @@
         </details>
       </div>
 
-      <!-- Секция: Заметки -->
       <div id="vaultNotesBox" style="display:none;">
         <div class="card admin-only">
           <div style="font-weight:700; font-size:0.86rem; margin-bottom:8px;">Новое объявление для группы</div>
@@ -1260,7 +1250,6 @@
         <div id="vaultNotesList"></div>
       </div>
 
-      <!-- Секция: Локальные файлы -->
       <div id="vaultFilesBox" style="display:none;">
         <div class="card admin-only">
           <div style="font-weight:700; font-size:0.86rem; margin-bottom:4px;">Локальные файлы</div>
@@ -1300,7 +1289,7 @@
   </nav>
 
   <script>
-    // ================= 0. КОНФИГУРАЦИЯ ОБЛАКА И ЗАЩИТЫ (МАСТЕР-ПАРОЛЬ) =================
+    // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ =================
     const DEFAULT_CLOUD_CONFIG = {
       supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU',
@@ -1311,19 +1300,36 @@
       chatId: ''
     };
 
-    // Мастер-пароль Старостата НГИЭУ для создания новых или удаления групп (защита от «обуза»)
-    // Поддерживает как единый мастер-ключ, так и стандартный ключ старосты
-    const MASTER_PASSWORDS = ['ngieu2026', 'b26leader', 'starostat'];
+    // Токен доступа к официальному расписанию НГИЭУ (Schedulab)
+    const NGIEU_API_CONFIG = {
+      baseUrl: 'https://api.schedule.ngieu.ru/api/v1/public/service/schedule',
+      clientCredential: 'slinst_8qKnLNSgxMCdXEcIA39ADw.pduWXZUnv-IKg--IXGUCYNRvzaB1_iQqLt2rlVo2aIg',
+      // Маппинг названий групп НГИЭУ на их ID в университетской системе
+      groupMap: {
+        'б-26био': 93,
+        'b26bio': 93
+      }
+    };
 
+    const MASTER_PASSWORDS = ['ngieu2026', 'b26leader', 'starostat'];
     const STORAGE_KEY = 'starosta_local_v1';
     const CLOUD_CFG_KEY = 'starosta_cloud_cfg_v1';
     const ADMIN_UNLOCK_MAP_KEY = 'starostat_ngieu_unlocks_v1';
     const PERSONAL_HW_KEY = 'starosta_my_hw_done_v1';
     const DAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
+    const DAY_NAME_MAP = {
+      'понедельник': 'ПН',
+      'вторник': 'ВТ',
+      'среда': 'СР',
+      'четверг': 'ЧТ',
+      'пятница': 'ПТ',
+      'суббота': 'СБ'
+    };
+
     let cloudCfg = Object.assign({}, DEFAULT_CLOUD_CONFIG);
-    let cachedCloudGroups = []; // Кэш реальных групп из Supabase
-    let leaderModalSubMode = 'login'; // 'login' | 'create'
+    let cachedCloudGroups = [];
+    let leaderModalSubMode = 'login';
     let myDoneHwIds = [];
     let tgApp = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     let tgUser = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) ? tgApp.initDataUnsafe.user : null;
@@ -1367,7 +1373,7 @@
         schedule: [],
         homeworks: [],
         notes: [
-          { id: 'n1', title: 'Старостат | НГИЭУ', body: 'Добро пожаловать в цифровое пространство учебной группы. Расписание, звонки и чек-лист ДЗ синхронизируются автоматически.', pinned: true, date: 'Сегодня' }
+          { id: 'n1', title: 'Старостат | НГИЭУ', body: 'Расписание синхронизировано с базой университета НГИЭУ. Актуальные аудитории и замены обновляются онлайн.', pinned: true, date: 'Сегодня' }
         ],
         collections: []
       };
@@ -1386,7 +1392,134 @@
       if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
     }
 
-    // ================= 1. ЗАЩИТА, РОЛИ И СИСТЕМА ДВУХ ССЫЛОК =================
+    // ================= 1. СИНХРОНИЗАЦИЯ С API РАСПИСАНИЯ НГИЭУ =================
+    function getNgieuGroupId() {
+      const gNorm = (state.groupName || '').trim().toLowerCase();
+      if (NGIEU_API_CONFIG.groupMap[gNorm]) return NGIEU_API_CONFIG.groupMap[gNorm];
+      if (NGIEU_API_CONFIG.groupMap[cloudCfg.groupId]) return NGIEU_API_CONFIG.groupMap[cloudCfg.groupId];
+      return 93; // По умолчанию для Б-26БиО
+    }
+
+    async function syncScheduleFromNgieuApi(showNotification = true) {
+      const gId = getNgieuGroupId();
+      const elGrp = document.getElementById('ngieuGrpIdDisplay');
+      if (elGrp) elGrp.textContent = gId;
+
+      if (showNotification) toast('⏳ Загрузка расписания из базы НГИЭУ...');
+
+      // Запрашиваем окно текущих двух недель (текущий семестр)
+      const now = new Date();
+      const monday = new Date(now);
+      const dayOfWeek = (monday.getDay() + 6) % 7;
+      monday.setDate(monday.getDate() - dayOfWeek - 7);
+      const sunday = new Date(monday);
+      sunday.setDate(sunday.getDate() + 20);
+
+      const dFrom = monday.toISOString().slice(0, 10);
+      const dTo = sunday.toISOString().slice(0, 10);
+
+      const targetUrl = `${NGIEU_API_CONFIG.baseUrl}?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}&includeChanges=true`;
+
+      try {
+        let response = null;
+        const headers = {
+          'Accept': 'application/json',
+          'X-Schedulab-Client-Credential': NGIEU_API_CONFIG.clientCredential
+        };
+
+        // Попытка 1: Прямой запрос к API НГИЭУ
+        try {
+          response = await fetch(targetUrl, { method: 'GET', headers });
+        } catch (corsErr) {
+          response = null;
+        }
+
+        // Попытка 2: Если браузер заблокировал CORS, делаем прозрачный запрос через CORS-прокси
+        if (!response || !response.ok) {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+          response = await fetch(proxyUrl, { headers });
+        }
+
+        if (!response || !response.ok) throw new Error('Ошибка связи с сервером расписания НГИЭУ');
+
+        const rawData = await response.json();
+        const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
+
+        if (!entries.length) {
+          if (showNotification) toast('Сервер вернул пустое расписание на этот период');
+          return;
+        }
+
+        // Парсинг полученных записей пар
+        const newScheduleItems = [];
+        const seenKeys = new Set();
+
+        entries.forEach(entry => {
+          const wDayName = (entry.week_day_name || '').toLowerCase().trim();
+          const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
+
+          // Определение недели: по тегу или четности
+          let weekType = 'odd';
+          const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
+          if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
+            weekType = 'even';
+          }
+
+          // Номер пары: вычленяем цифру из "1 пара", "3 пара"
+          const hourName = entry.class_hour_name || '';
+          const matchNum = hourName.match(/\d+/);
+          const num = matchNum ? matchNum[0] : (entry.class_hour_id || '1');
+
+          // Название предмета (или активности)
+          const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
+
+          // Тип пары (Лекция, Практика, Лаб)
+          let type = 'Лекция';
+          const typeName = (entry.subject_type_name || '').toLowerCase();
+          if (typeName.includes('практ')) type = 'Практика';
+          else if (typeName.includes('лаб')) type = 'Лаб. работа';
+          else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
+
+          // Преподаватель и аудитория
+          const teacher = entry.instructor_display || '';
+          const room = entry.classroom_name || '';
+
+          // Заметка при замене
+          let classNote = '';
+          if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
+            classNote = '🔄 Замена занятия!';
+          }
+
+          const uniqueKey = `${weekType}_${dayCode}_${num}_${subject}`;
+          if (!seenKeys.has(uniqueKey)) {
+            seenKeys.add(uniqueKey);
+            newScheduleItems.push({
+              id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
+              week: weekType,
+              day: dayCode,
+              num: String(num),
+              type,
+              subject,
+              room,
+              teacher,
+              classNote
+            });
+          }
+        });
+
+        if (newScheduleItems.length > 0) {
+          state.schedule = newScheduleItems;
+          saveState();
+          renderScheduleView();
+          refreshDashboard();
+          if (showNotification) toast(`✅ Успешно загружено ${newScheduleItems.length} пар из НГИЭУ!`);
+        }
+      } catch (err) {
+        if (showNotification) toast('Не удалось загрузить онлайн-расписание НГИЭУ');
+      }
+    }
+
+    // ================= 2. БЕЗОПАСНОСТЬ, РОЛИ И ДВЕ ССЫЛКИ =================
     function getGroupSecret() {
       return (state.leaderSecret || cloudCfg.adminSecret || DEFAULT_CLOUD_CONFIG.adminSecret || 'b26leader').trim();
     }
@@ -1454,8 +1587,7 @@
     function isTrueAdmin() {
       const map = getUnlockedGroupsMap();
       const secret = getGroupSecret();
-      if (map[cloudCfg.groupId] && map[cloudCfg.groupId] === secret) return true;
-      return false;
+      return (map[cloudCfg.groupId] && map[cloudCfg.groupId] === secret);
     }
 
     function isAdminEffective() {
@@ -1473,7 +1605,7 @@
 
       if (trueAdm) {
         previewBtn.style.display = 'inline-flex';
-        previewBtn.textContent = previewAsStudent ? '👑 Вернуться в Старосту' : '👁️ Вид студента';
+        previewBtn.textContent = previewAsStudent ? '👑 В режим Старосты' : '👁️ Вид студента';
         previewBtn.classList.toggle('btn-accent-outline', previewAsStudent);
       } else {
         previewBtn.style.display = 'none';
@@ -1494,7 +1626,7 @@
       previewAsStudent = !previewAsStudent;
       applyRoleUI();
       refreshAllViews();
-      toast(previewAsStudent ? '👁️ Режим просмотра глазами студента' : '👑 Вы в режиме Старосты');
+      toast(previewAsStudent ? '👁️ Режим студента (только чтение)' : '👑 Режим Старосты');
     }
 
     function openUnlockAdminModal() {
@@ -1558,7 +1690,7 @@
       copyTextQuick(link, 'Секретная ТГ-ссылка Старосты');
     }
 
-    // ================= 2. ОБЛАКО SUPABASE И ЗАЩИТА ОТ ПЕРЕЗАПИСИ =================
+    // ================= 3. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА =================
     function loadCloudConfig() {
       const raw = localStorage.getItem(CLOUD_CFG_KEY);
       if (raw) {
@@ -1595,7 +1727,6 @@
       }
     }
 
-    // Проверка существования группы в облаке перед созданием/записью (Защита от перезаписи чужой группы)
     async function checkGroupExistsInCloud(targetGroupId) {
       const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       try {
@@ -1647,7 +1778,6 @@
           updateCloudHeaderStatus(`НГИЭУ • Синхронизировано`, true);
           if (showToastMsg) toast(`☁️ Данные группы ${state.groupName} загружены`);
         } else {
-          // Записываем в облако только если пользователь — подтвержденный староста этой группы
           if (isTrueAdmin()) {
             await pushToCloud(false);
           }
@@ -1661,22 +1791,13 @@
 
     async function pushToCloud(showToastMsg = false) {
       if (!isCloudConfigured()) return;
-      // Защита: студент без прав старосты не может перезаписать облако
       if (!isTrueAdmin()) {
-        if (showToastMsg) toast('🔒 Только староста может выгружать изменения в облако');
+        if (showToastMsg) toast('🔒 Только староста может сохранять изменения в облако');
         return;
       }
 
       const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       try {
-        // Защита от случайного затирания непустой облачной базы пустым локальным стейтом
-        const existingRemote = await checkGroupExistsInCloud(cloudCfg.groupId);
-        if (existingRemote && Array.isArray(existingRemote.students) && existingRemote.students.length > 0 && state.students.length === 0 && !showToastMsg) {
-          state = Object.assign(getDefaultStateForGroup(existingRemote.groupName), existingRemote);
-          refreshAllViews();
-          return;
-        }
-
         const url = `${baseUrl}/rest/v1/group_store`;
         const payload = {
           id: cloudCfg.groupId,
@@ -1702,7 +1823,6 @@
       }
     }
 
-    // Удаление группы (защищено мастер-паролем старостата)
     async function deleteCurrentGroupFromCloud() {
       const grpName = state.groupName || cloudCfg.groupId;
       const masterInp = prompt(`Для удаления группы «${grpName}» из облака НГИЭУ введите мастер-пароль старостата:`);
@@ -1741,7 +1861,6 @@
       }
     }
 
-    // Загрузка списка существующих групп НГИЭУ в выпадающий селектор и чипы
     async function fetchAllUniversityGroups() {
       const box = document.getElementById('obExistingGroupsList');
       const selectStu = document.getElementById('obGroupSelectDropdown');
@@ -1762,7 +1881,7 @@
         if (!cachedCloudGroups.length) {
           selectStu.innerHTML = `<option value="${esc(cloudCfg.groupId)}">${esc(state.groupName || 'Б-26БиО')}</option>`;
           selectLdr.innerHTML = `<option value="${esc(state.groupName || 'Б-26БиО')}">${esc(state.groupName || 'Б-26БиО')}</option>`;
-          box.innerHTML = `<span style="font-size:0.75rem; color:var(--text-muted);">В облаке пока нет групп. Староста может создать первую группу во вкладке «👑 Старостат».</span>`;
+          box.innerHTML = `<span style="font-size:0.75rem; color:var(--text-muted);">В облаке пока нет групп. Староста может создать первую во вкладке «👑 Старостат».</span>`;
           return;
         }
 
@@ -1838,21 +1957,19 @@
       closeGroupSwitcher();
       applyRoleUI();
       await pullFromCloud(true);
+      // Авто-синхронизация сетки расписания из API НГИЭУ
+      await syncScheduleFromNgieuApi(false);
     }
 
     async function enterAsStudent() {
       const sel = document.getElementById('obGroupSelectDropdown');
       const selectedId = sel.value;
-      if (!selectedId) {
-        toast('Выберите группу из списка!');
-        return;
-      }
+      if (!selectedId) return toast('Выберите группу из списка!');
       const found = cachedCloudGroups.find(r => r.id === selectedId);
       const gTitle = (found && found.state_json && found.state_json.groupName) ? found.state_json.groupName : selectedId;
       await selectExistingUniversityGroup(selectedId, gTitle);
     }
 
-    // Защищенный вход старосты или создание новой группы (с проверкой на существование в облаке)
     async function completeLeaderOnboarding() {
       const secretInput = document.getElementById('obLeaderSecret').value.trim();
       const wType = document.getElementById('obWeekType').value;
@@ -1880,32 +1997,25 @@
           closeGroupSwitcher();
           refreshAllViews();
           toast(`👑 Вы вошли как Староста группы ${gName}`);
+          await syncScheduleFromNgieuApi(false);
           return;
         } else {
           return toast('Группа не найдена в облаке. Переключитесь на «➕ Создать новую»');
         }
       }
 
-      // Режим создания новой группы («create»)
       const gName = document.getElementById('obGroupName').value.trim();
       const lName = document.getElementById('obLeaderName').value.trim();
       const masterPass = document.getElementById('obMasterPassword').value.trim();
       const newSecret = secretInput || 'b26leader';
 
-      if (!gName) {
-        toast('⚠️ Укажите название новой группы (например, Б-26ЭО)');
-        return;
-      }
-      if (!isValidMasterPassword(masterPass)) {
-        toast('🛡️ Неверный мастер-пароль Старостата! Создание запрещено.');
-        return;
-      }
+      if (!gName) return toast('⚠️ Укажите название новой группы');
+      if (!isValidMasterPassword(masterPass)) return toast('🛡️ Неверный мастер-пароль Старостата!');
 
       const newGrpId = groupNameToId(gName);
-      // ЗАЩИТА ОТ ПЕРЕЗАПИСИ: проверяем в Supabase, не занята ли уже эта ячейка
       const alreadyInCloud = await checkGroupExistsInCloud(newGrpId);
       if (alreadyInCloud) {
-        toast(`⚠️ Группа «${alreadyInCloud.groupName || gName}» уже существует! Перезапись заблокирована.`);
+        toast(`⚠️ Группа «${alreadyInCloud.groupName || gName}» уже существует!`);
         switchLeaderSubMode('login');
         return;
       }
@@ -1936,6 +2046,7 @@
       closeGroupSwitcher();
       refreshAllViews();
       await pushToCloud(true);
+      await syncScheduleFromNgieuApi(false);
       toast(`👑 Создана новая группа ${gName}!`);
     }
 
@@ -1957,6 +2068,8 @@
       document.getElementById('cfgChatId').value = cloudCfg.chatId || '';
       document.getElementById('cfgBotToken').value = cloudCfg.botToken || '';
       renderAccessLinksPreview();
+      const elGrp = document.getElementById('ngieuGrpIdDisplay');
+      if (elGrp) elGrp.textContent = getNgieuGroupId();
       document.getElementById('cloudModal').classList.add('active');
     }
 
@@ -2029,7 +2142,7 @@
       return false;
     }
 
-    // ================= 3. ЗВОНКИ С 08:00 И БОЛЬШОЙ ПЕРЕРЫВ 55 МИНУТ =================
+    // ================= 4. ЗВОНКИ С 08:00 И ПЕРЕРЫВ 55 МИНУТ =================
     function minsToHHMM(totalMins) {
       const h = Math.floor(totalMins / 60);
       const m = totalMins % 60;
@@ -2154,7 +2267,7 @@
       });
     }
 
-    // ================= 4. ДНИ РОЖДЕНИЯ ОДНОГРУППНИКОВ =================
+    // ================= 5. ДНИ РОЖДЕНИЯ =================
     function getBirthdayInfo(birthDateStr) {
       if (!birthDateStr) return null;
       const parts = birthDateStr.split('-').map(Number);
@@ -2215,7 +2328,7 @@
       }
     }
 
-    // ================= 5. ЗАМЕТКИ К ПАРАМ И УМНЫЙ РАСЧЕТ ДЕДЛАЙНОВ ДЗ =================
+    // ================= 6. ЗАМЕТКИ К ПАРАМ И ДЕДЛАЙНЫ ДЗ =================
     let activeClassIdForNote = null;
     let hwContext = { subject: '', fromDay: null, fromWeek: null, mode: 'next' };
 
@@ -2411,7 +2524,7 @@
       el.focus();
     }
 
-    // ================= 6. ЖИВОЙ ТАЙМЕР ЗВОНКОВ =================
+    // ================= 7. ТАЙМЕР ЗВОНКОВ =================
     function updateLiveBellRadar() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
@@ -2461,7 +2574,7 @@
       progEl.style.width = '0%';
     }
 
-    // ================= 7. ЛОКАЛЬНЫЕ ФАЙЛЫ INDEXEDDB =================
+    // ================= 8. ФАЙЛЫ INDEXEDDB =================
     let db = null;
     const DB_NAME = 'StarostaFilesDB';
     const STORE_NAME = 'files';
@@ -2570,7 +2683,7 @@
       }).join('');
     }
 
-    // ================= 8. НАВИГАЦИЯ И ДАШБОРД =================
+    // ================= 9. КАРТОЧКИ ПАР И ДАШБОРД =================
     function openTab(tabName, btnEl) {
       haptic(8);
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -2619,7 +2732,7 @@
             ${allowDelete ? `<button class="btn-danger btn-sm admin-only" onclick="removeSchedItem('${c.id}')">✕</button>` : ''}
           </div>
           ${c.teacher ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">👨‍🏫 ${esc(c.teacher)}</div>` : ''}
-          ${c.classNote ? `<div class="class-note-box">💬 ${esc(c.classNote)}</div>` : ''}
+          ${c.classNote ? `<div class="class-note-box">${esc(c.classNote)}</div>` : ''}
           ${hwHtml}
           <div class="row admin-only" style="margin-top:10px;">
             <button class="btn-glass btn-sm" style="flex:1;" onclick="openClassNoteModal('${c.id}')">
@@ -2755,7 +2868,7 @@
       }
     }
 
-    // ================= 9. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ =================
+    // ================= 10. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ =================
     function switchScheduleWeek(w) {
       haptic(8);
       state.currentWeekType = w;
@@ -2847,7 +2960,7 @@
       renderScheduleView();
     }
 
-    // ================= 10. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
+    // ================= 11. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
     const ST_CYCLE = ['P', 'N', 'U', 'O'];
     const ST_META = {
       'P': { label: '✓ Был', cls: 'st-P' },
@@ -2943,7 +3056,7 @@
       state.attendance[getJKey()] = { subject: document.getElementById('jSubject').value, records: {} };
       saveState();
       renderJournal();
-      toast('Все отмечены присутствующими');
+      toast('Все присутствуют');
     }
 
     function renderRiskRadar() {
@@ -3014,7 +3127,7 @@
       await sendTelegramBotMessage(buildReportText());
     }
 
-    // ================= 11. КАЗНА И КОМАНДЫ =================
+    // ================= 12. КАЗНА И РАНДОМАЙЗЕР КОМАНД =================
     function switchLabMode(mode) {
       haptic(8);
       document.getElementById('btnLabMoney').classList.toggle('active', mode === 'collections');
@@ -3132,7 +3245,7 @@
       `).join('');
     }
 
-    // ================= 12. СПИСОК ГРУППЫ, КАРТОЧКИ СТУДЕНТОВ И ЗАМЕТКИ =================
+    // ================= 13. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ) =================
     function switchVaultSub(sub) {
       haptic(8);
       document.getElementById('vBtnGroup').classList.toggle('active', sub === 'group');
@@ -3497,6 +3610,8 @@
       checkBirthdayStartupReminder();
 
       await pullFromCloud(false);
+      // Фоновая онлайн-синхронизация расписания из API НГИЭУ
+      await syncScheduleFromNgieuApi(false);
     });
   </script>
 </body>
