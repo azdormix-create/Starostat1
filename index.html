@@ -3616,8 +3616,9 @@
       const elGrp = document.getElementById('ngieuGrpIdDisplay');
       if (elGrp) elGrp.textContent = gId;
 
-      if (showNotification) toast('⏳ Подключение к базе НГИЭУ...');
+      if (showNotification) toast('⏳ Загрузка расписания через облако НГИЭУ...');
 
+      // Расчет окна дат на 3 недели (текущая и две следующие)
       const now = new Date();
       const monday = new Date(now);
       const dayOfWeek = (monday.getDay() + 6) % 7;
@@ -3627,100 +3628,81 @@
 
       const dFrom = monday.toISOString().slice(0, 10);
       const dTo = sunday.toISOString().slice(0, 10);
-      const targetApiUrl = `${NGIEU_API_CONFIG.baseUrl}?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}&includeChanges=true`;
 
-      // Список вариантов обхода блокировок: прямой запрос + зеркала
-      const requestUrls = [
-        targetApiUrl,
-        `https://corsproxy.io/?${encodeURIComponent(targetApiUrl)}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetApiUrl)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(targetApiUrl)}`
-      ];
+      // Обращение к вашей созданной функции в Supabase (CORS не блокирует!)
+      const targetUrl = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}`;
 
-      let rawData = null;
+      try {
+        const res = await fetch(targetUrl);
+        if (!res.ok) throw new Error('Ошибка сервера Edge Function');
 
-      for (const url of requestUrls) {
-        try {
-          const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'X-Schedulab-Client-Credential': NGIEU_API_CONFIG.clientCredential
-            }
-          });
-          if (res.ok) {
-            const parsed = await res.json();
-            if (parsed && Array.isArray(parsed.entries)) {
-              rawData = parsed;
-              break;
-            }
+        const rawData = await res.json();
+        const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
+
+        if (!entries.length) {
+          if (showNotification) toast('Расписание на выбранный период не найдено');
+          return;
+        }
+
+        const newScheduleItems = [];
+        const seenKeys = new Set();
+
+        entries.forEach(entry => {
+          const wDayName = (entry.week_day_name || '').toLowerCase().trim();
+          const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
+
+          let weekType = 'odd';
+          const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
+          if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
+            weekType = 'even';
           }
-        } catch (e) {
-          // Пробуем следующий шлюз
+
+          const hourName = entry.class_hour_name || '';
+          const matchNum = hourName.match(/\d+/);
+          const num = matchNum ? matchNum[0] : (entry.class_hour_id || '1');
+
+          const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
+
+          let type = 'Лекция';
+          const typeName = (entry.subject_type_name || '').toLowerCase();
+          if (typeName.includes('практ')) type = 'Практика';
+          else if (typeName.includes('лаб')) type = 'Лаб. работа';
+          else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
+
+          const teacher = entry.instructor_display || '';
+          const room = entry.classroom_name || '';
+
+          let classNote = '';
+          if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
+            classNote = '🔄 Замена занятия!';
+          }
+
+          const uniqueKey = `${weekType}_${dayCode}_${num}_${subject}`;
+          if (!seenKeys.has(uniqueKey)) {
+            seenKeys.add(uniqueKey);
+            newScheduleItems.push({
+              id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
+              week: weekType,
+              day: dayCode,
+              num: String(num),
+              type,
+              subject,
+              room,
+              teacher,
+              classNote
+            });
+          }
+        });
+
+        if (newScheduleItems.length > 0) {
+          state.schedule = newScheduleItems;
+          saveState();
+          renderScheduleView();
+          refreshDashboard();
+          if (showNotification) toast(`✅ Успешно загружено ${newScheduleItems.length} пар из НГИЭУ!`);
         }
-      }
-
-      if (!rawData || !Array.isArray(rawData.entries) || !rawData.entries.length) {
-        if (showNotification) toast('⚠️ Сервер НГИЭУ недоступен или вернул пустой список');
-        return;
-      }
-
-      const newScheduleItems = [];
-      const seenKeys = new Set();
-
-      rawData.entries.forEach(entry => {
-        const wDayName = (entry.week_day_name || '').toLowerCase().trim();
-        const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
-
-        let weekType = 'odd';
-        const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
-        if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
-          weekType = 'even';
-        }
-
-        const hourName = entry.class_hour_name || '';
-        const matchNum = hourName.match(/\d+/);
-        const num = matchNum ? matchNum[0] : (entry.class_hour_id || '1');
-
-        const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
-
-        let type = 'Лекция';
-        const typeName = (entry.subject_type_name || '').toLowerCase();
-        if (typeName.includes('практ')) type = 'Практика';
-        else if (typeName.includes('лаб')) type = 'Лаб. работа';
-        else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
-
-        const teacher = entry.instructor_display || '';
-        const room = entry.classroom_name || '';
-
-        let classNote = '';
-        if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
-          classNote = '🔄 Замена занятия!';
-        }
-
-        const uniqueKey = `${weekType}_${dayCode}_${num}_${subject}`;
-        if (!seenKeys.has(uniqueKey)) {
-          seenKeys.add(uniqueKey);
-          newScheduleItems.push({
-            id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
-            week: weekType,
-            day: dayCode,
-            num: String(num),
-            type,
-            subject,
-            room,
-            teacher,
-            classNote
-          });
-        }
-      });
-
-      if (newScheduleItems.length > 0) {
-        state.schedule = newScheduleItems;
-        saveState();
-        renderScheduleView();
-        refreshDashboard();
-        if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар из НГИЭУ!`);
+      } catch (err) {
+        if (showNotification) toast('⚠️ Не удалось загрузить расписание через Edge Function');
       }
     }
     });
