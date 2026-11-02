@@ -3616,9 +3616,8 @@
       const elGrp = document.getElementById('ngieuGrpIdDisplay');
       if (elGrp) elGrp.textContent = gId;
 
-      if (showNotification) toast('⏳ Загрузка расписания через облако НГИЭУ...');
+      if (showNotification) toast('⏳ Загрузка расписания НГИЭУ...');
 
-      // Расчет окна дат на 3 недели (текущая и две следующие)
       const now = new Date();
       const monday = new Date(now);
       const dayOfWeek = (monday.getDay() + 6) % 7;
@@ -3628,38 +3627,54 @@
 
       const dFrom = monday.toISOString().slice(0, 10);
       const dTo = sunday.toISOString().slice(0, 10);
-
-      // Обращение к вашей созданной функции в Supabase (CORS не блокирует!)
       const targetUrl = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}`;
 
       try {
         const res = await fetch(targetUrl);
-        if (!res.ok) throw new Error('Ошибка сервера Edge Function');
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errText.slice(0, 30)}`);
+        }
 
         const rawData = await res.json();
         const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
 
         if (!entries.length) {
-          if (showNotification) toast('Расписание на выбранный период не найдено');
+          if (showNotification) toast('⚠️ Расписание на эти дни пустое');
           return;
         }
 
         const newScheduleItems = [];
         const seenKeys = new Set();
 
+        // Дата начала семестра из ответа schedules для корректного чередования I / II недели
+        const semStartStr = (rawData.schedules && rawData.schedules[0] && rawData.schedules[0].valid_from) 
+          ? rawData.schedules[0].valid_from 
+          : '2026-09-01';
+        const semStartDate = new Date(semStartStr + 'T00:00:00');
+
         entries.forEach(entry => {
           const wDayName = (entry.week_day_name || '').toLowerCase().trim();
           const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
 
+          // Определение недели: сначала по тегу, а если он null (как у замен) — по дате занятия
           let weekType = 'odd';
           const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
+          
           if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
             weekType = 'even';
+          } else if (tag.includes('up') || tag.includes('верхн') || tag.includes('i') || tag.includes('нечет')) {
+            weekType = 'odd';
+          } else if (entry.day_date) {
+            const entryDate = new Date(entry.day_date + 'T00:00:00');
+            const diffWeeks = Math.floor((entryDate - semStartDate) / (7 * 24 * 60 * 60 * 1000));
+            weekType = (diffWeeks % 2 === 0) ? 'odd' : 'even';
           }
 
+          // Извлечение цифры пары
           const hourName = entry.class_hour_name || '';
           const matchNum = hourName.match(/\d+/);
-          const num = matchNum ? matchNum[0] : (entry.class_hour_id || '1');
+          const num = matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
 
           const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
 
@@ -3671,7 +3686,7 @@
 
           const teacher = entry.instructor_display || '';
           const room = entry.classroom_name || '';
-
+          
           let classNote = '';
           if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
             classNote = '🔄 Замена занятия!';
@@ -3699,10 +3714,10 @@
           saveState();
           renderScheduleView();
           refreshDashboard();
-          if (showNotification) toast(`✅ Успешно загружено ${newScheduleItems.length} пар из НГИЭУ!`);
+          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар из НГИЭУ!`);
         }
       } catch (err) {
-        if (showNotification) toast('⚠️ Не удалось загрузить расписание через Edge Function');
+        if (showNotification) toast(`Ошибка: ${err.message}`);
       }
     }
     });
