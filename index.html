@@ -377,21 +377,6 @@
     .st-U { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
     .st-O { background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
 
-    .break-banner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 6px 10px;
-      margin: -2px 0 10px;
-      border-radius: var(--radius-sm);
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px dashed rgba(245, 158, 11, 0.35);
-      color: #fbbf24;
-      font-size: 0.74rem;
-      font-weight: 600;
-    }
-
     .days-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -951,14 +936,15 @@
     <section id="pane-home" class="tab-pane active">
       <div class="card card-hero">
         <div class="between">
-          <span class="badge badge-accent">⏱️ Звонки с 08:00 (90 мин)</span>
+          <span class="badge badge-accent">⏱️ Расписание звонков НГИЭУ</span>
           <span style="font-size:0.84rem; font-weight:800;" id="liveClockText">00:00</span>
         </div>
         <div style="font-size:1.05rem; font-weight:800; margin-top:8px;" id="liveClassStatus">Сверка расписания...</div>
-        <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;" id="liveClassSub">Стандартная перемена 10 минут</div>
+        <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;" id="liveClassSub">Синхронизировано с базой НГИЭУ</div>
         <div class="progress-track">
           <div class="progress-fill" id="liveClassProgress" style="width: 0%;"></div>
         </div>
+      </div>
 
       <div class="metrics-row">
         <div class="metric-card">
@@ -1059,8 +1045,6 @@
           🔄 Обновить
         </button>
       </div>
-
-     
 
       <div class="days-grid" id="schedDaysBar"></div>
       <div id="schedCardsList"></div>
@@ -1265,9 +1249,7 @@
       <span class="ico">👥</span>
       <span>Группа</span>
     </button>
-  </nav>
-
-  <script>
+  </nav><script>
     // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ =================
     const DEFAULT_CLOUD_CONFIG = {
       supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co',
@@ -1279,11 +1261,7 @@
       chatId: ''
     };
 
-    // Токен доступа к официальному расписанию НГИЭУ (Schedulab)
     const NGIEU_API_CONFIG = {
-      baseUrl: 'https://api.schedule.ngieu.ru/api/v1/public/service/schedule',
-      clientCredential: 'slinst_8qKnLNSgxMCdXEcIA39ADw.pduWXZUnv-IKg--IXGUCYNRvzaB1_iQqLt2rlVo2aIg',
-      // Маппинг названий групп НГИЭУ на их ID в университетской системе
       groupMap: {
         'б-26био': 93,
         'b26bio': 93
@@ -1345,7 +1323,6 @@
         currentWeekType: 'odd',
         selectedDay: 'ПН',
         subgroupFilter: 'all',
-        bigBreakAfter: 0,
         subgroupsMigratedV2: true,
         students: [],
         attendance: {},
@@ -1376,7 +1353,7 @@
       const gNorm = (state.groupName || '').trim().toLowerCase();
       if (NGIEU_API_CONFIG.groupMap[gNorm]) return NGIEU_API_CONFIG.groupMap[gNorm];
       if (NGIEU_API_CONFIG.groupMap[cloudCfg.groupId]) return NGIEU_API_CONFIG.groupMap[cloudCfg.groupId];
-      return 93; // По умолчанию для Б-26БиО
+      return 93;
     }
 
     async function syncScheduleFromNgieuApi(showNotification = true) {
@@ -1384,117 +1361,91 @@
       const elGrp = document.getElementById('ngieuGrpIdDisplay');
       if (elGrp) elGrp.textContent = gId;
 
-      if (showNotification) toast('⏳ Загрузка расписания из базы НГИЭУ...');
+      if (showNotification) toast('⏳ Загрузка расписания НГИЭУ...');
 
-      // Запрашиваем окно текущих двух недель (текущий семестр)
       const now = new Date();
       const monday = new Date(now);
       const dayOfWeek = (monday.getDay() + 6) % 7;
       monday.setDate(monday.getDate() - dayOfWeek - 7);
       const sunday = new Date(monday);
-      sunday.setDate(sunday.getDate() + 20);
+      sunday.setDate(sunday.getDate() + 21);
 
       const dFrom = monday.toISOString().slice(0, 10);
       const dTo = sunday.toISOString().slice(0, 10);
-
-      const targetUrl = `${NGIEU_API_CONFIG.baseUrl}?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}&includeChanges=true`;
+      const targetUrl = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}`;
 
       try {
-        let response = null;
-        const headers = {
-          'Accept': 'application/json',
-          'X-Schedulab-Client-Credential': NGIEU_API_CONFIG.clientCredential
-        };
-
-        // Попытка 1: Прямой запрос к API НГИЭУ
-        try {
-          response = await fetch(targetUrl, { method: 'GET', headers });
-        } catch (corsErr) {
-          response = null;
+        const res = await fetch(targetUrl);
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errText.slice(0, 30)}`);
         }
 
-        // Попытка 2: Если браузер заблокировал CORS, делаем прозрачный запрос через CORS-прокси
-        if (!response || !response.ok) {
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-          response = await fetch(proxyUrl, { headers });
-        }
-
-        if (!response || !response.ok) throw new Error('Ошибка связи с сервером расписания НГИЭУ');
-
-        const rawData = await response.json();
+        const rawData = await res.json();
         const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
 
         if (!entries.length) {
-          if (showNotification) toast('Сервер вернул пустое расписание на этот период');
+          if (showNotification) toast('⚠️ Расписание пустое');
           return;
         }
 
-        // Парсинг полученных записей пар
-        const newScheduleItems = [];
-        const seenKeys = new Set();
+        // Сортируем: сначала обычные шаблоны, затем замены, чтобы замены перезаписывали слот
+        const sortedEntries = entries.sort((a, b) => {
+          const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
+          const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
+          return aIsChange - bIsChange;
+        });
 
-        entries.forEach(entry => {
+        const scheduleMap = new Map();
+
+        sortedEntries.forEach(entry => {
+          if (entry.occurrence_status === 'CANCELLED' || entry.occurrence_status === 'REPLACED') return;
+
           const wDayName = (entry.week_day_name || '').toLowerCase().trim();
           const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
 
-          // Определение недели: по тегу или четности
-          let weekType = 'odd';
           const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
-          if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
-            weekType = 'even';
-          }
+          let weekType = (tag.includes('down') || tag.includes('ii') || tag.includes('нижн')) ? 'even' : 'odd';
 
-          // Номер пары: вычленяем цифру из "1 пара", "3 пара"
-          const hourName = entry.class_hour_name || '';
-          const matchNum = hourName.match(/\d+/);
-          const num = matchNum ? matchNum[0] : (entry.class_hour_id || '1');
+          const matchNum = (entry.class_hour_name || '').match(/\d+/);
+          const num = matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
 
-          // Название предмета (или активности)
-          const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
-
-          // Тип пары (Лекция, Практика, Лаб)
           let type = 'Лекция';
           const typeName = (entry.subject_type_name || '').toLowerCase();
           if (typeName.includes('практ')) type = 'Практика';
           else if (typeName.includes('лаб')) type = 'Лаб. работа';
           else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
 
-          // Преподаватель и аудитория
-          const teacher = entry.instructor_display || '';
-          const room = entry.classroom_name || '';
+          const isChange = (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED');
+          const slotKey = `${weekType}_${dayCode}_${num}`;
 
-          // Заметка при замене
-          let classNote = '';
-          if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
-            classNote = '🔄 Замена занятия!';
-          }
-
-          const uniqueKey = `${weekType}_${dayCode}_${num}_${subject}`;
-          if (!seenKeys.has(uniqueKey)) {
-            seenKeys.add(uniqueKey);
-            newScheduleItems.push({
-              id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
-              week: weekType,
-              day: dayCode,
-              num: String(num),
-              type,
-              subject,
-              room,
-              teacher,
-              classNote
-            });
-          }
+          scheduleMap.set(slotKey, {
+            id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
+            week: weekType,
+            day: dayCode,
+            num: String(num),
+            type,
+            subject: entry.subject_name || entry.activity_type_name || 'Дисциплина',
+            room: entry.classroom_name || '',
+            teacher: entry.instructor_display || '',
+            timeStart: entry.time_start || '',
+            timeEnd: entry.time_end || '',
+            classNote: isChange ? '🔄 Замена занятия!' : ''
+          });
         });
+
+        const newScheduleItems = Array.from(scheduleMap.values());
 
         if (newScheduleItems.length > 0) {
           state.schedule = newScheduleItems;
           saveState();
+          if (typeof pushToCloud === 'function') await pushToCloud(false);
           renderScheduleView();
           refreshDashboard();
-          if (showNotification) toast(`✅ Успешно загружено ${newScheduleItems.length} пар из НГИЭУ!`);
+          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с заменами!`);
         }
       } catch (err) {
-        if (showNotification) toast('Не удалось загрузить онлайн-расписание НГИЭУ');
+        if (showNotification) toast(`Ошибка: ${err.message}`);
       }
     }
 
@@ -1936,7 +1887,6 @@
       closeGroupSwitcher();
       applyRoleUI();
       await pullFromCloud(true);
-      // Авто-синхронизация сетки расписания из API НГИЭУ
       await syncScheduleFromNgieuApi(false);
     }
 
@@ -2121,52 +2071,16 @@
       return false;
     }
 
-    // ================= 4. ЗВОНКИ С 08:00 И ПЕРЕРЫВ 55 МИНУТ =================
-    function minsToHHMM(totalMins) {
-      const h = Math.floor(totalMins / 60);
-      const m = totalMins % 60;
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
-
+    // ================= 4. ОФИЦИАЛЬНОЕ РАСПИСАНИЕ ЗВОНКОВ НГИЭУ =================
     function getBellSchedule() {
-      const schedule = [];
-      let currentMin = 8 * 60; // 08:00
-      const bigAfter = Number(state.bigBreakAfter) || 0;
-
-      for (let num = 1; num <= 6; num++) {
-        const startMin = currentMin;
-        const endMin = startMin + 90;
-        const breakAfter = (num === bigAfter) ? 55 : 10;
-        schedule.push({
-          num,
-          start: minsToHHMM(startMin),
-          end: minsToHHMM(endMin),
-          startMin,
-          endMin,
-          breakAfter
-        });
-        currentMin = endMin + breakAfter;
-      }
-      return schedule;
-    }
-
-    function setBigBreakAfter(pairNum) {
-      if (!isAdminEffective()) return;
-      haptic(10);
-      state.bigBreakAfter = Number(pairNum) || 0;
-      saveState();
-      syncBreakButtonsUI();
-      populateSchedulePairSelect();
-      updateLiveBellRadar();
-      renderScheduleView();
-      toast(state.bigBreakAfter === 0 ? 'Перемены по 10 мин' : `Перерыв 55 мин после ${state.bigBreakAfter}-й пары`);
-    }
-
-    function syncBreakButtonsUI() {
-      const cur = Number(state.bigBreakAfter) || 0;
-      document.querySelectorAll('.break-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', Number(btn.getAttribute('data-bm')) === cur);
-      });
+      return [
+        { num: 1, start: "08:00", end: "09:30", startMin: 480, endMin: 570, breakAfter: 10 },
+        { num: 2, start: "09:40", end: "11:10", startMin: 580, endMin: 670, breakAfter: 55 },
+        { num: 3, start: "12:05", end: "13:35", startMin: 725, endMin: 815, breakAfter: 10 },
+        { num: 4, start: "13:45", end: "15:15", startMin: 825, endMin: 915, breakAfter: 10 },
+        { num: 5, start: "15:25", end: "16:55", startMin: 925, endMin: 1015, breakAfter: 10 },
+        { num: 6, start: "17:05", end: "18:35", startMin: 1025, endMin: 1115, breakAfter: 10 }
+      ];
     }
 
     function populateSchedulePairSelect() {
@@ -2182,7 +2096,6 @@
 
     function refreshAllViews() {
       applyRoleUI();
-      syncBreakButtonsUI();
       populateSchedulePairSelect();
       refreshDashboard();
       renderJournal();
@@ -2201,7 +2114,6 @@
           state = Object.assign(state, parsed);
           if (!state.homeworks) state.homeworks = [];
           if (!state.collections) state.collections = [];
-          if (typeof state.bigBreakAfter === 'undefined') state.bigBreakAfter = 0;
         } catch (e) {}
       }
 
@@ -2680,7 +2592,9 @@
     function buildClassCardHTML(c, allowDelete = false) {
       const bells = getBellSchedule();
       const bellObj = bells.find(b => b.num === Number(c.num));
-      const timeStr = bellObj ? `${bellObj.start}–${bellObj.end}` : '';
+      const timeStr = (c.timeStart && c.timeEnd)
+        ? `${c.timeStart}–${c.timeEnd}`
+        : (bellObj ? `${bellObj.start}–${bellObj.end}` : '');
 
       const subjClean = c.subject.trim().toLowerCase();
       const relatedHw = (state.homeworks || []).filter(h => h.subject.trim().toLowerCase() === subjClean);
@@ -2721,14 +2635,12 @@
             </button>
           </div>
         </div>
-        
       `;
     }
 
     async function refreshDashboard() {
       document.getElementById('hdrGroupName').textContent = state.groupName || 'НГИЭУ';
       document.getElementById('mTotalStudents').textContent = state.students.length;
-      syncBreakButtonsUI();
       applyRoleUI();
 
       const activeHw = (state.homeworks || []).filter(h => !isHwDoneByMe(h));
@@ -2865,7 +2777,6 @@
     function renderScheduleView() {
       document.getElementById('addSchedDayLbl').textContent = state.selectedDay;
       populateSchedulePairSelect();
-      syncBreakButtonsUI();
 
       const bar = document.getElementById('schedDaysBar');
       bar.innerHTML = DAYS.map(d => `
@@ -3569,101 +3480,7 @@
       return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
 
-    // ================= СИНХРОНИЗАЦИЯ РАСПИСАНИЯ НГИЭУ =================
-    async function syncScheduleFromNgieuApi(showNotification = true) {
-      const gId = getNgieuGroupId();
-      const elGrp = document.getElementById('ngieuGrpIdDisplay');
-      if (elGrp) elGrp.textContent = gId;
-
-      if (showNotification) toast('⏳ Загрузка расписания НГИЭУ...');
-
-      const now = new Date();
-      const monday = new Date(now);
-      const dayOfWeek = (monday.getDay() + 6) % 7;
-      monday.setDate(monday.getDate() - dayOfWeek - 7);
-      const sunday = new Date(monday);
-      sunday.setDate(sunday.getDate() + 21);
-
-      const dFrom = monday.toISOString().slice(0, 10);
-      const dTo = sunday.toISOString().slice(0, 10);
-      const targetUrl = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}`;
-
-      try {
-        const res = await fetch(targetUrl);
-        if (!res.ok) {
-          const errText = await res.text();
-          throw new Error(`HTTP ${res.status}: ${errText.slice(0, 30)}`);
-        }
-
-        const rawData = await res.json();
-        const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
-
-        if (!entries.length) {
-          if (showNotification) toast('⚠️ Расписание пустое');
-          return;
-        }
-
-        const DAY_MAP = {'понедельник':'ПН','вторник':'ВТ','среда':'СР','четверг':'ЧТ','пятница':'ПТ','суббота':'СБ'};
-
-        // Сортировка: сначала обычные пары, затем замены, чтобы замены перезаписывали их
-        const sortedEntries = entries.sort((a, b) => {
-          const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
-          const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
-          return aIsChange - bIsChange;
-        });
-
-        const scheduleMap = new Map();
-
-        sortedEntries.forEach(entry => {
-          if (entry.occurrence_status === 'CANCELLED' || entry.occurrence_status === 'REPLACED') return;
-
-          const wDayName = (entry.week_day_name || '').toLowerCase().trim();
-          const dayCode = DAY_MAP[wDayName] || 'ПН';
-
-          const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
-          let weekType = (tag.includes('down') || tag.includes('ii') || tag.includes('нижн')) ? 'even' : 'odd';
-
-          const matchNum = (entry.class_hour_name || '').match(/\d+/);
-          const num = matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
-
-          let type = 'Лекция';
-          const typeName = (entry.subject_type_name || '').toLowerCase();
-          if (typeName.includes('практ')) type = 'Практика';
-          else if (typeName.includes('лаб')) type = 'Лаб. работа';
-          else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
-
-          const isChange = (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED');
-          const slotKey = `${weekType}_${dayCode}_${num}`;
-
-          scheduleMap.set(slotKey, {
-            id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
-            week: weekType,
-            day: dayCode,
-            num: String(num),
-            type,
-            subject: entry.subject_name || entry.activity_type_name || 'Дисциплина',
-            room: entry.classroom_name || '',
-            teacher: entry.instructor_display || '',
-            classNote: isChange ? '🔄 Замена занятия!' : ''
-          });
-        });
-
-        const newScheduleItems = Array.from(scheduleMap.values());
-
-        if (newScheduleItems.length > 0) {
-          state.schedule = newScheduleItems;
-          saveState();
-          if (typeof pushToCloud === 'function') await pushToCloud(false);
-          renderScheduleView();
-          refreshDashboard();
-          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с заменами!`);
-        }
-      } catch (err) {
-        if (showNotification) toast(`Ошибка: ${err.message}`);
-      }
-    }
-
-    // ================= СТАРТ ПРИЛОЖЕНИЯ =================
+    // ================= 14. СТАРТ ПРИЛОЖЕНИЯ =================
     window.addEventListener('DOMContentLoaded', async () => {
       if (tgApp) {
         try {
