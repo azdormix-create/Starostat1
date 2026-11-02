@@ -3644,39 +3644,28 @@
           return;
         }
 
-        const newScheduleItems = [];
-        const seenKeys = new Set();
+        const DAY_MAP = {'понедельник':'ПН','вторник':'ВТ','среда':'СР','четверг':'ЧТ','пятница':'ПТ','суббота':'СБ'};
 
-        // Дата начала семестра из ответа schedules для корректного чередования I / II недели
-        const semStartStr = (rawData.schedules && rawData.schedules[0] && rawData.schedules[0].valid_from) 
-          ? rawData.schedules[0].valid_from 
-          : '2026-09-01';
-        const semStartDate = new Date(semStartStr + 'T00:00:00');
+        // Сортируем: сначала обычные занятия, а поверх них замены, чтобы замены перезаписывали старые пары
+        const sortedEntries = entries.sort((a, b) => {
+          const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
+          const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
+          return aIsChange - bIsChange;
+        });
 
-        entries.forEach(entry => {
+        const scheduleMap = new Map();
+
+        sortedEntries.forEach(entry => {
+          if (entry.occurrence_status === 'CANCELLED' || entry.occurrence_status === 'REPLACED') return;
+
           const wDayName = (entry.week_day_name || '').toLowerCase().trim();
-          const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
+          const dayCode = DAY_MAP[wDayName] || 'ПН';
 
-          // Определение недели: сначала по тегу, а если он null (как у замен) — по дате занятия
-          let weekType = 'odd';
           const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
-          
-          if (tag.includes('down') || tag.includes('нижн') || tag.includes('ii') || tag.includes('четн')) {
-            weekType = 'even';
-          } else if (tag.includes('up') || tag.includes('верхн') || tag.includes('i') || tag.includes('нечет')) {
-            weekType = 'odd';
-          } else if (entry.day_date) {
-            const entryDate = new Date(entry.day_date + 'T00:00:00');
-            const diffWeeks = Math.floor((entryDate - semStartDate) / (7 * 24 * 60 * 60 * 1000));
-            weekType = (diffWeeks % 2 === 0) ? 'odd' : 'even';
-          }
+          let weekType = (tag.includes('down') || tag.includes('ii') || tag.includes('нижн')) ? 'even' : 'odd';
 
-          // Извлечение цифры пары
-          const hourName = entry.class_hour_name || '';
-          const matchNum = hourName.match(/\d+/);
+          const matchNum = (entry.class_hour_name || '').match(/\d+/);
           const num = matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
-
-          const subject = entry.subject_name || entry.activity_type_name || 'Дисциплина';
 
           let type = 'Лекция';
           const typeName = (entry.subject_type_name || '').toLowerCase();
@@ -3684,37 +3673,33 @@
           else if (typeName.includes('лаб')) type = 'Лаб. работа';
           else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
 
-          const teacher = entry.instructor_display || '';
-          const room = entry.classroom_name || '';
-          
-          let classNote = '';
-          if (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED') {
-            classNote = '🔄 Замена занятия!';
-          }
+          const isChange = (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED');
 
-          const uniqueKey = `${weekType}_${dayCode}_${num}_${subject}`;
-          if (!seenKeys.has(uniqueKey)) {
-            seenKeys.add(uniqueKey);
-            newScheduleItems.push({
-              id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
-              week: weekType,
-              day: dayCode,
-              num: String(num),
-              type,
-              subject,
-              room,
-              teacher,
-              classNote
-            });
-          }
+          // Ключ слота: Неделя + День + Номер пары (замена встает на место старой пары)
+          const slotKey = `${weekType}_${dayCode}_${num}`;
+
+          scheduleMap.set(slotKey, {
+            id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
+            week: weekType,
+            day: dayCode,
+            num: String(num),
+            type,
+            subject: entry.subject_name || entry.activity_type_name || 'Дисциплина',
+            room: entry.classroom_name || '',
+            teacher: entry.instructor_display || '',
+            classNote: isChange ? '🔄 Замена занятия!' : ''
+          });
         });
+
+        const newScheduleItems = Array.from(scheduleMap.values());
 
         if (newScheduleItems.length > 0) {
           state.schedule = newScheduleItems;
           saveState();
+          if (typeof pushToCloud === 'function') await pushToCloud(false);
           renderScheduleView();
           refreshDashboard();
-          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар из НГИЭУ!`);
+          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с актуальными заменами!`);
         }
       } catch (err) {
         if (showNotification) toast(`Ошибка: ${err.message}`);
