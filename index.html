@@ -3591,27 +3591,8 @@
       return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      if (tgApp) {
-        try {
-          tgApp.ready();
-          tgApp.expand();
-          if (tgApp.setHeaderColor) tgApp.setHeaderColor('#0b0f19');
-          if (tgApp.setBackgroundColor) tgApp.setBackgroundColor('#0b0f19');
-        } catch (e) {}
-      }
-
-      loadState();
-      await initDB();
-      document.getElementById('jDate').value = new Date().toISOString().slice(0, 10);
-      updateLiveBellRadar();
-      setInterval(updateLiveBellRadar, 15000);
-      refreshDashboard();
-      checkBirthdayStartupReminder();
-
-      await pullFromCloud(false);
-      // Фоновая онлайн-синхронизация расписания из API НГИЭУ
-      async function syncScheduleFromNgieuApi(showNotification = true) {
+    // ================= СИНХРОНИЗАЦИЯ РАСПИСАНИЯ НГИЭУ =================
+    async function syncScheduleFromNgieuApi(showNotification = true) {
       const gId = getNgieuGroupId();
       const elGrp = document.getElementById('ngieuGrpIdDisplay');
       if (elGrp) elGrp.textContent = gId;
@@ -3640,13 +3621,13 @@
         const entries = (rawData && Array.isArray(rawData.entries)) ? rawData.entries : [];
 
         if (!entries.length) {
-          if (showNotification) toast('⚠️ Расписание на эти дни пустое');
+          if (showNotification) toast('⚠️ Расписание пустое');
           return;
         }
 
         const DAY_MAP = {'понедельник':'ПН','вторник':'ВТ','среда':'СР','четверг':'ЧТ','пятница':'ПТ','суббота':'СБ'};
 
-        // Сортируем: сначала обычные занятия, а поверх них замены, чтобы замены перезаписывали старые пары
+        // Сортировка: сначала обычные пары, затем замены, чтобы замены перезаписывали их
         const sortedEntries = entries.sort((a, b) => {
           const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
           const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
@@ -3674,8 +3655,6 @@
           else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
 
           const isChange = (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED');
-
-          // Ключ слота: Неделя + День + Номер пары (замена встает на место старой пары)
           const slotKey = `${weekType}_${dayCode}_${num}`;
 
           scheduleMap.set(slotKey, {
@@ -3699,12 +3678,34 @@
           if (typeof pushToCloud === 'function') await pushToCloud(false);
           renderScheduleView();
           refreshDashboard();
-          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с актуальными заменами!`);
+          if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с заменами!`);
         }
       } catch (err) {
         if (showNotification) toast(`Ошибка: ${err.message}`);
       }
     }
+
+    // ================= СТАРТ ПРИЛОЖЕНИЯ =================
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (tgApp) {
+        try {
+          tgApp.ready();
+          tgApp.expand();
+          if (tgApp.setHeaderColor) tgApp.setHeaderColor('#0b0f19');
+          if (tgApp.setBackgroundColor) tgApp.setBackgroundColor('#0b0f19');
+        } catch (e) {}
+      }
+
+      loadState();
+      await initDB();
+      document.getElementById('jDate').value = new Date().toISOString().slice(0, 10);
+      updateLiveBellRadar();
+      setInterval(updateLiveBellRadar, 15000);
+      refreshDashboard();
+      checkBirthdayStartupReminder();
+
+      await pullFromCloud(false);
+      await syncScheduleFromNgieuApi(false);
     });
   </script>
 </body>
