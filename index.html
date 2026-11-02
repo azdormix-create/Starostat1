@@ -2681,7 +2681,6 @@
       const bells = getBellSchedule();
       const bellObj = bells.find(b => b.num === Number(c.num));
       const timeStr = bellObj ? `${bellObj.start}–${bellObj.end}` : '';
-      const isBigBreakAfter = bellObj && bellObj.breakAfter === 55;
 
       const subjClean = c.subject.trim().toLowerCase();
       const relatedHw = (state.homeworks || []).filter(h => h.subject.trim().toLowerCase() === subjClean);
