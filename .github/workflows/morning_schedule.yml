@@ -1,0 +1,78 @@
+name: Send Morning Schedule
+
+on:
+  schedule:
+    # 04:00 UTC = 07:00 по МСК (09:00 по Уфе / МСК+2) с понедельника по субботу
+    - cron: '0 4 * * 1-6'
+  workflow_dispatch: # Позволяет запускать рассылку вручную для проверки
+
+jobs:
+  send-schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch schedule and send to Telegram
+        uses: actions/github-script@v7
+        env:
+          BOT_TOKEN: "9076066218:AAH1qA5MpifL9EUi3E0X9uAsECcIE-nnwIM"
+          CHAT_ID: "-1004336760837" # <-- ВСТАВЬТЕ СЮДА ВАШ CHAT_ID ГРУППЫ
+          SUPABASE_URL: "https://grkefffovuisfvqgwugj.supabase.co"
+          GROUP_ID: "93" # ID группы Б-26БиО в сервисе НГИЭУ
+        with:
+          script: |
+            const botToken = process.env.BOT_TOKEN;
+            const chatId = process.env.CHAT_ID;
+            const groupId = process.env.GROUP_ID;
+            
+            // Дата на сегодня
+            const today = new Date();
+            const dateStr = today.toISOString().slice(0, 10);
+            
+            // Запрос пар из API НГИЭУ
+            const url = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${groupId}&dateFrom=${dateStr}&dateTo=${dateStr}`;
+            
+            try {
+              const res = await fetch(url);
+              const data = await res.json();
+              const entries = data.entries || [];
+              
+              const daysOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+              const dayName = daysOfWeek[today.getDay()];
+              
+              if (!entries.length) {
+                const msg = `☀️ Доброе утро, Б-26БиО!\n📅 Сегодня ${dayName} (${dateStr})\n\n🎉 Сегодня пар нет, отдыхаем!`;
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ chat_id: chatId, text: msg })
+                });
+                return;
+              }
+              
+              // Формирование расписания
+              let msg = `☀️ Доброе утро, Б-26БиО!\n📅 Расписание на сегодня (${dayName}):\n\n`;
+              
+              entries
+                .sort((a, b) => (Number(a.class_hour_id) || 1) - (Number(b.class_hour_id) || 1))
+                .forEach(e => {
+                  const num = e.class_hour_id || '1';
+                  const time = (e.time_start && e.time_end) ? `[${e.time_start}–${e.time_end}]` : '';
+                  const type = e.subject_type_name ? `(${e.subject_type_name})` : '';
+                  const room = e.classroom_name ? `📍 ${e.classroom_name}` : '';
+                  const teacher = e.instructor_display ? `👨‍🏫 ${e.instructor_display}` : '';
+                  
+                  msg += `🔹 ${num} пара ${time} ${type}\n   📖 ${e.subject_name || 'Дисциплина'}\n   ${room} ${teacher}\n\n`;
+                });
+                
+              msg += `📱 Подробнее в мини-аппе Старостат`;
+              
+              await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: msg })
+              });
+              
+              console.log('Расписание успешно отправлено в чат.');
+            } catch (err) {
+              console.error('Ошибка отправки:', err);
+              throw err;
+            }
