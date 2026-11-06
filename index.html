@@ -1,3 +1,4 @@
+<!-- ЧАСТЬ 1 ИЗ 2: Стили, разметка модальных окон и интерфейса[cite: 1, 2] -->
 <!DOCTYPE html>
 <html lang="ru" data-theme="indigo">
 <head>
@@ -5,7 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Старостат | НГИЭУ</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Google Fonts: Unbounded, JetBrains Mono, Onest -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800;900&display=swap" rel="stylesheet">
+
   <style>
+    /* ================= СУЩЕСТВУЮЩИЕ КЛАССИЧЕСКИЕ ТЕМЫ ================= */
     :root, [data-theme="indigo"] {
       --bg-main: #0b0f19;
       --bg-surface: #131b2e;
@@ -49,6 +57,113 @@
       --accent-soft: rgba(244, 63, 94, 0.14);
     }
 
+    /* ================= НОВАЯ ТЕМА: NEO-BRUTALIST CYBER ================= */
+    [data-theme="cyber"] {
+      --bg-main: #08080c;
+      --bg-surface: #0e131f;
+      --bg-elevated: #161d2e;
+      --bg-glass: rgba(255, 42, 95, 0.08);
+      --border: #1e293b;
+      --border-accent: #ff2a5f;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #ff2a5f;
+      --accent-soft: rgba(255, 42, 95, 0.16);
+      --success: #22c55e;
+      --warning: #facc15;
+      --danger: #ff2a5f;
+      --radius-lg: 8px;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+
+    [data-theme="cyber"] body {
+      font-family: "Onest", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      background-image: 
+        linear-gradient(rgba(255, 42, 95, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    [data-theme="cyber"] h1,
+    [data-theme="cyber"] h2,
+    [data-theme="cyber"] .brand-title,
+    [data-theme="cyber"] .section-head,
+    [data-theme="cyber"] .metric-val {
+      font-family: "Unbounded", -apple-system, sans-serif !important;
+      letter-spacing: -0.02em;
+    }
+
+    [data-theme="cyber"] #liveClockText,
+    [data-theme="cyber"] .badge,
+    [data-theme="cyber"] .status-chip,
+    [data-theme="cyber"] select,
+    [data-theme="cyber"] input,
+    [data-theme="cyber"] textarea {
+      font-family: "JetBrains Mono", monospace !important;
+    }
+
+    [data-theme="cyber"] .card {
+      border: 2px solid #1e293b;
+      box-shadow: 4px 4px 0px #040406;
+    }
+
+    [data-theme="cyber"] .card-hero {
+      border: 2px solid #ff2a5f;
+      box-shadow: 4px 4px 0px rgba(255, 42, 95, 0.45);
+      background: linear-gradient(180deg, #171d2c 0%, #0e131f 100%);
+    }
+
+    [data-theme="cyber"] .metric-card {
+      border: 2px solid #1e293b;
+      box-shadow: 3px 3px 0px #040406;
+    }
+
+    [data-theme="cyber"] button {
+      border: 2px solid #08080c;
+      box-shadow: 3px 3px 0px var(--accent);
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    [data-theme="cyber"] button:active {
+      transform: translate(2px, 2px) !important;
+      box-shadow: 1px 1px 0px transparent !important;
+    }
+
+    [data-theme="cyber"] .btn-glass {
+      background: var(--bg-surface);
+      border: 2px solid #1e293b;
+      box-shadow: 3px 3px 0px #1e293b;
+      color: var(--text-main);
+    }
+
+    [data-theme="cyber"] .btn-accent-outline {
+      background: var(--accent-soft);
+      border: 2px solid #ff2a5f;
+      box-shadow: 3px 3px 0px #38bdf8;
+      color: #fff;
+    }
+
+    [data-theme="cyber"] .badge-accent {
+      background: rgba(255, 42, 95, 0.18);
+      border: 1.5px solid #ff2a5f;
+      color: #ff527b;
+    }
+
+    [data-theme="cyber"] nav.floating-dock {
+      border: 2px solid #ff2a5f;
+      box-shadow: 0 6px 0px #040406;
+      background: rgba(14, 19, 31, 0.96);
+    }
+
+    [data-theme="cyber"] .dock-btn.active {
+      background: #ff2a5f;
+      color: #fff;
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    /* ================= БАЗОВЫЕ СТИЛИ ================= */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -671,6 +786,60 @@
     </div>
   </div>
 
+  <!-- МОДАЛЬНОЕ ОКНО: ЧАСОВОЙ ПОЯС -->
+  <div id="timezoneModal" class="modal-backdrop" onclick="if(event.target===this) closeTimezoneModal()">
+    <div class="modal-sheet">
+      <div class="between" style="margin-bottom:12px;">
+        <div style="font-weight:800; font-size:1rem;">🕒 Часовой пояс расписания</div>
+        <button type="button" class="btn-glass btn-sm" onclick="closeTimezoneModal()">✕ Закрыть</button>
+      </div>
+
+      <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:12px;">
+        Базовое расписание в НГИЭУ хранится по Москве (МСК / UTC+3). Выберите подходящий режим для автоматической адаптации звонков, активных пар и таймеров:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+        <button type="button" class="btn-glass btn-block" style="justify-content:flex-start; text-align:left; padding:10px 12px;" onclick="applyTimezoneOffset(0, 'msk')">
+          <span style="font-size:1.15rem; margin-right:8px;">🏛️</span>
+          <div>
+            <div style="font-weight:700; font-size:0.86rem;">По времени вуза (МСК / UTC+3)</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Нижний Новгород, Княгинино, Москва</div>
+          </div>
+        </button>
+
+        <button type="button" class="btn-glass btn-block" style="justify-content:flex-start; text-align:left; padding:10px 12px;" onclick="applyTimezoneOffset(2, 'remote_ural')">
+          <span style="font-size:1.15rem; margin-right:8px;">💻</span>
+          <div>
+            <div style="font-weight:700; font-size:0.86rem;">Моё время: Дистант (МСК+2 / UTC+5)</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Башкортостан (Уфа), Екатеринбург, Пермь, Тюмень, Челябинск</div>
+          </div>
+        </button>
+
+        <button type="button" class="btn-glass btn-block" style="justify-content:flex-start; text-align:left; padding:10px 12px;" onclick="applyAutoTimezone()">
+          <span style="font-size:1.15rem; margin-right:8px;">🌐</span>
+          <div>
+            <div style="font-weight:700; font-size:0.86rem;">Автоопределение устройства</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);" id="lblDeviceTzDetected">Определение часового пояса...</div>
+          </div>
+        </button>
+      </div>
+
+      <label class="field-lbl">РУЧНОЙ ВЫБОР СМЕЩЕНИЯ ОТНОСИТЕЛЬНО МСК:</label>
+      <div class="pill-group" style="margin-bottom:14px;">
+        <button type="button" id="tzBtnMinus1" onclick="applyTimezoneOffset(-1, 'custom')">-1 ч</button>
+        <button type="button" id="tzBtn0" onclick="applyTimezoneOffset(0, 'custom')">0 ч (МСК)</button>
+        <button type="button" id="tzBtnPlus1" onclick="applyTimezoneOffset(1, 'custom')">+1 ч</button>
+        <button type="button" id="tzBtnPlus2" onclick="applyTimezoneOffset(2, 'custom')">+2 ч</button>
+        <button type="button" id="tzBtnPlus3" onclick="applyTimezoneOffset(3, 'custom')">+3 ч</button>
+        <button type="button" id="tzBtnPlus4" onclick="applyTimezoneOffset(4, 'custom')">+4 ч</button>
+      </div>
+
+      <div class="row">
+        <button type="button" class="btn-grad btn-block" onclick="closeTimezoneModal()">Готово</button>
+      </div>
+    </div>
+  </div>
+
   <!-- МОДАЛЬНОЕ ОКНО: ССЫЛКИ, ОБЛАКО И НАСТРОЙКИ СИНХРОНИЗАЦИИ НГИЭУ -->
   <div id="cloudModal" class="modal-backdrop" onclick="if(event.target===this) closeCloudModal()">
     <div class="modal-sheet">
@@ -708,7 +877,6 @@
         </div>
       </div>
 
-      <!-- Кнопка быстрой синхронизации с API НГИЭУ -->
       <div style="margin-bottom:12px; padding:10px; border-radius:var(--radius-md); background:var(--accent-soft); border:1px solid var(--border-accent);">
         <div class="between" style="margin-bottom:4px;">
           <span style="font-weight:700; font-size:0.84rem; color:#fff;">⚡ Онлайн расписание НГИЭУ</span>
@@ -902,21 +1070,25 @@
 
       <div class="hdr-actions">
         <button class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Ссылки и синхронизация">🔗</button>
-        <div class="theme-dots" title="Тема оформления">
-          <div class="theme-dot active" data-t="indigo" style="background:#6366f1;" onclick="setTheme('indigo')"></div>
-          <div class="theme-dot" data-t="emerald" style="background:#10b981;" onclick="setTheme('emerald')"></div>
-          <div class="theme-dot" data-t="sunset" style="background:#f97316;" onclick="setTheme('sunset')"></div>
-          <div class="theme-dot" data-t="crimson" style="background:#f43f5e;" onclick="setTheme('crimson')"></div>
+        <div class="theme-dots" title="Выбор темы оформления">
+          <div class="theme-dot active" data-t="indigo" style="background:#6366f1;" onclick="setTheme('indigo')" title="Indigo"></div>
+          <div class="theme-dot" data-t="emerald" style="background:#10b981;" onclick="setTheme('emerald')" title="Emerald"></div>
+          <div class="theme-dot" data-t="sunset" style="background:#f97316;" onclick="setTheme('sunset')" title="Sunset"></div>
+          <div class="theme-dot" data-t="crimson" style="background:#f43f5e;" onclick="setTheme('crimson')" title="Crimson"></div>
+          <div class="theme-dot" data-t="cyber" style="background:#ff2a5f; box-shadow:0 0 6px rgba(255,42,95,0.7);" onclick="setTheme('cyber')" title="Neo-Brutalist Cyber"></div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- СТРОКА СТАТУСА -->
+  <!-- СТРОКА СТАТУСА И ЧАСОВОЙ ПОЯС -->
   <div class="sub-bar">
-    <div class="row" style="gap:6px;">
+    <div class="row" style="gap:6px; flex-wrap:wrap;">
       <span class="badge badge-accent" id="roleBadgeText" onclick="if(!isTrueAdmin()) openUnlockAdminModal()" style="cursor:pointer;">👑 Староста</span>
       <span class="badge" id="cloudStateBadge" onclick="pullFromCloud(true)" style="cursor:pointer;">☁️ Синхр.</span>
+      <button type="button" class="badge badge-accent" id="btnTimezoneBadge" onclick="openTimezoneModal()" style="cursor:pointer; padding:3px 8px; font-size:0.68rem;" title="Сменить часовой пояс расписания">
+        🕒 <span id="lblActiveTz">МСК+2</span>
+      </button>
       <button class="btn-accent-outline btn-sm" style="padding:3px 8px; font-size:0.68rem;" onclick="syncScheduleFromNgieuApi(true)">
         🔄 Синхр. с НГИЭУ
       </button>
@@ -936,7 +1108,7 @@
     <section id="pane-home" class="tab-pane active">
       <div class="card card-hero">
         <div class="between">
-          <span class="badge badge-accent">⏱️ Расписание звонков НГИЭУ</span>
+          <span class="badge badge-accent">⏱️ Расписание пар НГИЭУ</span>
           <span style="font-size:0.84rem; font-weight:800;" id="liveClockText">00:00</span>
         </div>
         <div style="font-size:1.05rem; font-weight:800; margin-top:8px;" id="liveClassStatus">Сверка расписания...</div>
@@ -1240,17 +1412,9 @@
     <button class="dock-btn" onclick="openTab('schedule', this)">
       <span class="ico">📅</span>
       <span>Пары и ДЗ</span>
-    </button>
-    <button class="dock-btn" onclick="openTab('lab', this)">
-      <span class="ico">💎</span>
-      <span>Казна</span>
-    </button>
-    <button class="dock-btn" onclick="openTab('vault', this)">
-      <span class="ico">👥</span>
-      <span>Группа</span>
-    </button>
-  </nav><script>
-    // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ =================
+    </button><!-- ЧАСТЬ 2 ИЗ 2: Скрипты, пересчёт часовых поясов, логика тем и базы данных[cite: 1, 2] -->
+  <script>
+    // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ[cite: 2] =================
     const DEFAULT_CLOUD_CONFIG = {
       supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU',
@@ -1273,6 +1437,7 @@
     const CLOUD_CFG_KEY = 'starosta_cloud_cfg_v1';
     const ADMIN_UNLOCK_MAP_KEY = 'starostat_ngieu_unlocks_v1';
     const PERSONAL_HW_KEY = 'starosta_my_hw_done_v1';
+    const TIMEZONE_STORAGE_KEY = 'starostat_timezone_cfg_v1';
     const DAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
     const DAY_NAME_MAP = {
@@ -1291,6 +1456,12 @@
     let tgApp = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     let tgUser = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) ? tgApp.initDataUnsafe.user : null;
     let previewAsStudent = false;
+
+    // Конфигурация часового пояса (по умолчанию для дистанта МСК+2)[cite: 1]
+    let timezoneConfig = {
+      mode: 'remote_ural',
+      offsetHours: 2
+    };
 
     function cleanSupabaseUrl(rawUrl) {
       if (!rawUrl) return DEFAULT_CLOUD_CONFIG.supabaseUrl;
@@ -1348,7 +1519,139 @@
       if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
     }
 
-    // ================= 1. СИНХРОНИЗАЦИЯ С API РАСПИСАНИЯ НГИЭУ =================
+    // ================= 1. ЧАСОВЫЕ ПОЯСА И АДАПТАЦИЯ ВРЕМЕНИ[cite: 1] =================
+    function getDeviceMskOffsetHours() {
+      const deviceUtcOffsetMinutes = -new Date().getTimezoneOffset();
+      return Math.round((deviceUtcOffsetMinutes - 180) / 60);
+    }
+
+    function initUserTimezone() {
+      const raw = localStorage.getItem(TIMEZONE_STORAGE_KEY);
+      if (raw) {
+        try { timezoneConfig = Object.assign(timezoneConfig, JSON.parse(raw)); } catch (e) {}
+      } else {
+        const autoOffset = getDeviceMskOffsetHours();
+        if (autoOffset === 0) {
+          timezoneConfig = { mode: 'msk', offsetHours: 0 };
+        } else {
+          timezoneConfig = { mode: 'remote_ural', offsetHours: 2 };
+        }
+      }
+      updateTimezoneBadgeUI();
+    }
+
+    function saveTimezoneConfig() {
+      localStorage.setItem(TIMEZONE_STORAGE_KEY, JSON.stringify(timezoneConfig));
+      updateTimezoneBadgeUI();
+      populateSchedulePairSelect();
+      updateLiveBellRadar();
+      renderScheduleView();
+      refreshDashboard();
+    }
+
+    function updateTimezoneBadgeUI() {
+      const badge = document.getElementById('lblActiveTz');
+      if (badge) {
+        if (timezoneConfig.offsetHours === 0) {
+          badge.textContent = 'МСК';
+        } else {
+          const sign = timezoneConfig.offsetHours > 0 ? '+' : '';
+          badge.textContent = `МСК${sign}${timezoneConfig.offsetHours}`;
+        }
+      }
+      [-1, 0, 1, 2, 3, 4].forEach(val => {
+        const id = val === -1 ? 'tzBtnMinus1' : (val === 0 ? 'tzBtn0' : `tzBtnPlus${val}`);
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', timezoneConfig.offsetHours === val);
+      });
+    }
+
+    function openTimezoneModal() {
+      haptic(8);
+      const autoOffset = getDeviceMskOffsetHours();
+      const sign = autoOffset >= 0 ? '+' : '';
+      const lblAuto = document.getElementById('lblDeviceTzDetected');
+      if (lblAuto) {
+        lblAuto.textContent = `Ваше устройство: UTC${autoOffset >= -3 ? '+' + (autoOffset + 3) : autoOffset + 3} (МСК${sign}${autoOffset} ч)`;
+      }
+      updateTimezoneBadgeUI();
+      document.getElementById('timezoneModal').classList.add('active');
+    }
+
+    function closeTimezoneModal() {
+      document.getElementById('timezoneModal').classList.remove('active');
+    }
+
+    function applyTimezoneOffset(offset, mode = 'custom') {
+      haptic(10);
+      timezoneConfig.offsetHours = offset;
+      timezoneConfig.mode = mode;
+      saveTimezoneConfig();
+      closeTimezoneModal();
+      toast(`Часовой пояс: МСК${offset >= 0 ? '+' : ''}${offset}`);
+    }
+
+    function applyAutoTimezone() {
+      haptic(10);
+      const autoOffset = getDeviceMskOffsetHours();
+      timezoneConfig.offsetHours = autoOffset;
+      timezoneConfig.mode = 'auto';
+      saveTimezoneConfig();
+      closeTimezoneModal();
+      toast(`Автоопределение: МСК${autoOffset >= 0 ? '+' : ''}${autoOffset}`);
+    }
+
+    function shiftTimeString(timeStr, offsetHours) {
+      if (!timeStr || !timeStr.includes(':')) return timeStr;
+      const parts = timeStr.split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      if (isNaN(h) || isNaN(m)) return timeStr;
+
+      let totalMinutes = h * 60 + m + offsetHours * 60;
+      totalMinutes = ((totalMinutes % 1440) + 1440) % 1440;
+
+      const newH = Math.floor(totalMinutes / 60);
+      const newM = totalMinutes % 60;
+      return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
+    }
+
+    // Каноническое время звонков НГИЭУ (по МСК)[cite: 1, 2]
+    const BASE_BELLS_MSK = [
+      { num: 1, start: "08:00", end: "09:30", startMin: 480,  endMin: 570,  breakAfter: 10 },
+      { num: 2, start: "09:40", end: "11:10", startMin: 580,  endMin: 670,  breakAfter: 55 },
+      { num: 3, start: "12:05", end: "13:35", startMin: 725,  endMin: 815,  breakAfter: 10 },
+      { num: 4, start: "13:45", end: "15:15", startMin: 825,  endMin: 915,  breakAfter: 10 },
+      { num: 5, start: "15:25", end: "16:55", startMin: 925,  endMin: 1015, breakAfter: 10 },
+      { num: 6, start: "17:05", end: "18:35", startMin: 1025, endMin: 1115, breakAfter: 10 }
+    ];
+
+    function getBellSchedule() {
+      const offset = (timezoneConfig && typeof timezoneConfig.offsetHours === 'number') ? timezoneConfig.offsetHours : 0;
+      if (offset === 0) return BASE_BELLS_MSK;
+      return BASE_BELLS_MSK.map(b => ({
+        ...b,
+        start: shiftTimeString(b.start, offset),
+        end: shiftTimeString(b.end, offset),
+        startMin: ((b.startMin + offset * 60) % 1440 + 1440) % 1440,
+        endMin: ((b.endMin + offset * 60) % 1440 + 1440) % 1440
+      }));
+    }
+
+    function populateSchedulePairSelect() {
+      const sel = document.getElementById('addSchedNum');
+      if (!sel) return;
+      const curVal = sel.value || '1';
+      const bells = getBellSchedule();
+      const offset = timezoneConfig.offsetHours || 0;
+      const tzNote = offset !== 0 ? ` [МСК${offset > 0 ? '+' : ''}${offset}]` : '';
+      sel.innerHTML = bells.map(b =>
+        `<option value="${b.num}">${b.num} пара (${b.start}–${b.end}${tzNote})</option>`
+      ).join('');
+      sel.value = curVal;
+    }
+
+    // ================= 2. СИНХРОНИЗАЦИЯ С API РАСПИСАНИЯ НГИЭУ[cite: 2] =================
     function getNgieuGroupId() {
       const gNorm = (state.groupName || '').trim().toLowerCase();
       if (NGIEU_API_CONFIG.groupMap[gNorm]) return NGIEU_API_CONFIG.groupMap[gNorm];
@@ -1389,7 +1692,6 @@
           return;
         }
 
-        // Сортируем: сначала обычные шаблоны, затем замены, чтобы замены перезаписывали слот
         const sortedEntries = entries.sort((a, b) => {
           const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
           const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
@@ -1449,7 +1751,7 @@
       }
     }
 
-    // ================= 2. БЕЗОПАСНОСТЬ, РОЛИ И ДВЕ ССЫЛКИ =================
+    // ================= 3. БЕЗОПАСНОСТЬ, РОЛИ И ДОСТУП[cite: 2] =================
     function getGroupSecret() {
       return (state.leaderSecret || cloudCfg.adminSecret || DEFAULT_CLOUD_CONFIG.adminSecret || 'b26leader').trim();
     }
@@ -1620,7 +1922,7 @@
       copyTextQuick(link, 'Секретная ТГ-ссылка Старосты');
     }
 
-    // ================= 3. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА =================
+    // ================= 4. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА[cite: 2] =================
     function loadCloudConfig() {
       const raw = localStorage.getItem(CLOUD_CFG_KEY);
       if (raw) {
@@ -2071,32 +2373,11 @@
       return false;
     }
 
-    // ================= 4. ОФИЦИАЛЬНОЕ РАСПИСАНИЕ ЗВОНКОВ НГИЭУ =================
-    function getBellSchedule() {
-      return [
-        { num: 1, start: "08:00", end: "09:30", startMin: 480, endMin: 570, breakAfter: 10 },
-        { num: 2, start: "09:40", end: "11:10", startMin: 580, endMin: 670, breakAfter: 55 },
-        { num: 3, start: "12:05", end: "13:35", startMin: 725, endMin: 815, breakAfter: 10 },
-        { num: 4, start: "13:45", end: "15:15", startMin: 825, endMin: 915, breakAfter: 10 },
-        { num: 5, start: "15:25", end: "16:55", startMin: 925, endMin: 1015, breakAfter: 10 },
-        { num: 6, start: "17:05", end: "18:35", startMin: 1025, endMin: 1115, breakAfter: 10 }
-      ];
-    }
-
-    function populateSchedulePairSelect() {
-      const sel = document.getElementById('addSchedNum');
-      if (!sel) return;
-      const curVal = sel.value || '1';
-      const bells = getBellSchedule();
-      sel.innerHTML = bells.map(b =>
-        `<option value="${b.num}">${b.num} пара (${b.start}–${b.end})</option>`
-      ).join('');
-      sel.value = curVal;
-    }
-
+    // ================= 5. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ТЕМАМИ[cite: 1, 2] =================
     function refreshAllViews() {
       applyRoleUI();
       populateSchedulePairSelect();
+      updateTimezoneBadgeUI();
       refreshDashboard();
       renderJournal();
       renderScheduleView();
@@ -2156,9 +2437,16 @@
       document.querySelectorAll('.theme-dot').forEach(d => {
         d.classList.toggle('active', d.getAttribute('data-t') === themeName);
       });
+      if (tgApp && tgApp.setHeaderColor && tgApp.setBackgroundColor) {
+        try {
+          const bg = themeName === 'cyber' ? '#08080c' : (themeName === 'emerald' ? '#07120e' : (themeName === 'sunset' ? '#120c09' : (themeName === 'crimson' ? '#12080c' : '#0b0f19')));
+          tgApp.setHeaderColor(bg);
+          tgApp.setBackgroundColor(bg);
+        } catch (e) {}
+      }
     }
 
-    // ================= 5. ДНИ РОЖДЕНИЯ =================
+    // ================= 6. ДНИ РОЖДЕНИЯ[cite: 2] =================
     function getBirthdayInfo(birthDateStr) {
       if (!birthDateStr) return null;
       const parts = birthDateStr.split('-').map(Number);
@@ -2219,7 +2507,7 @@
       }
     }
 
-    // ================= 6. ЗАМЕТКИ К ПАРАМ И ДЕДЛАЙНЫ ДЗ =================
+    // ================= 7. ЗАМЕТКИ К ПАРАМ И ДЕДЛАЙНЫ ДЗ[cite: 2] =================
     let activeClassIdForNote = null;
     let hwContext = { subject: '', fromDay: null, fromWeek: null, mode: 'next' };
 
@@ -2415,24 +2703,28 @@
       el.focus();
     }
 
-    // ================= 7. ТАЙМЕР ЗВОНКОВ =================
+    // ================= 8. РАДАР ЗВОНКОВ С АДАПТАЦИЕЙ ВРЕМЕНИ[cite: 1, 2] =================
     function updateLiveBellRadar() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('liveClockText').textContent = `${hh}:${mm}`;
+      const clockEl = document.getElementById('liveClockText');
+      if (clockEl) clockEl.textContent = `${hh}:${mm}`;
 
       const curMin = now.getHours() * 60 + now.getMinutes();
       const statusEl = document.getElementById('liveClassStatus');
       const subEl = document.getElementById('liveClassSub');
       const progEl = document.getElementById('liveClassProgress');
+      if (!statusEl || !subEl || !progEl) return;
 
       const bells = getBellSchedule();
+      const offset = timezoneConfig.offsetHours || 0;
+      const tzLabel = offset === 0 ? 'по МСК' : (offset > 0 ? `МСК+${offset}` : `МСК${offset}`);
 
       if (curMin < bells[0].startMin) {
         const wait = bells[0].startMin - curMin;
         statusEl.textContent = `До 1-й пары ${wait} мин.`;
-        subEl.textContent = `Начало в ${bells[0].start}`;
+        subEl.textContent = `Начало в ${bells[0].start} (${tzLabel})`;
         progEl.style.width = '0%';
         return;
       }
@@ -2445,7 +2737,7 @@
           const left = b.endMin - curMin;
           const pct = Math.min(100, Math.round((passed / total) * 100));
           statusEl.textContent = `Идет ${b.num} пара • осталось ${left} мин.`;
-          subEl.textContent = `${b.start} – ${b.end} (${pct}%) • Перемена после: ${b.breakAfter} мин.`;
+          subEl.textContent = `${b.start} – ${b.end} (${pct}%) • Перемена: ${b.breakAfter} мин. (${tzLabel})`;
           progEl.style.width = pct + '%';
           return;
         }
@@ -2453,19 +2745,20 @@
           const nextB = bells[i + 1];
           if (curMin >= b.endMin && curMin < nextB.startMin) {
             const isBig = (b.breakAfter === 55);
-            statusEl.textContent = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${nextB.startMin - curMin} мин.`;
-            subEl.textContent = `Следующая пара: ${nextB.start} – ${nextB.end}`;
+            const waitNext = nextB.startMin - curMin;
+            statusEl.textContent = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${waitNext} мин.`;
+            subEl.textContent = `Следующая пара: ${nextB.start} – ${nextB.end} (${tzLabel})`;
             progEl.style.width = '100%';
             return;
           }
         }
       }
       statusEl.textContent = 'Пары окончены';
-      subEl.textContent = 'Свободное время';
+      subEl.textContent = `Свободное время (${tzLabel})`;
       progEl.style.width = '0%';
     }
 
-    // ================= 8. ФАЙЛЫ INDEXEDDB =================
+    // ================= 9. ФАЙЛЫ INDEXEDDB[cite: 2] =================
     let db = null;
     const DB_NAME = 'StarostaFilesDB';
     const STORE_NAME = 'files';
@@ -2574,7 +2867,7 @@
       }).join('');
     }
 
-    // ================= 9. КАРТОЧКИ ПАР И ДАШБОРД =================
+    // ================= 10. КАРТОЧКИ ПАР И ДАШБОРД[cite: 1, 2] =================
     function openTab(tabName, btnEl) {
       haptic(8);
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -2592,9 +2885,17 @@
     function buildClassCardHTML(c, allowDelete = false) {
       const bells = getBellSchedule();
       const bellObj = bells.find(b => b.num === Number(c.num));
-      const timeStr = (c.timeStart && c.timeEnd)
-        ? `${c.timeStart}–${c.timeEnd}`
-        : (bellObj ? `${bellObj.start}–${bellObj.end}` : '');
+      const baseBell = BASE_BELLS_MSK.find(b => b.num === Number(c.num));
+
+      const rawMskStart = c.timeStart || (baseBell ? baseBell.start : '');
+      const rawMskEnd = c.timeEnd || (baseBell ? baseBell.end : '');
+
+      const offset = timezoneConfig.offsetHours || 0;
+      const localStart = rawMskStart ? shiftTimeString(rawMskStart, offset) : (bellObj ? bellObj.start : '');
+      const localEnd = rawMskEnd ? shiftTimeString(rawMskEnd, offset) : (bellObj ? bellObj.end : '');
+
+      const timeStr = (localStart && localEnd) ? `${localStart}–${localEnd}` : '';
+      const mskHint = (offset !== 0 && rawMskStart && rawMskEnd) ? `${rawMskStart}–${rawMskEnd} МСК` : '';
 
       const subjClean = c.subject.trim().toLowerCase();
       const relatedHw = (state.homeworks || []).filter(h => h.subject.trim().toLowerCase() === subjClean);
@@ -2617,6 +2918,7 @@
           <div class="between">
             <div>
               <span class="badge badge-accent">${c.num} пара ${timeStr ? '• ' + timeStr : ''}</span>
+              ${mskHint ? `<span class="badge" title="Время по МСК" style="font-size:0.64rem; opacity:0.85;">🕒 ${mskHint}</span>` : ''}
               <span class="badge">${esc(c.type)}</span>
               ${c.room ? `<span class="badge badge-warn">📍 ${esc(c.room)}</span>` : ''}
               <div style="font-weight:800; font-size:0.96rem; margin-top:6px;">${esc(c.subject)}</div>
@@ -2758,7 +3060,7 @@
       }
     }
 
-    // ================= 10. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ =================
+    // ================= 11. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ[cite: 2] =================
     function switchScheduleWeek(w) {
       haptic(8);
       state.currentWeekType = w;
@@ -2849,7 +3151,7 @@
       renderScheduleView();
     }
 
-    // ================= 11. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
+    // ================= 12. ЖУРНАЛ ПОСЕЩАЕМОСТИ[cite: 2] =================
     const ST_CYCLE = ['P', 'N', 'U', 'O'];
     const ST_META = {
       'P': { label: '✓ Был', cls: 'st-P' },
@@ -3016,7 +3318,7 @@
       await sendTelegramBotMessage(buildReportText());
     }
 
-    // ================= 12. КАЗНА И РАНДОМАЙЗЕР КОМАНД =================
+    // ================= 13. КАЗНА И РАНДОМАЙЗЕР КОМАНД[cite: 2] =================
     function switchLabMode(mode) {
       haptic(8);
       document.getElementById('btnLabMoney').classList.toggle('active', mode === 'collections');
@@ -3134,7 +3436,7 @@
       `).join('');
     }
 
-    // ================= 13. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ) =================
+    // ================= 14. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ)[cite: 2] =================
     function switchVaultSub(sub) {
       haptic(8);
       document.getElementById('vBtnGroup').classList.toggle('active', sub === 'group');
@@ -3480,8 +3782,10 @@
       return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
 
-    // ================= 14. СТАРТ ПРИЛОЖЕНИЯ =================
+    // ================= 15. СТАРТ ПРИЛОЖЕНИЯ[cite: 2] =================
     window.addEventListener('DOMContentLoaded', async () => {
+      initUserTimezone();
+
       if (tgApp) {
         try {
           tgApp.ready();
@@ -3505,3 +3809,13 @@
   </script>
 </body>
 </html>
+    <button class="dock-btn" onclick="openTab('lab', this)">
+      <span class="ico">💎</span>
+      <span>Казна</span>
+    </button>
+    <button class="dock-btn" onclick="openTab('vault', this)">
+      <span class="ico">👥</span>
+      <span>Группа</span>
+    </button>
+  </nav>
+<!-- КОНЕЦ ЧАСТИ 1[cite: 2] -->
