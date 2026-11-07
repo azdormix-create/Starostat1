@@ -1,11 +1,12 @@
-<!-- ЧАСТЬ 1 ИЗ 2: Стили, разметка модальных окон и интерфейса[cite: 1, 2] -->
+<!-- ЧАСТЬ 1 ИЗ 2: Стили, разметка модальных окон, 6 вкладок (включая PARRY) и навигация -->
 <!DOCTYPE html>
 <html lang="ru" data-theme="indigo">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Старостат | НГИЭУ</title>
+  <title>Старостат: Parry | НГИЭУ</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Google Fonts: Unbounded, JetBrains Mono, Onest -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -567,7 +568,7 @@
       bottom: 10px;
       left: 12px;
       right: 12px;
-      max-width: 540px;
+      max-width: 560px;
       margin: 0 auto;
       background: rgba(19, 27, 46, 0.94);
       backdrop-filter: blur(16px);
@@ -575,7 +576,7 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       padding: 4px;
       z-index: 100;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
@@ -587,13 +588,18 @@
       flex-direction: column;
       align-items: center;
       gap: 2px;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 600;
       padding: 6px 2px;
       border-radius: 12px;
     }
-    .dock-btn .ico { font-size: 1.1rem; }
+    .dock-btn .ico { font-size: 1.05rem; }
     .dock-btn.active { color: #fff; background: var(--accent); }
+    .dock-btn.parry-dock-btn.active {
+      background: #ff2a5f !important;
+      color: #fff !important;
+      box-shadow: 0 0 12px rgba(255, 42, 95, 0.6);
+    }
 
     #toast {
       position: fixed;
@@ -703,6 +709,200 @@
       align-items: center;
     }
     details.clean-collapse summary::-webkit-details-marker { display: none; }
+
+    /* ================= СТИЛИ МОДУЛЯ PARRY (NEO-BRUTALIST CYBER-ARCADE) ================= */
+    .parry-arena-wrap {
+      background: #08080c;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0px #ff2a5f;
+      border-radius: 14px;
+      padding: 14px;
+      color: #f8fafc;
+      font-family: 'Onest', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+    .parry-shake {
+      animation: parryScreenShake 0.36s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes parryScreenShake {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-6px, 4px); }
+      40% { transform: translate(6px, -4px); }
+      60% { transform: translate(-4px, -3px); }
+      80% { transform: translate(4px, 3px); }
+    }
+    .parry-title-font {
+      font-family: 'Unbounded', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .parry-mono-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .parry-hud-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .parry-fighter-box {
+      background: #11111a;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0px #38bdf8;
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .parry-fighter-box.enemy {
+      box-shadow: 3px 3px 0px #ff2a5f;
+      text-align: right;
+    }
+    .parry-hp-track {
+      width: 100%;
+      height: 12px;
+      background: #000;
+      border: 2px solid #000;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .parry-hp-fill {
+      height: 100%;
+      background: #22c55e;
+      transition: width 0.25s ease;
+    }
+    .parry-hp-fill.enemy {
+      background: #ff2a5f;
+    }
+    .parry-symbiosis-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      background: #11111a;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0px #38bdf8;
+      padding: 7px 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 0.72rem;
+    }
+    .parry-lane {
+      position: relative;
+      height: 54px;
+      background: repeating-linear-gradient(90deg, #0d0d14 0px, #0d0d14 18px, #13131f 18px, #13131f 36px);
+      border: 2px solid #000;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .parry-projectile {
+      position: absolute;
+      padding: 5px 12px;
+      background: #ff2a5f;
+      color: #fff;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0px #000;
+      border-radius: 6px;
+      display: none;
+      white-space: nowrap;
+      z-index: 5;
+    }
+    .parry-projectile.fly-right {
+      display: inline-block;
+      animation: flyToOpponent 0.42s linear forwards;
+    }
+    .parry-projectile.fly-left {
+      display: inline-block;
+      background: #38bdf8;
+      color: #08080c;
+      animation: flyToMe 0.42s linear forwards;
+    }
+    @keyframes flyToOpponent {
+      0% { left: 6%; transform: scale(0.9); }
+      100% { left: 72%; transform: scale(1.1); }
+    }
+    @keyframes flyToMe {
+      0% { left: 72%; transform: scale(0.9); }
+      100% { left: 6%; transform: scale(1.15); }
+    }
+    .parry-q-box {
+      background: #141421;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0px #38bdf8;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .parry-btn {
+      width: 100%;
+      text-align: left;
+      background: #1c1c2e;
+      color: #f8fafc;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0px #ff2a5f;
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin-bottom: 8px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 700;
+      font-size: 0.84rem;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .parry-btn:active {
+      transform: translate(2px, 2px) !important;
+      box-shadow: 2px 2px 0px #ff2a5f !important;
+    }
+    .parry-btn:disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .parry-blitz-overlay {
+      display: none;
+      background: rgba(8, 8, 12, 0.96);
+      border: 2px solid #ff2a5f;
+      box-shadow: 0 0 25px rgba(255, 42, 95, 0.45);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .parry-blitz-overlay.active {
+      display: block;
+      animation: fadeIn 0.12s ease;
+    }
+    .parry-blitz-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .parry-btn-true {
+      background: #22c55e;
+      color: #08080c;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0px #000;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      justify-content: center;
+    }
+    .parry-btn-false {
+      background: #ff2a5f;
+      color: #fff;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0px #000;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -1396,6 +1596,101 @@
         <div id="vaultFilesList"></div>
       </div>
     </section>
+
+    <!-- ВКЛАДКА 6: ДУЭЛЬНАЯ АРЕНА PARRY -->
+    <section id="pane-parry" class="tab-pane">
+      <div class="parry-arena-wrap" id="parryArenaRoot">
+        <div class="parry-symbiosis-bar">
+          <div>
+            <span class="parry-title-font" style="color:#38bdf8; font-size:0.7rem;">📚 ДИСЦИПЛИНА:</span>
+            <strong id="parrySubjLbl">Сверка с расписанием...</strong>
+          </div>
+          <div id="parryBuffBadge" class="parry-mono-font" style="color:#22c55e; font-weight:800;">
+            ✓ БЫЛ: +15% HP | +1 AP
+          </div>
+        </div>
+
+        <div class="between" style="margin-bottom:10px; gap:6px; flex-wrap:wrap;">
+          <div class="parry-mono-font" style="font-size:0.74rem; color:#94a3b8;">
+            КОМНАТА: <strong style="color:#fff;" id="parryRoomLbl">b26bio_duel</strong>
+            • ELO: <strong style="color:#38bdf8;" id="parryEloLbl">1000</strong>
+          </div>
+          <div class="row">
+            <button type="button" class="btn-sm" style="background:#38bdf8; color:#08080c; border:2px solid #000; font-family:'Unbounded',sans-serif; font-size:0.65rem;" onclick="startParryMatch(false)">
+              🌐 1v1 ОНЛАЙН
+            </button>
+            <button type="button" class="btn-sm" style="background:#ff2a5f; color:#fff; border:2px solid #000; font-family:'Unbounded',sans-serif; font-size:0.65rem;" onclick="startParryMatch(true)">
+              🤖 БОЙ С БОТОМ
+            </button>
+          </div>
+        </div>
+
+        <div class="parry-hud-grid">
+          <div class="parry-fighter-box">
+            <div class="between">
+              <span style="font-weight:800; font-size:0.8rem;" id="parryMyName">Вы</span>
+              <span class="parry-mono-font" style="font-size:0.78rem; color:#22c55e;" id="parryMyHpTxt">115/115</span>
+            </div>
+            <div class="parry-hp-track">
+              <div class="parry-hp-fill" id="parryMyHpBar" style="width:100%;"></div>
+            </div>
+          </div>
+
+          <div class="parry-title-font" style="font-size:0.85rem; color:#ff2a5f; text-align:center;">
+            VS<br><span class="parry-mono-font" style="font-size:0.68rem; color:#f8fafc;" id="parryRoundLbl">1/5</span>
+          </div>
+
+          <div class="parry-fighter-box enemy">
+            <div class="between">
+              <span class="parry-mono-font" style="font-size:0.78rem; color:#ff2a5f;" id="parryOppHpTxt">100/100</span>
+              <span style="font-weight:800; font-size:0.8rem;" id="parryOppName">Соперник</span>
+            </div>
+            <div class="parry-hp-track">
+              <div class="parry-hp-fill enemy" id="parryOppHpBar" style="width:100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="parry-lane">
+          <span class="parry-mono-font" style="font-size:0.72rem; color:#94a3b8;" id="parryStatusBanner">
+            Нажмите «1v1 ОНЛАЙН» или «БОЙ С БОТОМ» для старта
+          </span>
+          <div id="parryProjectileEl" class="parry-projectile">⚡ АРГУМЕНТ (18 HP)</div>
+        </div>
+
+        <div id="parryMainQuestionArea">
+          <div class="parry-q-box">
+            <div class="between" style="margin-bottom:6px;">
+              <span class="badge" style="background:#ff2a5f; color:#fff; border:1px solid #000;" id="parryQTopicBadge">ПОДАЧА</span>
+              <span class="parry-mono-font" style="font-size:0.72rem; color:#38bdf8;" id="parryMultBadge">УРОН x1 (18 HP)</span>
+            </div>
+            <div style="font-weight:700; font-size:0.92rem; line-height:1.35;" id="parryQuestionText">
+              Готовы к интеллектуальной дуэли? Вопросы подстраиваются под текущую пару из расписания НГИЭУ.
+            </div>
+          </div>
+          <div id="parryAnswersList"></div>
+        </div>
+
+        <div id="parryBlitzOverlay" class="parry-blitz-overlay">
+          <div class="parry-title-font" style="color:#ff2a5f; font-size:0.95rem;">
+            🛡️ ОКНО ПАРИРОВАНИЯ!
+          </div>
+          <div class="parry-mono-font" style="font-size:1.5rem; font-weight:800; color:#f8fafc; margin:4px 0;" id="parryTimerDisplay">
+            3.0s
+          </div>
+          <div class="parry-hp-track" style="margin-bottom:10px;">
+            <div id="parryTimerBar" style="height:100%; width:100%; background:#38bdf8;"></div>
+          </div>
+          <div style="font-size:0.88rem; font-weight:700; padding:8px; background:#141421; border:2px solid #000; border-radius:8px;" id="parryBlitzStatement">
+            Утверждение для парирования...
+          </div>
+          <div class="parry-blitz-btn-row">
+            <button type="button" class="parry-btn parry-btn-true" onclick="handleParryBlitzAnswer(true)">ПРАВДА</button>
+            <button type="button" class="parry-btn parry-btn-false" onclick="handleParryBlitzAnswer(false)">ЛОЖЬ</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <div id="toast">Готово</div>
@@ -1412,9 +1707,23 @@
     <button class="dock-btn" onclick="openTab('schedule', this)">
       <span class="ico">📅</span>
       <span>Пары и ДЗ</span>
-    </button><!-- ЧАСТЬ 2 ИЗ 2: Скрипты, пересчёт часовых поясов, логика тем и базы данных[cite: 1, 2] -->
+    </button>
+    <button class="dock-btn" onclick="openTab('lab', this)">
+      <span class="ico">💎</span>
+      <span>Казна</span>
+    </button>
+    <button class="dock-btn" onclick="openTab('vault', this)">
+      <span class="ico">👥</span>
+      <span>Группа</span>
+    </button>
+    <button class="dock-btn parry-dock-btn" onclick="openTab('parry', this)">
+      <span class="ico">⚔️</span>
+      <span>Parry</span>
+    </button>
+  </nav>
+<!-- КОНЕЦ ЧАСТИ 1 --><!-- ЧАСТЬ 2 ИЗ 2: Скрипты, пересчёт часовых поясов, логика тем, базы данных и движок PARRY -->
   <script>
-    // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ[cite: 2] =================
+    // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ =================
     const DEFAULT_CLOUD_CONFIG = {
       supabaseUrl: 'https://grkefffovuisfvqgwugj.supabase.co',
       supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU',
@@ -1457,7 +1766,7 @@
     let tgUser = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) ? tgApp.initDataUnsafe.user : null;
     let previewAsStudent = false;
 
-    // Конфигурация часового пояса (по умолчанию для дистанта МСК+2)[cite: 1]
+    // Конфигурация часового пояса (по умолчанию для дистанта МСК+2)
     let timezoneConfig = {
       mode: 'remote_ural',
       offsetHours: 2
@@ -1519,7 +1828,7 @@
       if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
     }
 
-    // ================= 1. ЧАСОВЫЕ ПОЯСА И АДАПТАЦИЯ ВРЕМЕНИ[cite: 1] =================
+    // ================= 1. ЧАСОВЫЕ ПОЯСА И АДАПТАЦИЯ ВРЕМЕНИ =================
     function getDeviceMskOffsetHours() {
       const deviceUtcOffsetMinutes = -new Date().getTimezoneOffset();
       return Math.round((deviceUtcOffsetMinutes - 180) / 60);
@@ -1616,7 +1925,7 @@
       return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
     }
 
-    // Каноническое время звонков НГИЭУ (по МСК)[cite: 1, 2]
+    // Каноническое время звонков НГИЭУ (по МСК)
     const BASE_BELLS_MSK = [
       { num: 1, start: "08:00", end: "09:30", startMin: 480,  endMin: 570,  breakAfter: 10 },
       { num: 2, start: "09:40", end: "11:10", startMin: 580,  endMin: 670,  breakAfter: 55 },
@@ -1651,7 +1960,7 @@
       sel.value = curVal;
     }
 
-    // ================= 2. СИНХРОНИЗАЦИЯ С API РАСПИСАНИЯ НГИЭУ[cite: 2] =================
+    // ================= 2. СИНХРОНИЗАЦИЯ С API РАСПИСАНИЯ НГИЭУ =================
     function getNgieuGroupId() {
       const gNorm = (state.groupName || '').trim().toLowerCase();
       if (NGIEU_API_CONFIG.groupMap[gNorm]) return NGIEU_API_CONFIG.groupMap[gNorm];
@@ -1751,7 +2060,7 @@
       }
     }
 
-    // ================= 3. БЕЗОПАСНОСТЬ, РОЛИ И ДОСТУП[cite: 2] =================
+    // ================= 3. БЕЗОПАСНОСТЬ, РОЛИ И ДОСТУП =================
     function getGroupSecret() {
       return (state.leaderSecret || cloudCfg.adminSecret || DEFAULT_CLOUD_CONFIG.adminSecret || 'b26leader').trim();
     }
@@ -1922,7 +2231,7 @@
       copyTextQuick(link, 'Секретная ТГ-ссылка Старосты');
     }
 
-    // ================= 4. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА[cite: 2] =================
+    // ================= 4. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА =================
     function loadCloudConfig() {
       const raw = localStorage.getItem(CLOUD_CFG_KEY);
       if (raw) {
@@ -2373,7 +2682,7 @@
       return false;
     }
 
-    // ================= 5. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ТЕМАМИ[cite: 1, 2] =================
+    // ================= 5. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ТЕМАМИ =================
     function refreshAllViews() {
       applyRoleUI();
       populateSchedulePairSelect();
@@ -2446,7 +2755,7 @@
       }
     }
 
-    // ================= 6. ДНИ РОЖДЕНИЯ[cite: 2] =================
+    // ================= 6. ДНИ РОЖДЕНИЯ =================
     function getBirthdayInfo(birthDateStr) {
       if (!birthDateStr) return null;
       const parts = birthDateStr.split('-').map(Number);
@@ -2507,7 +2816,7 @@
       }
     }
 
-    // ================= 7. ЗАМЕТКИ К ПАРАМ И ДЕДЛАЙНЫ ДЗ[cite: 2] =================
+    // ================= 7. ЗАМЕТКИ К ПАРАМ И ДЕДЛАЙНЫ ДЗ =================
     let activeClassIdForNote = null;
     let hwContext = { subject: '', fromDay: null, fromWeek: null, mode: 'next' };
 
@@ -2703,7 +3012,7 @@
       el.focus();
     }
 
-    // ================= 8. РАДАР ЗВОНКОВ С АДАПТАЦИЕЙ ВРЕМЕНИ[cite: 1, 2] =================
+    // ================= 8. РАДАР ЗВОНКОВ С АДАПТАЦИЕЙ ВРЕМЕНИ =================
     function updateLiveBellRadar() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
@@ -2758,7 +3067,7 @@
       progEl.style.width = '0%';
     }
 
-    // ================= 9. ФАЙЛЫ INDEXEDDB[cite: 2] =================
+    // ================= 9. ФАЙЛЫ INDEXEDDB =================
     let db = null;
     const DB_NAME = 'StarostaFilesDB';
     const STORE_NAME = 'files';
@@ -2867,7 +3176,7 @@
       }).join('');
     }
 
-    // ================= 10. КАРТОЧКИ ПАР И ДАШБОРД[cite: 1, 2] =================
+    // ================= 10. КАРТОЧКИ ПАР И ДАШБОРД =================
     function openTab(tabName, btnEl) {
       haptic(8);
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -2880,6 +3189,7 @@
       if (tabName === 'schedule') renderScheduleView();
       if (tabName === 'lab') renderCollections();
       if (tabName === 'vault') { renderVaultGroup(); renderVaultNotes(); renderVaultFiles(); }
+      if (tabName === 'parry') initParrySymbiosisUI();
     }
 
     function buildClassCardHTML(c, allowDelete = false) {
@@ -3060,7 +3370,7 @@
       }
     }
 
-    // ================= 11. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ[cite: 2] =================
+    // ================= 11. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ =================
     function switchScheduleWeek(w) {
       haptic(8);
       state.currentWeekType = w;
@@ -3151,7 +3461,7 @@
       renderScheduleView();
     }
 
-    // ================= 12. ЖУРНАЛ ПОСЕЩАЕМОСТИ[cite: 2] =================
+    // ================= 12. ЖУРНАЛ ПОСЕЩАЕМОСТИ =================
     const ST_CYCLE = ['P', 'N', 'U', 'O'];
     const ST_META = {
       'P': { label: '✓ Был', cls: 'st-P' },
@@ -3318,7 +3628,7 @@
       await sendTelegramBotMessage(buildReportText());
     }
 
-    // ================= 13. КАЗНА И РАНДОМАЙЗЕР КОМАНД[cite: 2] =================
+    // ================= 13. КАЗНА И РАНДОМАЙЗЕР КОМАНД =================
     function switchLabMode(mode) {
       haptic(8);
       document.getElementById('btnLabMoney').classList.toggle('active', mode === 'collections');
@@ -3436,7 +3746,7 @@
       `).join('');
     }
 
-    // ================= 14. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ)[cite: 2] =================
+    // ================= 14. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ) =================
     function switchVaultSub(sub) {
       haptic(8);
       document.getElementById('vBtnGroup').classList.toggle('active', sub === 'group');
@@ -3782,7 +4092,594 @@
       return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
 
-    // ================= 15. СТАРТ ПРИЛОЖЕНИЯ[cite: 2] =================
+    // ================= 15. МОДУЛЬ «СТАРОСТАТ: PARRY» (ZERO-LAG ENGINE) =================
+    const PARRY_FALLBACK_QUESTIONS = [
+      {
+        subject_id: 'databases',
+        subject_title: 'Базы данных',
+        question_text: 'Какая нормальная форма требует отсутствия транзитивных зависимостей неключевых атрибутов от первичного ключа?',
+        answers_json: ['Первая (1NF)', 'Вторая (2NF)', 'Третья (3NF)', 'Бойса-Кодда (BCNF)'],
+        correct_idx: 2,
+        blitz_statement: 'Оператор TRUNCATE в SQL удаляет строки по одной так же медленно, как DELETE без WHERE.',
+        blitz_is_true: false
+      },
+      {
+        subject_id: 'databases',
+        subject_title: 'Базы данных',
+        question_text: 'Какой тип индекса в PostgreSQL создается по умолчанию командой CREATE INDEX?',
+        answers_json: ['Hash', 'B-Tree', 'GIN', 'GiST'],
+        correct_idx: 1,
+        blitz_statement: 'Индекс GIN отлично подходит для поиска внутри полей JSONB.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'it',
+        subject_title: 'Информационные технологии',
+        question_text: 'Какова временная сложность поиска в сбалансированном бинарном дереве поиска?',
+        answers_json: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+        correct_idx: 1,
+        blitz_statement: 'WebSocket-соединение устанавливается поверх протокола TCP через HTTP Upgrade.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'it',
+        subject_title: 'Информационные технологии',
+        question_text: 'Какой HTTP-код означает, что доступ к ресурсу запрещен (нет прав)?',
+        answers_json: ['401 Unauthorized', '403 Forbidden', '404 Not Found', '500 Internal Error'],
+        correct_idx: 1,
+        blitz_statement: 'HTTP-метод PUT является идемпотентным, в отличие от метода POST.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'general',
+        subject_title: 'Бизнес-информатика',
+        question_text: 'Что означает буква "I" в требованиях к транзакциям ACID?',
+        answers_json: ['Integrity', 'Isolation (Изолированность)', 'Indexing', 'Idempotency'],
+        correct_idx: 1,
+        blitz_statement: 'UNION ALL работает быстрее UNION, так как не удаляет дубликаты строк.',
+        blitz_is_true: true
+      }
+    ];
+
+    let parrySupaClient = null;
+    let parryChannel = null;
+    let parryRafId = null;
+    let parryBotTimer = null;
+
+    let parryState = {
+      isBotMode: true,
+      matchId: '',
+      myId: '',
+      myName: 'Студент',
+      myElo: 1000,
+      myHp: 115,
+      myMaxHp: 115,
+      oppId: 'bot_ngieu',
+      oppName: 'Кибер-Староста (Бот)',
+      oppHp: 100,
+      oppMaxHp: 100,
+      cooldownPenaltyMs: 0,
+      subjectId: 'general',
+      subjectTitle: 'Общий пул НГИЭУ',
+      questions: [],
+      qIdx: 0,
+      blitzIdx: 0,
+      baseDmg: 18,
+      currentDmg: 18,
+      mult: 1,
+      maxStreak: 1,
+      locked: false,
+      parryDeadline: 0,
+      parryDuration: 3000,
+      finished: false
+    };
+
+    function getParryStudentIdentity() {
+      if (tgUser && tgUser.id) {
+        const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || tgUser.username || 'Студент';
+        return { id: 'tg_' + tgUser.id, name: fullName };
+      }
+      if (state.students && state.students.length > 0) {
+        return { id: state.students[0].id, name: state.students[0].name.split(' ').slice(0, 2).join(' ') };
+      }
+      return { id: 'stu_local_' + (cloudCfg.groupId || 'b26bio'), name: 'Боец ' + (state.groupName || 'Б-26БиО') };
+    }
+
+    function computeParrySymbiosis() {
+      const ident = getParryStudentIdentity();
+      const now = new Date();
+      const todayStr = now.toISOString().slice(0, 10);
+      const curMin = now.getHours() * 60 + now.getMinutes();
+      const bells = getBellSchedule();
+
+      let activePair = 1;
+      for (const b of bells) {
+        if (curMin >= b.startMin - 15 && curMin <= b.endMin) {
+          activePair = b.num;
+          break;
+        }
+      }
+
+      const jKey = `${todayStr}_${activePair}`;
+      const recObj = state.attendance && state.attendance[jKey] && state.attendance[jKey].records;
+      let attCode = 'P';
+      if (recObj) {
+        if (recObj[ident.id]) attCode = recObj[ident.id];
+        else if (state.students.length && recObj[state.students[0].id]) attCode = recObj[state.students[0].id];
+      }
+
+      const jsDay = now.getDay();
+      const dayCode = jsDay === 0 ? 'ПН' : DAYS[jsDay - 1];
+      const curClass = (state.schedule || []).find(
+        s => s.week === state.currentWeekType && s.day === dayCode && Number(s.num) === activePair
+      );
+
+      const subjTitle = (curClass && curClass.subject) ||
+        (state.attendance && state.attendance[jKey] && state.attendance[jKey].subject) ||
+        'Базы данных и ИТ';
+
+      const low = subjTitle.toLowerCase();
+      let subjId = 'general';
+      if (low.includes('баз') || low.includes('субд') || low.includes('данн')) subjId = 'databases';
+      else if (low.includes('информ') || low.includes('програм') || low.includes('алгоритм')) subjId = 'it';
+
+      return {
+        ident,
+        attCode,
+        maxHp: attCode === 'P' ? 115 : 100,
+        cooldownPenaltyMs: attCode === 'N' ? 1200 : 0,
+        subjId,
+        subjTitle
+      };
+    }
+
+    async function initParrySymbiosisUI() {
+      const sym = computeParrySymbiosis();
+      parryState.myId = sym.ident.id;
+      parryState.myName = sym.ident.name;
+      parryState.myMaxHp = sym.maxHp;
+      parryState.myHp = sym.maxHp;
+      parryState.cooldownPenaltyMs = sym.cooldownPenaltyMs;
+      parryState.subjectId = sym.subjId;
+      parryState.subjectTitle = sym.subjTitle;
+
+      document.getElementById('parrySubjLbl').textContent = sym.subjTitle;
+      document.getElementById('parryMyName').textContent = sym.ident.name;
+      document.getElementById('parryRoomLbl').textContent = `${cloudCfg.groupId}_duel`;
+
+      const buffEl = document.getElementById('parryBuffBadge');
+      if (sym.attCode === 'P') {
+        buffEl.textContent = '✓ БЫЛ НА ПАРЕ: +15% HP (115) | +1 AP';
+        buffEl.style.color = '#22c55e';
+      } else if (sym.attCode === 'N') {
+        buffEl.textContent = '⚠️ Н/Б В ЖУРНАЛЕ: ШТРАФ К ПЕРЕЗАРЯДКЕ +1.2s';
+        buffEl.style.color = '#ff2a5f';
+      } else {
+        buffEl.textContent = '• СТАНДАРТНЫЙ РЕЖИМ: 100 HP';
+        buffEl.style.color = '#38bdf8';
+      }
+
+      updateParryHudDOM();
+    }
+
+    async function preloadParryQuestionsFromCloud() {
+      try {
+        if (!parrySupaClient && window.supabase) {
+          parrySupaClient = window.supabase.createClient(
+            cleanSupabaseUrl(cloudCfg.supabaseUrl),
+            cloudCfg.supabaseKey
+          );
+        }
+        if (parrySupaClient) {
+          const { data } = await parrySupaClient
+            .from('parry_questions')
+            .select('*')
+            .limit(10);
+          if (Array.isArray(data) && data.length >= 3) {
+            return data;
+          }
+        }
+      } catch (e) {}
+      return PARRY_FALLBACK_QUESTIONS;
+    }
+
+    async function startParryMatch(botMode = true) {
+      haptic(15);
+      stopParryCountdown();
+      if (parryBotTimer) clearTimeout(parryBotTimer);
+
+      await initParrySymbiosisUI();
+      const qPack = await preloadParryQuestionsFromCloud();
+
+      parryState.isBotMode = botMode;
+      parryState.questions = qPack;
+      parryState.qIdx = 0;
+      parryState.blitzIdx = 0;
+      parryState.myHp = parryState.myMaxHp;
+      parryState.oppMaxHp = 100;
+      parryState.oppHp = 100;
+      parryState.mult = 1;
+      parryState.currentDmg = parryState.baseDmg;
+      parryState.locked = false;
+      parryState.finished = false;
+      parryState.matchId = `duel_${cloudCfg.groupId || 'b26bio'}`;
+
+      document.getElementById('parryBlitzOverlay').classList.remove('active');
+
+      if (botMode) {
+        parryState.oppId = 'bot_cyber';
+        parryState.oppName = '🤖 Кибер-Бот';
+        document.getElementById('parryOppName').textContent = parryState.oppName;
+        document.getElementById('parryStatusBanner').textContent = 'БОЙ НАЧАЛСЯ! Ответьте первым для подачи!';
+        renderParryCurrentQuestion();
+        scheduleBotAttack();
+      } else {
+        parryState.oppId = 'waiting';
+        parryState.oppName = 'Ожидание...';
+        document.getElementById('parryOppName').textContent = parryState.oppName;
+        document.getElementById('parryStatusBanner').textContent = '🌐 Ожидание одногруппника в комнате ' + parryState.matchId + '...';
+        connectParryRealtimeChannel();
+        renderParryCurrentQuestion();
+      }
+      updateParryHudDOM();
+    }
+
+    function connectParryRealtimeChannel() {
+      if (!window.supabase) return toast('Библиотека Supabase Realtime не загружена');
+      if (!parrySupaClient) {
+        parrySupaClient = window.supabase.createClient(
+          cleanSupabaseUrl(cloudCfg.supabaseUrl),
+          cloudCfg.supabaseKey
+        );
+      }
+      if (parryChannel) {
+        parrySupaClient.removeChannel(parryChannel);
+      }
+
+      parryChannel = parrySupaClient.channel(parryState.matchId, {
+        config: { broadcast: { self: false } }
+      });
+
+      parryChannel
+        .on('broadcast', { event: 'duel_ev' }, ({ payload }) => {
+          if (!payload || payload.u === parryState.myId) return;
+
+          if (payload.e === 'SYNC') {
+            const wasWaiting = parryState.oppId === 'waiting';
+            parryState.oppId = payload.u;
+            parryState.oppName = payload.name || 'Одногруппник';
+            parryState.oppHp = payload.hp || 100;
+            parryState.oppMaxHp = payload.maxHp || 100;
+            document.getElementById('parryOppName').textContent = parryState.oppName;
+            document.getElementById('parryStatusBanner').textContent = '⚔️ Соперник подключен! Отвечайте!';
+            updateParryHudDOM();
+
+            if (wasWaiting) {
+              parryChannel.send({
+                type: 'broadcast',
+                event: 'duel_ev',
+                payload: { e: 'SYNC', u: parryState.myId, name: parryState.myName, hp: parryState.myHp, maxHp: parryState.myMaxHp }
+              });
+            }
+          } else if (payload.e === 'ATTACK') {
+            parryState.locked = true;
+            parryState.currentDmg = payload.dmg;
+            parryState.mult = payload.mult;
+            parryState.blitzIdx = payload.bIdx || 0;
+            animateProjectile('ME', payload.dmg, () => {
+              openParryBlitzWindow(3000);
+            });
+          } else if (payload.e === 'PARRY_HIT') {
+            parryState.currentDmg = payload.newDmg;
+            parryState.mult = payload.newMult;
+            parryState.blitzIdx = payload.bIdx || 0;
+            animateProjectile('ME', payload.newDmg, () => {
+              openParryBlitzWindow(payload.nextWindowMs || 2000);
+            });
+          } else if (payload.e === 'DAMAGE_APPLIED') {
+            triggerParryShake();
+            parryState.oppHp = payload.hpLeft;
+            updateParryHudDOM();
+            advanceParryRoundOrFinish(payload.nextQIdx);
+          }
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            parryChannel.send({
+              type: 'broadcast',
+              event: 'duel_ev',
+              payload: { e: 'SYNC', u: parryState.myId, name: parryState.myName, hp: parryState.myHp, maxHp: parryState.myMaxHp }
+            });
+          }
+        });
+    }
+
+    function updateParryHudDOM() {
+      document.getElementById('parryMyHpTxt').textContent = `${parryState.myHp}/${parryState.myMaxHp}`;
+      document.getElementById('parryOppHpTxt').textContent = `${parryState.oppHp}/${parryState.oppMaxHp}`;
+      document.getElementById('parryMyHpBar').style.width = `${Math.max(0, (parryState.myHp / parryState.myMaxHp) * 100)}%`;
+      document.getElementById('parryOppHpBar').style.width = `${Math.max(0, (parryState.oppHp / parryState.oppMaxHp) * 100)}%`;
+      document.getElementById('parryRoundLbl').textContent = `${Math.min(5, parryState.qIdx + 1)}/5`;
+      document.getElementById('parryMultBadge').textContent = `УРОН x${parryState.mult} (${parryState.currentDmg} HP)`;
+    }
+
+    function renderParryCurrentQuestion() {
+      const q = parryState.questions[parryState.qIdx % parryState.questions.length];
+      if (!q) return;
+
+      document.getElementById('parryQTopicBadge').textContent = q.subject_title || 'ПОДАЧА';
+      document.getElementById('parryQuestionText').textContent = q.question_text;
+
+      const answers = Array.isArray(q.answers_json) ? q.answers_json : JSON.parse(q.answers_json || '[]');
+      const box = document.getElementById('parryAnswersList');
+      box.innerHTML = answers.map((ans, idx) => `
+        <button type="button" class="parry-btn" ${parryState.locked ? 'disabled' : ''} onclick="submitParryMainAnswer(${idx})">
+          <span class="parry-mono-font" style="color:#ff2a5f; margin-right:6px;">[${idx + 1}]</span> ${esc(ans)}
+        </button>
+      `).join('');
+    }
+
+    function scheduleBotAttack() {
+      if (!parryState.isBotMode || parryState.finished) return;
+      if (parryBotTimer) clearTimeout(parryBotTimer);
+      parryBotTimer = setTimeout(() => {
+        if (parryState.locked || parryState.finished) return;
+        parryState.locked = true;
+        parryState.mult = 1;
+        parryState.currentDmg = parryState.baseDmg;
+        parryState.blitzIdx = parryState.qIdx % parryState.questions.length;
+        renderParryCurrentQuestion();
+        animateProjectile('ME', parryState.currentDmg, () => {
+          openParryBlitzWindow(3000);
+        });
+      }, 4200);
+    }
+
+    function submitParryMainAnswer(selectedIdx) {
+      if (parryState.locked || parryState.finished) return;
+      if (parryBotTimer) clearTimeout(parryBotTimer);
+
+      const q = parryState.questions[parryState.qIdx % parryState.questions.length];
+      if (!q) return;
+
+      parryState.locked = true;
+      renderParryCurrentQuestion();
+
+      if (selectedIdx === Number(q.correct_idx)) {
+        haptic(12);
+        parryState.mult = 1;
+        parryState.currentDmg = parryState.baseDmg;
+        parryState.blitzIdx = parryState.qIdx % parryState.questions.length;
+        updateParryHudDOM();
+
+        if (!parryState.isBotMode && parryChannel) {
+          parryChannel.send({
+            type: 'broadcast',
+            event: 'duel_ev',
+            payload: {
+              e: 'ATTACK',
+              u: parryState.myId,
+              qIdx: parryState.qIdx,
+              dmg: parryState.currentDmg,
+              mult: 1,
+              bIdx: parryState.blitzIdx
+            }
+          });
+        }
+
+        animateProjectile('OPPONENT', parryState.currentDmg, () => {
+          if (parryState.isBotMode) {
+            resolveBotDefense();
+          } else {
+            document.getElementById('parryStatusBanner').textContent = '⚡ Снаряд у соперника! У него 3.0s на парирование...';
+          }
+        });
+      } else {
+        const waitMs = 1400 + parryState.cooldownPenaltyMs;
+        document.getElementById('parryStatusBanner').textContent = `❌ Промах! Перезарядка ${(waitMs / 1000).toFixed(1)}s...`;
+        setTimeout(() => {
+          if (!parryState.finished) {
+            parryState.locked = false;
+            document.getElementById('parryStatusBanner').textContent = 'Выберите правильный аргумент!';
+            renderParryCurrentQuestion();
+          }
+        }, waitMs);
+      }
+    }
+
+    function animateProjectile(target, dmg, onComplete) {
+      const proj = document.getElementById('parryProjectileEl');
+      proj.className = 'parry-projectile';
+      proj.textContent = `⚡ АРГУМЕНТ (${dmg} HP)`;
+      void proj.offsetWidth;
+
+      if (target === 'OPPONENT') {
+        document.getElementById('parryStatusBanner').textContent = '🚀 Подача снаряда в соперника!';
+        proj.classList.add('fly-right');
+      } else {
+        document.getElementById('parryStatusBanner').textContent = '⚠️ Входящий аргумент! Приготовьтесь к ПАРИРОВАНИЮ!';
+        proj.classList.add('fly-left');
+      }
+
+      setTimeout(() => {
+        proj.className = 'parry-projectile';
+        if (onComplete) onComplete();
+      }, 420);
+    }
+
+    function openParryBlitzWindow(durationMs) {
+      const blitzQ = parryState.questions[parryState.blitzIdx % parryState.questions.length];
+      if (!blitzQ) return;
+
+      document.getElementById('parryBlitzStatement').textContent = blitzQ.blitz_statement;
+      document.getElementById('parryBlitzOverlay').classList.add('active');
+
+      parryState.parryDuration = durationMs;
+      parryState.parryDeadline = performance.now() + durationMs;
+
+      const tick = (now) => {
+        const left = Math.max(0, parryState.parryDeadline - now);
+        document.getElementById('parryTimerDisplay').textContent = (left / 1000).toFixed(1) + 's';
+        document.getElementById('parryTimerBar').style.width = `${(left / durationMs) * 100}%`;
+
+        if (left <= 0) {
+          applyDamageToMe(parryState.currentDmg);
+          return;
+        }
+        parryRafId = requestAnimationFrame(tick);
+      };
+      parryRafId = requestAnimationFrame(tick);
+    }
+
+    function stopParryCountdown() {
+      if (parryRafId) {
+        cancelAnimationFrame(parryRafId);
+        parryRafId = null;
+      }
+      const el = document.getElementById('parryBlitzOverlay');
+      if (el) el.classList.remove('active');
+    }
+
+    function handleParryBlitzAnswer(userSaidTrue) {
+      stopParryCountdown();
+      const blitzQ = parryState.questions[parryState.blitzIdx % parryState.questions.length];
+      if (!blitzQ) return;
+
+      if (Boolean(userSaidTrue) === Boolean(blitzQ.blitz_is_true)) {
+        haptic(20);
+        parryState.mult *= 2;
+        parryState.currentDmg = parryState.baseDmg * parryState.mult;
+        parryState.maxStreak = Math.max(parryState.maxStreak, parryState.mult);
+        parryState.blitzIdx = (parryState.blitzIdx + 1) % parryState.questions.length;
+        updateParryHudDOM();
+
+        toast(`🛡️ PARRY x${parryState.mult}! Контратака на ${parryState.currentDmg} HP!`);
+
+        if (!parryState.isBotMode && parryChannel) {
+          parryChannel.send({
+            type: 'broadcast',
+            event: 'duel_ev',
+            payload: {
+              e: 'PARRY_HIT',
+              u: parryState.myId,
+              newDmg: parryState.currentDmg,
+              newMult: parryState.mult,
+              nextWindowMs: 2000,
+              bIdx: parryState.blitzIdx
+            }
+          });
+        }
+
+        animateProjectile('OPPONENT', parryState.currentDmg, () => {
+          if (parryState.isBotMode) {
+            resolveBotDefense();
+          }
+        });
+      } else {
+        applyDamageToMe(parryState.currentDmg);
+      }
+    }
+
+    function resolveBotDefense() {
+      setTimeout(() => {
+        if (parryState.finished) return;
+        const botParried = Math.random() < 0.4 && parryState.mult < 4;
+        if (botParried) {
+          parryState.mult *= 2;
+          parryState.currentDmg = parryState.baseDmg * parryState.mult;
+          parryState.blitzIdx = (parryState.blitzIdx + 1) % parryState.questions.length;
+          updateParryHudDOM();
+          toast(`🤖 Бот спарировал! Урон вырос до ${parryState.currentDmg} HP (Таймер 2.0s)!`);
+          animateProjectile('ME', parryState.currentDmg, () => {
+            openParryBlitzWindow(2000);
+          });
+        } else {
+          triggerParryShake();
+          parryState.oppHp = Math.max(0, parryState.oppHp - parryState.currentDmg);
+          document.getElementById('parryStatusBanner').textContent = `💥 Попадание! Соперник потерял ${parryState.currentDmg} HP!`;
+          updateParryHudDOM();
+          advanceParryRoundOrFinish(parryState.qIdx + 1);
+        }
+      }, 650);
+    }
+
+    function applyDamageToMe(dmg) {
+      stopParryCountdown();
+      triggerParryShake();
+      parryState.myHp = Math.max(0, parryState.myHp - dmg);
+      document.getElementById('parryStatusBanner').textContent = `💥 Пробитие защиты! Вы получили -${dmg} HP!`;
+      updateParryHudDOM();
+
+      const nextQ = parryState.qIdx + 1;
+      if (!parryState.isBotMode && parryChannel) {
+        parryChannel.send({
+          type: 'broadcast',
+          event: 'duel_ev',
+          payload: {
+            e: 'DAMAGE_APPLIED',
+            target: parryState.myId,
+            dmg,
+            hpLeft: parryState.myHp,
+            nextQIdx: nextQ
+          }
+        });
+      }
+      advanceParryRoundOrFinish(nextQ);
+    }
+
+    function triggerParryShake() {
+      haptic(25);
+      const root = document.getElementById('parryArenaRoot');
+      if (!root) return;
+      root.classList.remove('parry-shake');
+      void root.offsetWidth;
+      root.classList.add('parry-shake');
+    }
+
+    async function advanceParryRoundOrFinish(nextQIdx) {
+      if (parryState.myHp <= 0 || parryState.oppHp <= 0 || nextQIdx >= 5) {
+        parryState.finished = true;
+        if (parryBotTimer) clearTimeout(parryBotTimer);
+
+        const iWon = parryState.oppHp <= 0 || (parryState.myHp > parryState.oppHp);
+        parryState.myElo += iWon ? 25 : -15;
+        document.getElementById('parryEloLbl').textContent = parryState.myElo;
+        document.getElementById('parryStatusBanner').textContent = iWon
+          ? '🏆 ПОБЕДА В ДУЭЛИ! (+25 ELO)'
+          : '💀 ПОРАЖЕНИЕ! (-15 ELO)';
+
+        // ЕДИНСТВЕННАЯ ЗАПИСЬ В БАЗУ ДАННЫХ ПО ОКОНЧАНИИ МАТЧА (Zero-Lag правило)
+        if (parrySupaClient) {
+          try {
+            await parrySupaClient.rpc('finish_parry_match', {
+              p_match_id: `${parryState.matchId}_${Date.now()}`,
+              p_group_id: cloudCfg.groupId || 'b26bio',
+              p_subject_id: parryState.subjectId,
+              p_player1_id: parryState.myId,
+              p_player2_id: parryState.oppId,
+              p_winner_id: iWon ? parryState.myId : parryState.oppId,
+              p_p1_hp: parryState.myHp,
+              p_p2_hp: parryState.oppHp,
+              p_max_streak: parryState.maxStreak,
+              p_delta: 25
+            });
+          } catch (e) {}
+        }
+        return;
+      }
+
+      setTimeout(() => {
+        parryState.qIdx = nextQIdx;
+        parryState.mult = 1;
+        parryState.currentDmg = parryState.baseDmg;
+        parryState.locked = false;
+        updateParryHudDOM();
+        renderParryCurrentQuestion();
+        if (parryState.isBotMode) scheduleBotAttack();
+      }, 1000);
+    }
+
+    // ================= 16. СТАРТ ПРИЛОЖЕНИЯ =================
     window.addEventListener('DOMContentLoaded', async () => {
       initUserTimezone();
 
@@ -3809,13 +4706,4 @@
   </script>
 </body>
 </html>
-    <button class="dock-btn" onclick="openTab('lab', this)">
-      <span class="ico">💎</span>
-      <span>Казна</span>
-    </button>
-    <button class="dock-btn" onclick="openTab('vault', this)">
-      <span class="ico">👥</span>
-      <span>Группа</span>
-    </button>
-  </nav>
-<!-- КОНЕЦ ЧАСТИ 1[cite: 2] -->
+<!-- КОНЕЦ ЧАСТИ 2 -->
