@@ -1,201 +1,199 @@
-<!-- ЧАСТЬ 1 ИЗ 2: Стили, разметка модальных окон, 6 вкладок (включая PARRY) и навигация -->
+<!-- ЧАСТЬ 1 ИЗ 2: Head, обновленные стили (Linear / Apple + Telegram Theme + Parry), модальные окна, 6 вкладок и навигация -->
 <!DOCTYPE html>
 <html lang="ru" data-theme="indigo">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Старостат: Parry | НГИЭУ</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Google Fonts: Unbounded, JetBrains Mono, Onest -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ================= СУЩЕСТВУЮЩИЕ КЛАССИЧЕСКИЕ ТЕМЫ ================= */
-    :root, [data-theme="indigo"] {
-      --bg-main: #0b0f19;
-      --bg-surface: #131b2e;
-      --bg-elevated: #1c263f;
-      --bg-glass: rgba(255, 255, 255, 0.05);
+    /* ================= СИСТЕМА ТЕМ (LINEAR / APPLE + TELEGRAM NATIVE) ================= */
+    :root,
+    [data-theme="indigo"] {
+      --bg-main: #09090b;
+      --bg-surface: #111115;
+      --bg-elevated: #18181f;
+      --bg-glass: rgba(255, 255, 255, 0.045);
+      --bg-glass-hover: rgba(255, 255, 255, 0.08);
+      --bg-header: rgba(9, 9, 11, 0.82);
+      --bg-dock: rgba(17, 17, 21, 0.88);
       --border: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(99, 102, 241, 0.35);
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --border-accent: rgba(99, 102, 241, 0.42);
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-subtle: #71717a;
       --accent: #6366f1;
+      --accent-fg: #ffffff;
       --accent-soft: rgba(99, 102, 241, 0.14);
-      --success: #10b981;
+      --success: #22c55e;
+      --success-soft: rgba(34, 197, 94, 0.13);
       --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.13);
       --danger: #f43f5e;
+      --danger-soft: rgba(244, 63, 94, 0.13);
+      --info: #38bdf8;
+      --info-soft: rgba(56, 189, 248, 0.13);
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      --shadow-dock: 0 12px 32px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      --radius-xl: 22px;
       --radius-lg: 16px;
       --radius-md: 12px;
-      --radius-sm: 8px;
+      --radius-sm: 9px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
     }
+
+    /* Адаптивная тема Telegram WebApp */
+    [data-theme="tg"] {
+      --bg-main: var(--tg-theme-bg-color, #09090b);
+      --bg-surface: var(--tg-theme-secondary-bg-color, #141418);
+      --bg-elevated: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color, #1c1c22));
+      --bg-header: color-mix(in srgb, var(--tg-theme-bg-color, #09090b) 84%, transparent);
+      --bg-dock: color-mix(in srgb, var(--tg-theme-secondary-bg-color, #141418) 92%, transparent);
+      --text-main: var(--tg-theme-text-color, #f4f4f5);
+      --text-muted: var(--tg-theme-hint-color, #a1a1aa);
+      --text-subtle: var(--tg-theme-subtitle-text-color, var(--tg-theme-hint-color, #71717a));
+      --accent: var(--tg-theme-button-color, #6366f1);
+      --accent-fg: var(--tg-theme-button-text-color, #ffffff);
+      --accent-soft: color-mix(in srgb, var(--tg-theme-button-color, #6366f1) 15%, transparent);
+      --border-accent: color-mix(in srgb, var(--tg-theme-button-color, #6366f1) 40%, transparent);
+    }
+
+    [data-theme="tg"][data-tg-scheme="light"] {
+      --bg-glass: rgba(15, 23, 42, 0.045);
+      --bg-glass-hover: rgba(15, 23, 42, 0.08);
+      --border: rgba(15, 23, 42, 0.09);
+      --border-strong: rgba(15, 23, 42, 0.16);
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+      --shadow-dock: 0 10px 28px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.07);
+    }
+
     [data-theme="emerald"] {
-      --bg-main: #07120e;
-      --bg-surface: #0f221b;
-      --bg-elevated: #163026;
-      --border-accent: rgba(16, 185, 129, 0.35);
+      --bg-main: #060d0a;
+      --bg-surface: #0d1813;
+      --bg-elevated: #13231c;
+      --bg-header: rgba(6, 13, 10, 0.84);
+      --bg-dock: rgba(13, 24, 19, 0.9);
+      --border-accent: rgba(16, 185, 129, 0.4);
       --accent: #10b981;
       --accent-soft: rgba(16, 185, 129, 0.14);
     }
+
     [data-theme="sunset"] {
-      --bg-main: #120c09;
-      --bg-surface: #221611;
-      --bg-elevated: #302019;
-      --border-accent: rgba(249, 115, 22, 0.35);
+      --bg-main: #0e0a08;
+      --bg-surface: #18110d;
+      --bg-elevated: #231914;
+      --bg-header: rgba(14, 10, 8, 0.84);
+      --bg-dock: rgba(24, 17, 13, 0.9);
+      --border-accent: rgba(249, 115, 22, 0.4);
       --accent: #f97316;
       --accent-soft: rgba(249, 115, 22, 0.14);
     }
+
     [data-theme="crimson"] {
-      --bg-main: #12080c;
-      --bg-surface: #241118;
-      --bg-elevated: #331822;
-      --border-accent: rgba(244, 63, 94, 0.35);
+      --bg-main: #0f070a;
+      --bg-surface: #1a0d12;
+      --bg-elevated: #26131a;
+      --bg-header: rgba(15, 7, 10, 0.84);
+      --bg-dock: rgba(26, 13, 18, 0.9);
+      --border-accent: rgba(244, 63, 94, 0.4);
       --accent: #f43f5e;
       --accent-soft: rgba(244, 63, 94, 0.14);
     }
 
-    /* ================= НОВАЯ ТЕМА: NEO-BRUTALIST CYBER ================= */
+    /* Тема Cyber (минималистичный кибер-акцент без лагов) */
     [data-theme="cyber"] {
-      --bg-main: #08080c;
-      --bg-surface: #0e131f;
-      --bg-elevated: #161d2e;
+      --bg-main: #07070b;
+      --bg-surface: #0e111b;
+      --bg-elevated: #151a28;
+      --bg-header: rgba(7, 7, 11, 0.9);
+      --bg-dock: rgba(14, 17, 27, 0.95);
       --bg-glass: rgba(255, 42, 95, 0.08);
-      --border: #1e293b;
+      --border: #1e2638;
+      --border-strong: #2d3852;
       --border-accent: #ff2a5f;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent: #ff2a5f;
+      --accent-fg: #ffffff;
       --accent-soft: rgba(255, 42, 95, 0.16);
-      --success: #22c55e;
-      --warning: #facc15;
-      --danger: #ff2a5f;
-      --radius-lg: 8px;
-      --radius-md: 6px;
-      --radius-sm: 4px;
+      --radius-lg: 10px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
     }
 
-    [data-theme="cyber"] body {
-      font-family: "Onest", -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-main);
-      background-image: 
-        linear-gradient(rgba(255, 42, 95, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
-      background-size: 26px 26px;
-    }
-
-    [data-theme="cyber"] h1,
-    [data-theme="cyber"] h2,
-    [data-theme="cyber"] .brand-title,
-    [data-theme="cyber"] .section-head,
-    [data-theme="cyber"] .metric-val {
-      font-family: "Unbounded", -apple-system, sans-serif !important;
-      letter-spacing: -0.02em;
-    }
-
-    [data-theme="cyber"] #liveClockText,
-    [data-theme="cyber"] .badge,
-    [data-theme="cyber"] .status-chip,
-    [data-theme="cyber"] select,
-    [data-theme="cyber"] input,
-    [data-theme="cyber"] textarea {
-      font-family: "JetBrains Mono", monospace !important;
-    }
-
-    [data-theme="cyber"] .card {
-      border: 2px solid #1e293b;
-      box-shadow: 4px 4px 0px #040406;
+    [data-theme="cyber"] .card,
+    [data-theme="cyber"] .metric-card {
+      border-width: 1.5px;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.65);
     }
 
     [data-theme="cyber"] .card-hero {
-      border: 2px solid #ff2a5f;
-      box-shadow: 4px 4px 0px rgba(255, 42, 95, 0.45);
-      background: linear-gradient(180deg, #171d2c 0%, #0e131f 100%);
-    }
-
-    [data-theme="cyber"] .metric-card {
-      border: 2px solid #1e293b;
-      box-shadow: 3px 3px 0px #040406;
-    }
-
-    [data-theme="cyber"] button {
-      border: 2px solid #08080c;
-      box-shadow: 3px 3px 0px var(--accent);
-      transition: transform 0.08s ease, box-shadow 0.08s ease;
-    }
-
-    [data-theme="cyber"] button:active {
-      transform: translate(2px, 2px) !important;
-      box-shadow: 1px 1px 0px transparent !important;
-    }
-
-    [data-theme="cyber"] .btn-glass {
-      background: var(--bg-surface);
-      border: 2px solid #1e293b;
-      box-shadow: 3px 3px 0px #1e293b;
-      color: var(--text-main);
-    }
-
-    [data-theme="cyber"] .btn-accent-outline {
-      background: var(--accent-soft);
-      border: 2px solid #ff2a5f;
-      box-shadow: 3px 3px 0px #38bdf8;
-      color: #fff;
-    }
-
-    [data-theme="cyber"] .badge-accent {
-      background: rgba(255, 42, 95, 0.18);
       border: 1.5px solid #ff2a5f;
-      color: #ff527b;
+      box-shadow: 3px 3px 0 rgba(255, 42, 95, 0.35);
     }
 
-    [data-theme="cyber"] nav.floating-dock {
-      border: 2px solid #ff2a5f;
-      box-shadow: 0 6px 0px #040406;
-      background: rgba(14, 19, 31, 0.96);
-    }
-
-    [data-theme="cyber"] .dock-btn.active {
-      background: #ff2a5f;
-      color: #fff;
-      box-shadow: 2px 2px 0px #000;
+    [data-theme="cyber"] .brand-title,
+    [data-theme="cyber"] .metric-val {
+      font-family: "Unbounded", -apple-system, sans-serif;
+      letter-spacing: -0.02em;
     }
 
     /* ================= БАЗОВЫЕ СТИЛИ ================= */
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    }
+
+    html {
+      font-size: 16px;
+      background-color: var(--bg-main);
     }
 
     body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-main);
       color: var(--text-main);
       min-height: 100vh;
-      padding-bottom: 96px;
+      padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
       overflow-x: hidden;
-      line-height: 1.4;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     body.student-mode .admin-only { display: none !important; }
-    body.student-mode .status-chip { pointer-events: none; opacity: 0.9; }
+    body.student-mode .status-chip { pointer-events: none; opacity: 0.92; }
 
+    .mono,
+    #liveClockText,
+    #parryTimerDisplay,
+    .metric-val {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ================= ШАПКА ================= */
     header {
       position: sticky;
       top: 0;
       z-index: 60;
-      background: rgba(11, 15, 25, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: var(--bg-header);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
     }
+
     .header-inner {
       max-width: 580px;
       margin: 0 auto;
@@ -204,59 +202,79 @@
       align-items: center;
       gap: 10px;
     }
+
     .brand-box {
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
       min-width: 0;
-      padding: 4px 8px 4px 4px;
+      padding: 3px 8px 3px 3px;
       border-radius: var(--radius-md);
-      transition: background 0.15s;
+      transition: background-color 0.15s ease, transform 0.12s ease;
     }
-    .brand-box:active { background: var(--bg-glass); }
+    .brand-box:active {
+      background: var(--bg-glass);
+      transform: scale(0.985);
+    }
+
     .brand-logo {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
-      background: var(--accent);
-      color: #fff;
+      background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, #000));
+      color: var(--accent-fg);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       flex-shrink: 0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
+
     .brand-title {
-      font-size: 0.96rem;
-      font-weight: 800;
+      font-size: 0.94rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
     }
+
     .uni-pill {
       font-size: 0.68rem;
-      padding: 2px 8px;
-      border-radius: 6px;
+      padding: 2px 7px;
+      border-radius: 99px;
       background: var(--accent-soft);
       border: 1px solid var(--border-accent);
       color: var(--text-main);
-      font-weight: 700;
+      font-weight: 600;
     }
+
     .hdr-sub {
       font-size: 0.7rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .hdr-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
+    .hdr-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ================= ПАНЕЛЬ СТАТУСА ================= */
     .sub-bar {
       max-width: 580px;
-      margin: 8px auto 0;
+      margin: 10px auto 0;
       padding: 0 16px;
       display: flex;
       justify-content: space-between;
@@ -271,95 +289,154 @@
       margin: 0 auto;
     }
 
-    .tab-pane { display: none; animation: fadeIn 0.2s ease; }
-    .tab-pane.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    /* ================= АНИМАЦИИ ВКЛАДОК ================= */
+    .tab-pane {
+      display: none;
+      will-change: transform, opacity;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: paneEnter 0.22s var(--ease-out) both;
+    }
+    @keyframes paneEnter {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
+    /* ================= КАРТОЧКИ И ЗАГОЛОВКИ ================= */
     .card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 14px;
       margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.18s ease, background-color 0.18s ease;
     }
+
     .card-hero {
-      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+      background: linear-gradient(165deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
       border-color: var(--border-accent);
+      position: relative;
+      overflow: hidden;
     }
+    .card-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+      pointer-events: none;
+    }
+
     .section-head {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
-      margin: 16px 2px 8px;
+      margin: 18px 2px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
+    /* ================= МЕТРИКИ И ЖИВОЙ ПРОГРЕСС ================= */
     .metrics-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-bottom: 12px;
     }
+
     .metric-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 10px 8px;
+      padding: 11px 8px;
       text-align: center;
+      box-shadow: var(--shadow-card);
     }
+
     .metric-val {
-      font-size: 1.25rem;
+      font-size: 1.24rem;
       font-weight: 800;
+      letter-spacing: -0.03em;
       color: var(--text-main);
     }
+
     .metric-lbl {
       font-size: 0.68rem;
       color: var(--text-muted);
       margin-top: 2px;
+      font-weight: 500;
     }
 
     .progress-track {
       width: 100%;
       height: 6px;
-      background: rgba(255, 255, 255, 0.07);
+      background: var(--bg-glass-hover);
       border-radius: 99px;
       overflow: hidden;
-      margin-top: 10px;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 99px;
-      transition: width 0.35s ease;
+      margin-top: 11px;
     }
 
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 72%, #fff));
+      border-radius: 99px;
+      transition: width 0.85s linear;
+      will-change: width;
+    }
+
+    /* ================= КНОПКИ И ПОЛЯ ВВОДА ================= */
     button {
+      font-family: inherit;
       border: none;
       border-radius: var(--radius-md);
-      padding: 10px 14px;
-      font-size: 0.84rem;
+      padding: 9px 14px;
+      font-size: 0.83rem;
       font-weight: 600;
+      letter-spacing: -0.01em;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: opacity 0.15s, transform 0.1s, background 0.15s;
+      transition: transform 0.12s var(--ease-out), background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
       color: var(--text-main);
     }
-    button:active { transform: scale(0.97); }
-    .btn-grad { background: var(--accent); color: #fff; }
-    .btn-glass { background: var(--bg-glass); border: 1px solid var(--border); color: var(--text-main); }
-    .btn-accent-outline { background: var(--accent-soft); border: 1px solid var(--border-accent); color: #fff; }
-    .btn-danger { background: rgba(244, 63, 94, 0.12); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.28); }
-    .btn-sm { padding: 6px 10px; font-size: 0.74rem; border-radius: var(--radius-sm); }
+    button:active { transform: scale(0.972); }
+
+    .btn-grad {
+      background: var(--accent);
+      color: var(--accent-fg);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+    .btn-glass {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .btn-accent-outline {
+      background: var(--accent-soft);
+      border: 1px solid var(--border-accent);
+      color: var(--text-main);
+    }
+    .btn-danger {
+      background: var(--danger-soft);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.28);
+    }
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      border-radius: var(--radius-sm);
+    }
     .btn-block { width: 100%; }
 
     input, select, textarea {
+      font-family: inherit;
       width: 100%;
       background: var(--bg-main);
       border: 1px solid var(--border);
@@ -369,13 +446,19 @@
       font-size: 0.88rem;
       margin-bottom: 8px;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    textarea { resize: vertical; }
+
     label.field-lbl {
       display: block;
-      font-size: 0.68rem;
+      font-size: 0.67rem;
       font-weight: 700;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
       text-transform: uppercase;
       margin-bottom: 4px;
@@ -385,10 +468,11 @@
     .between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .wrap-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 
+    /* ================= БЕЙДЖИ И СЕГМЕНТИРОВАННЫЕ ПЕРЕКЛЮЧАТЕЛИ ================= */
     .badge {
       font-size: 0.68rem;
       padding: 3px 8px;
-      border-radius: 6px;
+      border-radius: 7px;
       font-weight: 600;
       background: var(--bg-glass);
       color: var(--text-muted);
@@ -396,11 +480,12 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      line-height: 1.3;
     }
-    .badge-accent { background: var(--accent-soft); color: #fff; border-color: var(--border-accent); }
-    .badge-ok { background: rgba(16, 185, 129, 0.14); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
-    .badge-warn { background: rgba(245, 158, 11, 0.14); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
-    .badge-err { background: rgba(244, 63, 94, 0.14); color: #fb7185; border-color: rgba(244, 63, 94, 0.3); }
+    .badge-accent { background: var(--accent-soft); color: var(--text-main); border-color: var(--border-accent); }
+    .badge-ok { background: var(--success-soft); color: #34d399; border-color: rgba(34, 197, 94, 0.3); }
+    .badge-warn { background: var(--warning-soft); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .badge-err { background: var(--danger-soft); color: #fb7185; border-color: rgba(244, 63, 94, 0.3); }
 
     .pill-group {
       display: flex;
@@ -416,29 +501,32 @@
       background: transparent;
       color: var(--text-muted);
       padding: 7px 6px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       border-radius: 9px;
     }
     .pill-group button.active {
       background: var(--bg-elevated);
-      color: #fff;
-      border: 1px solid var(--border-accent);
+      color: var(--text-main);
+      border: 1px solid var(--border-strong);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
     }
 
+    /* ================= РАСПИСАНИЕ, ДЗ И ЖУРНАЛ ================= */
     .class-note-box {
       margin-top: 8px;
-      padding: 8px 10px;
+      padding: 8px 11px;
       background: var(--accent-soft);
-      border-left: 3px solid var(--accent);
-      border-radius: 6px;
+      border-left: 2.5px solid var(--accent);
+      border-radius: 8px;
       font-size: 0.8rem;
       color: var(--text-main);
       white-space: pre-wrap;
     }
+
     .hw-inline-item {
       margin-top: 8px;
       padding: 8px 10px;
-      background: rgba(245, 158, 11, 0.08);
+      background: var(--warning-soft);
       border: 1px solid rgba(245, 158, 11, 0.25);
       border-radius: var(--radius-sm);
       display: flex;
@@ -447,9 +535,9 @@
       gap: 8px;
     }
     .hw-inline-item.done {
-      opacity: 0.5;
-      background: rgba(16, 185, 129, 0.06);
-      border-color: rgba(16, 185, 129, 0.2);
+      opacity: 0.52;
+      background: var(--success-soft);
+      border-color: rgba(34, 197, 94, 0.22);
       text-decoration: line-through;
     }
 
@@ -463,35 +551,38 @@
       border-radius: var(--radius-md);
       margin-bottom: 6px;
       gap: 8px;
+      box-shadow: var(--shadow-card);
     }
+
     .stu-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 8px;
+      border-radius: 9px;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       color: var(--text-main);
       margin-right: 10px;
       flex-shrink: 0;
     }
+
     .status-chip {
       min-width: 86px;
       padding: 7px 10px;
       border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       text-align: center;
       user-select: none;
     }
-    .st-P { background: rgba(16, 185, 129, 0.14); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .st-N { background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
-    .st-U { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
-    .st-O { background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .st-P { background: var(--success-soft); color: #34d399; border: 1px solid rgba(34, 197, 94, 0.32); }
+    .st-N { background: var(--danger-soft); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.38); }
+    .st-U { background: var(--warning-soft); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .st-O { background: var(--info-soft); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
 
     .days-grid {
       display: grid;
@@ -505,46 +596,64 @@
       color: var(--text-muted);
       padding: 8px 0;
       border-radius: var(--radius-sm);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
     }
     .day-pill.active {
       background: var(--accent);
-      color: #fff;
+      color: var(--accent-fg);
       border-color: transparent;
     }
 
+    /* ================= МОДАЛЬНЫЕ ШТОРКИ (APPLE SHEET STYLE) ================= */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.62);
       z-index: 300;
       display: none;
       align-items: flex-end;
       justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
     }
-    .modal-backdrop.active { display: flex; }
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
     .modal-sheet {
       background: var(--bg-surface);
-      border-top: 1px solid var(--border-accent);
-      border-radius: 20px 20px 0 0;
-      padding: 18px 16px 26px;
+      border-top: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 12px 16px calc(24px + env(safe-area-inset-bottom, 0px));
       width: 100%;
       max-width: 580px;
-      max-height: 90vh;
+      max-height: 88vh;
       overflow-y: auto;
-      animation: slideUp 0.2s ease-out;
+      animation: sheetUp 0.24s var(--ease-out) both;
+      will-change: transform;
     }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-sheet::before {
+      content: "";
+      display: block;
+      width: 36px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--border-strong);
+      margin: 0 auto 12px;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(36px); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
 
     #onboardingOverlay {
       position: fixed;
       inset: 0;
-      background: rgba(7, 10, 18, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(5, 7, 12, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       z-index: 500;
       display: none;
       align-items: center;
@@ -552,35 +661,40 @@
       padding: 16px;
     }
     #onboardingOverlay.active { display: flex; }
+
     .onboard-box {
       background: var(--bg-surface);
-      border: 1px solid var(--border-accent);
-      border-radius: 20px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
       padding: 18px 16px;
       width: 100%;
       max-width: 420px;
       max-height: 90vh;
       overflow-y: auto;
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.55);
+      animation: paneEnter 0.22s var(--ease-out) both;
     }
 
+    /* ================= ПЛАВАЮЩАЯ НАВИГАЦИЯ (DOCK) ================= */
     nav.floating-dock {
       position: fixed;
-      bottom: 10px;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
       left: 12px;
       right: 12px;
       max-width: 560px;
       margin: 0 auto;
-      background: rgba(19, 27, 46, 0.94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--bg-dock);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       padding: 4px;
       z-index: 100;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-dock);
     }
+
     .dock-btn {
       background: transparent;
       color: var(--text-muted);
@@ -588,53 +702,71 @@
       flex-direction: column;
       align-items: center;
       gap: 2px;
-      font-size: 0.62rem;
+      font-size: 0.61rem;
       font-weight: 600;
       padding: 6px 2px;
-      border-radius: 12px;
+      border-radius: 13px;
     }
-    .dock-btn .ico { font-size: 1.05rem; }
-    .dock-btn.active { color: #fff; background: var(--accent); }
+    .dock-btn .ico { font-size: 1.04rem; line-height: 1.1; }
+    .dock-btn.active {
+      color: var(--accent-fg);
+      background: var(--accent);
+      box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 42%, transparent);
+    }
     .dock-btn.parry-dock-btn.active {
-      background: #ff2a5f !important;
-      color: #fff !important;
-      box-shadow: 0 0 12px rgba(255, 42, 95, 0.6);
+      background: #ff2a5f;
+      color: #ffffff;
+      box-shadow: 0 2px 12px rgba(255, 42, 95, 0.45);
     }
 
+    /* ================= TOAST ================= */
     #toast {
       position: fixed;
-      bottom: 82px;
+      bottom: calc(82px + env(safe-area-inset-bottom, 0px));
       left: 50%;
-      transform: translateX(-50%) translateY(15px);
+      transform: translateX(-50%) translateY(14px);
       background: var(--bg-elevated);
-      border: 1px solid var(--border-accent);
-      color: #fff;
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
       padding: 9px 16px;
       border-radius: 99px;
-      font-size: 0.8rem;
+      font-size: 0.79rem;
       font-weight: 600;
       opacity: 0;
       pointer-events: none;
-      transition: 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.22s var(--ease-out);
       z-index: 600;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
       white-space: nowrap;
       max-width: 90vw;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
+    /* ================= ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ ================= */
     .empty-box {
       text-align: center;
-      padding: 18px 12px;
+      padding: 20px 12px;
       color: var(--text-muted);
       font-size: 0.8rem;
       background: var(--bg-glass);
       border-radius: var(--radius-md);
-      border: 1px dashed var(--border);
+      border: 1px dashed var(--border-strong);
     }
-    .preview-img { max-width: 100%; max-height: 160px; border-radius: 10px; margin-top: 8px; object-fit: cover; display: block; }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 10px;
+      margin-top: 8px;
+      object-fit: cover;
+      display: block;
+    }
+
     .chip-template {
       background: var(--accent-soft);
       border: 1px solid var(--border-accent);
@@ -642,10 +774,12 @@
       padding: 4px 9px;
       border-radius: 8px;
       font-size: 0.72rem;
+      font-weight: 500;
       cursor: pointer;
       display: inline-block;
       margin: 2px 4px 2px 0;
     }
+
     .link-box {
       background: var(--bg-main);
       border: 1px solid var(--border);
@@ -653,16 +787,18 @@
       padding: 10px;
       margin-bottom: 8px;
     }
+
     .link-url {
-      font-family: monospace;
-      font-size: 0.72rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
       color: #a5b4fc;
       word-break: break-all;
-      margin: 4px 0 8px;
+      margin: 5px 0 8px;
       padding: 6px 8px;
-      background: rgba(255,255,255,0.03);
+      background: var(--bg-glass);
       border-radius: 6px;
     }
+
     .group-chip-btn {
       background: var(--bg-elevated);
       border: 1px solid var(--border);
@@ -681,6 +817,7 @@
       border-color: var(--accent);
       background: var(--accent-soft);
     }
+
     .theme-dots {
       display: flex;
       gap: 5px;
@@ -690,14 +827,26 @@
       border-radius: 99px;
       border: 1px solid var(--border);
     }
-    .theme-dot { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-    .theme-dot.active { border-color: #fff; transform: scale(1.15); }
+    .theme-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s var(--ease-spring), border-color 0.15s ease;
+    }
+    .theme-dot.active {
+      border-color: var(--text-main);
+      transform: scale(1.18);
+    }
+
     details.clean-collapse {
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 11px 14px;
       margin-bottom: 10px;
+      box-shadow: var(--shadow-card);
     }
     details.clean-collapse summary {
       cursor: pointer;
@@ -710,166 +859,253 @@
     }
     details.clean-collapse summary::-webkit-details-marker { display: none; }
 
-    /* ================= СТИЛИ МОДУЛЯ PARRY (NEO-BRUTALIST CYBER-ARCADE) ================= */
+    /* ================= МОДУЛЬ PARRY (CLEAN TACTICAL ARCADE — GPU OPTIMIZED) ================= */
     .parry-arena-wrap {
-      background: #08080c;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #ff2a5f;
-      border-radius: 14px;
+      background: #0a0a0f;
+      border: 1px solid rgba(255, 42, 95, 0.35);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-lg);
       padding: 14px;
       color: #f8fafc;
-      font-family: 'Onest', sans-serif;
       position: relative;
       overflow: hidden;
+      will-change: transform;
     }
+
     .parry-shake {
-      animation: parryScreenShake 0.36s cubic-bezier(.36,.07,.19,.97) both;
+      animation: parryScreenShake 0.32s cubic-bezier(.36, .07, .19, .97) both;
     }
     @keyframes parryScreenShake {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-6px, 4px); }
-      40% { transform: translate(6px, -4px); }
-      60% { transform: translate(-4px, -3px); }
-      80% { transform: translate(4px, 3px); }
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      20% { transform: translate3d(-5px, 3px, 0); }
+      40% { transform: translate3d(5px, -3px, 0); }
+      60% { transform: translate3d(-3px, -2px, 0); }
+      80% { transform: translate3d(3px, 2px, 0); }
     }
+
     .parry-title-font {
-      font-family: 'Unbounded', sans-serif;
+      font-family: "Unbounded", "Inter", sans-serif;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
     }
+
     .parry-mono-font {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: "JetBrains Mono", monospace;
+      font-variant-numeric: tabular-nums;
     }
-    .parry-hud-grid {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 8px;
+
+    /* Индикатор статуса соединения Parry */
+    .parry-conn-pill {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 12px;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      font-family: "JetBrains Mono", monospace;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
     }
-    .parry-fighter-box {
-      background: #11111a;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0px #38bdf8;
-      padding: 8px;
-      border-radius: 10px;
+    .parry-conn-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #64748b;
+      flex-shrink: 0;
     }
-    .parry-fighter-box.enemy {
-      box-shadow: 3px 3px 0px #ff2a5f;
-      text-align: right;
+    .parry-conn-pill.conn-online {
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.12);
     }
-    .parry-hp-track {
-      width: 100%;
-      height: 12px;
-      background: #000;
-      border: 2px solid #000;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 5px;
-    }
-    .parry-hp-fill {
-      height: 100%;
+    .parry-conn-pill.conn-online .parry-conn-dot {
       background: #22c55e;
-      transition: width 0.25s ease;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
     }
-    .parry-hp-fill.enemy {
-      background: #ff2a5f;
+    .parry-conn-pill.conn-reconnecting {
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.38);
+      background: rgba(245, 158, 11, 0.12);
     }
+    .parry-conn-pill.conn-reconnecting .parry-conn-dot {
+      background: #f59e0b;
+      animation: pulseDot 1s ease-in-out infinite;
+    }
+    .parry-conn-pill.conn-polling {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.38);
+      background: rgba(56, 189, 248, 0.12);
+    }
+    .parry-conn-pill.conn-polling .parry-conn-dot {
+      background: #38bdf8;
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+    .parry-conn-pill.conn-offline {
+      color: #fb7185;
+      border-color: rgba(244, 63, 94, 0.38);
+      background: rgba(244, 63, 94, 0.12);
+    }
+    .parry-conn-pill.conn-offline .parry-conn-dot {
+      background: #f43f5e;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
     .parry-symbiosis-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
-      background: #11111a;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0px #38bdf8;
-      padding: 7px 10px;
-      border-radius: 8px;
-      margin-bottom: 12px;
+      background: #12121a;
+      border: 1px solid rgba(56, 189, 248, 0.26);
+      padding: 8px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
       font-size: 0.72rem;
     }
+
+    .parry-hud-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 11px;
+    }
+
+    .parry-fighter-box {
+      background: #12121a;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 8px 9px;
+      border-radius: 10px;
+    }
+    .parry-fighter-box.enemy {
+      border-color: rgba(255, 42, 95, 0.32);
+      text-align: right;
+    }
+
+    .parry-hp-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .parry-hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      border-radius: 99px;
+      transition: width 0.24s var(--ease-out);
+      will-change: width;
+    }
+    .parry-hp-fill.enemy {
+      background: linear-gradient(90deg, #ff2a5f, #fb7185);
+    }
+
     .parry-lane {
       position: relative;
-      height: 54px;
-      background: repeating-linear-gradient(90deg, #0d0d14 0px, #0d0d14 18px, #13131f 18px, #13131f 36px);
-      border: 2px solid #000;
-      border-radius: 8px;
-      margin-bottom: 12px;
+      height: 50px;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.06), rgba(255, 255, 255, 0.02) 50%, rgba(255, 42, 95, 0.06));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      margin-bottom: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0 10px;
+      text-align: center;
       overflow: hidden;
     }
+
     .parry-projectile {
       position: absolute;
-      padding: 5px 12px;
+      left: 0;
+      padding: 5px 11px;
       background: #ff2a5f;
       color: #fff;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 900;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0px #000;
-      border-radius: 6px;
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      border-radius: 7px;
+      box-shadow: 0 4px 14px rgba(255, 42, 95, 0.45);
       display: none;
       white-space: nowrap;
       z-index: 5;
+      will-change: transform;
     }
     .parry-projectile.fly-right {
       display: inline-block;
-      animation: flyToOpponent 0.42s linear forwards;
+      animation: flyToOpponent 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     .parry-projectile.fly-left {
       display: inline-block;
       background: #38bdf8;
       color: #08080c;
-      animation: flyToMe 0.42s linear forwards;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.45);
+      animation: flyToMe 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
     @keyframes flyToOpponent {
-      0% { left: 6%; transform: scale(0.9); }
-      100% { left: 72%; transform: scale(1.1); }
+      0% { transform: translate3d(12px, 0, 0) scale(0.92); }
+      100% { transform: translate3d(calc(100vw - 190px), 0, 0) scale(1.06); }
     }
     @keyframes flyToMe {
-      0% { left: 72%; transform: scale(0.9); }
-      100% { left: 6%; transform: scale(1.15); }
+      0% { transform: translate3d(calc(100vw - 190px), 0, 0) scale(0.92); }
+      100% { transform: translate3d(12px, 0, 0) scale(1.08); }
     }
+    @media (min-width: 560px) {
+      @keyframes flyToOpponent {
+        0% { transform: translate3d(16px, 0, 0) scale(0.92); }
+        100% { transform: translate3d(330px, 0, 0) scale(1.06); }
+      }
+      @keyframes flyToMe {
+        0% { transform: translate3d(330px, 0, 0) scale(0.92); }
+        100% { transform: translate3d(16px, 0, 0) scale(1.08); }
+      }
+    }
+
     .parry-q-box {
-      background: #141421;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #38bdf8;
-      border-radius: 10px;
+      background: #13131d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       padding: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
+
     .parry-btn {
       width: 100%;
       text-align: left;
-      background: #1c1c2e;
+      justify-content: flex-start;
+      background: #171724;
       color: #f8fafc;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #ff2a5f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
       padding: 11px 12px;
-      margin-bottom: 8px;
-      font-family: 'Onest', sans-serif;
-      font-weight: 700;
+      margin-bottom: 7px;
+      font-weight: 600;
       font-size: 0.84rem;
-      transition: transform 0.08s, box-shadow 0.08s;
+      transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
     }
     .parry-btn:active {
-      transform: translate(2px, 2px) !important;
-      box-shadow: 2px 2px 0px #ff2a5f !important;
+      transform: scale(0.98);
+      border-color: #ff2a5f;
+      background: #1f1a28;
     }
     .parry-btn:disabled {
       opacity: 0.45;
       pointer-events: none;
     }
+
     .parry-blitz-overlay {
       display: none;
-      background: rgba(8, 8, 12, 0.96);
-      border: 2px solid #ff2a5f;
-      box-shadow: 0 0 25px rgba(255, 42, 95, 0.45);
+      background: #100e17;
+      border: 1.5px solid #ff2a5f;
+      box-shadow: 0 0 24px rgba(255, 42, 95, 0.28);
       border-radius: 12px;
       padding: 14px;
       margin-top: 8px;
@@ -877,7 +1113,7 @@
     }
     .parry-blitz-overlay.active {
       display: block;
-      animation: fadeIn 0.12s ease;
+      animation: paneEnter 0.16s var(--ease-out) both;
     }
     .parry-blitz-btn-row {
       display: grid;
@@ -887,21 +1123,26 @@
     }
     .parry-btn-true {
       background: #22c55e;
-      color: #08080c;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #000;
-      font-family: 'Unbounded', sans-serif;
-      font-weight: 900;
+      color: #052e16;
+      border: none;
+      font-family: "Unbounded", sans-serif;
+      font-weight: 800;
       justify-content: center;
     }
     .parry-btn-false {
       background: #ff2a5f;
-      color: #fff;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #000;
-      font-family: 'Unbounded', sans-serif;
-      font-weight: 900;
+      color: #ffffff;
+      border: none;
+      font-family: "Unbounded", sans-serif;
+      font-weight: 800;
       justify-content: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -912,13 +1153,13 @@
     <div class="onboard-box">
       <div class="between" style="margin-bottom: 12px;">
         <div class="row">
-          <div class="brand-logo" style="width:32px; height:32px; font-size:1rem;">🏛️</div>
+          <div class="brand-logo" style="width:32px; height:32px; font-size:0.95rem;">🏛️</div>
           <div>
-            <div style="font-size:1rem; font-weight:800;">Группы НГИЭУ</div>
+            <div style="font-size:0.98rem; font-weight:800; letter-spacing:-0.02em;">Группы НГИЭУ</div>
             <div style="font-size:0.7rem; color:var(--text-muted);">Выберите группу или войдите как староста</div>
           </div>
         </div>
-        <button type="button" class="btn-glass btn-sm" onclick="closeGroupSwitcher()">✕ Отмена</button>
+        <button type="button" class="btn-glass btn-sm" onclick="closeGroupSwitcher()">✕</button>
       </div>
 
       <div class="pill-group">
@@ -932,7 +1173,7 @@
           <option value="">Загрузка групп НГИЭУ...</option>
         </select>
 
-        <div id="obExistingGroupsList" style="margin-bottom:12px; max-height:130px; overflow-y:auto; padding:8px; background:var(--bg-main); border-radius:var(--radius-md); border:1px solid var(--border); text-align:center;">
+        <div id="obExistingGroupsList" style="margin-bottom:12px; max-height:132px; overflow-y:auto; padding:8px; background:var(--bg-main); border-radius:var(--radius-md); border:1px solid var(--border); text-align:center;">
           <span style="font-size:0.75rem; color:var(--text-muted);">Синхронизация списка групп...</span>
         </div>
 
@@ -960,7 +1201,7 @@
           <label class="field-lbl">ВАШЕ ФИО (СТАРОСТА)</label>
           <input type="text" id="obLeaderName" placeholder="Например: Гафуров Аяз">
 
-          <label class="field-lbl" style="color:#fbbf24;">🛡️ МАСТЕР-ПАРОЛЬ СТАРОСТАТА (ЗАЩИТА ОТ ОБУЗА) *</label>
+          <label class="field-lbl" style="color:var(--warning);">🛡️ МАСТЕР-ПАРОЛЬ СТАРОСТАТА *</label>
           <input type="password" id="obMasterPassword" placeholder="Пароль для регистрации новой группы">
         </div>
 
@@ -990,12 +1231,12 @@
   <div id="timezoneModal" class="modal-backdrop" onclick="if(event.target===this) closeTimezoneModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
-        <div style="font-weight:800; font-size:1rem;">🕒 Часовой пояс расписания</div>
+        <div style="font-weight:800; font-size:1rem; letter-spacing:-0.02em;">🕒 Часовой пояс расписания</div>
         <button type="button" class="btn-glass btn-sm" onclick="closeTimezoneModal()">✕ Закрыть</button>
       </div>
 
       <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:12px;">
-        Базовое расписание в НГИЭУ хранится по Москве (МСК / UTC+3). Выберите подходящий режим для автоматической адаптации звонков, активных пар и таймеров:
+        Базовое расписание в НГИЭУ хранится по Москве (МСК / UTC+3). Выберите режим для автоматической адаптации звонков, активных пар, дат и модуля Parry:
       </p>
 
       <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
@@ -1027,7 +1268,7 @@
       <label class="field-lbl">РУЧНОЙ ВЫБОР СМЕЩЕНИЯ ОТНОСИТЕЛЬНО МСК:</label>
       <div class="pill-group" style="margin-bottom:14px;">
         <button type="button" id="tzBtnMinus1" onclick="applyTimezoneOffset(-1, 'custom')">-1 ч</button>
-        <button type="button" id="tzBtn0" onclick="applyTimezoneOffset(0, 'custom')">0 ч (МСК)</button>
+        <button type="button" id="tzBtn0" onclick="applyTimezoneOffset(0, 'custom')">0 ч</button>
         <button type="button" id="tzBtnPlus1" onclick="applyTimezoneOffset(1, 'custom')">+1 ч</button>
         <button type="button" id="tzBtnPlus2" onclick="applyTimezoneOffset(2, 'custom')">+2 ч</button>
         <button type="button" id="tzBtnPlus3" onclick="applyTimezoneOffset(3, 'custom')">+3 ч</button>
@@ -1044,8 +1285,8 @@
   <div id="cloudModal" class="modal-backdrop" onclick="if(event.target===this) closeCloudModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
-        <div style="font-weight:800; font-size:1rem;">🔗 Ссылки и синхронизация НГИЭУ</div>
-        <button class="btn-glass btn-sm" onclick="closeCloudModal()">✕ Закрыть</button>
+        <div style="font-weight:800; font-size:1rem; letter-spacing:-0.02em;">🔗 Ссылки и синхронизация НГИЭУ</div>
+        <button type="button" class="btn-glass btn-sm" onclick="closeCloudModal()">✕ Закрыть</button>
       </div>
 
       <div class="link-box">
@@ -1077,13 +1318,13 @@
         </div>
       </div>
 
-      <div style="margin-bottom:12px; padding:10px; border-radius:var(--radius-md); background:var(--accent-soft); border:1px solid var(--border-accent);">
+      <div style="margin-bottom:12px; padding:11px; border-radius:var(--radius-md); background:var(--accent-soft); border:1px solid var(--border-accent);">
         <div class="between" style="margin-bottom:4px;">
-          <span style="font-weight:700; font-size:0.84rem; color:#fff;">⚡ Онлайн расписание НГИЭУ</span>
+          <span style="font-weight:700; font-size:0.84rem;">⚡ Онлайн расписание НГИЭУ</span>
           <span class="badge badge-accent">groupId: <span id="ngieuGrpIdDisplay">93</span></span>
         </div>
         <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">
-          Автоматически загружает пары, кабинеты, преподавателей и оперативные замены напрямую из официального сервиса НГИЭУ.
+          Автоматически загружает пары, кабинеты, преподавателей и оперативные замены напрямую из официального сервиса НГИЭУ, сохраняя ваши заметки к парам.
         </p>
         <button type="button" class="btn-grad btn-block" onclick="syncScheduleFromNgieuApi(true)">
           🔄 Загрузить расписание из НГИЭУ сейчас
@@ -1091,8 +1332,8 @@
       </div>
 
       <div class="row" style="margin-bottom:10px;">
-        <button class="btn-glass btn-block" onclick="pullFromCloud(true)">⬇ Загрузить из базы</button>
-        <button class="btn-accent-outline btn-block" onclick="pushToCloud(true)">⬆ Сохранить в базе</button>
+        <button type="button" class="btn-glass btn-block" onclick="pullFromCloud(true)">⬇ Загрузить из базы</button>
+        <button type="button" class="btn-accent-outline btn-block" onclick="pushToCloud(true)">⬆ Сохранить в базе</button>
       </div>
 
       <details style="margin-bottom:12px; font-size:0.76rem; color:var(--text-muted);">
@@ -1115,7 +1356,7 @@
           <label class="field-lbl">BOT TOKEN</label>
           <input type="password" id="cfgBotToken">
 
-          <div style="margin-top:10px; padding:10px; border-radius:var(--radius-md); background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.25);">
+          <div style="margin-top:10px; padding:10px; border-radius:var(--radius-md); background:var(--danger-soft); border:1px solid rgba(244,63,94,0.25);">
             <div style="font-weight:700; color:#fb7185; margin-bottom:4px;">🗑️ Удаление группы из базы НГИЭУ</div>
             <p style="font-size:0.72rem; margin-bottom:8px;">Требуется ввод мастер-пароля старостата.</p>
             <button type="button" class="btn-danger btn-sm btn-block" onclick="deleteCurrentGroupFromCloud()">Удалить группу «<span id="delGroupBtnName"></span>»</button>
@@ -1124,8 +1365,8 @@
       </details>
 
       <div class="row">
-        <button class="btn-glass btn-block" onclick="closeCloudModal()">Отмена</button>
-        <button class="btn-grad btn-block" onclick="saveCloudConfigModal()">💾 Сохранить</button>
+        <button type="button" class="btn-glass btn-block" onclick="closeCloudModal()">Отмена</button>
+        <button type="button" class="btn-grad btn-block" onclick="saveCloudConfigModal()">💾 Сохранить</button>
       </div>
     </div>
   </div>
@@ -1135,15 +1376,15 @@
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
         <div style="font-weight:800; font-size:1rem;">🔐 Вход для Старосты</div>
-        <button class="btn-glass btn-sm" onclick="closeUnlockAdminModal()">✕ Отмена</button>
+        <button type="button" class="btn-glass btn-sm" onclick="closeUnlockAdminModal()">✕ Отмена</button>
       </div>
       <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
         Введите секретный ключ старосты группы <b><span id="unlockModalGrpName"></span></b>:
       </p>
       <input type="password" id="unlockSecretInput" placeholder="Секретный ключ группы">
       <div class="row">
-        <button class="btn-glass btn-block" onclick="closeUnlockAdminModal()">Отмена</button>
-        <button class="btn-grad btn-block" onclick="submitUnlockSecret()">👑 Войти</button>
+        <button type="button" class="btn-glass btn-block" onclick="closeUnlockAdminModal()">Отмена</button>
+        <button type="button" class="btn-grad btn-block" onclick="submitUnlockSecret()">👑 Войти</button>
       </div>
     </div>
   </div>
@@ -1152,8 +1393,8 @@
   <div id="classNoteModal" class="modal-backdrop" onclick="if(event.target===this) closeClassNoteModal()">
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
-        <div style="font-weight:800; font-size:0.98rem;" id="cnModalTitle">💬 Заметка к паре</div>
-        <button class="btn-glass btn-sm" onclick="closeClassNoteModal()">✕ Отмена</button>
+        <div style="font-weight:800; font-size:0.96rem;" id="cnModalTitle">💬 Заметка к паре</div>
+        <button type="button" class="btn-glass btn-sm" onclick="closeClassNoteModal()">✕ Отмена</button>
       </div>
       <textarea id="cnModalTextarea" rows="3" placeholder="Тема занятия, что принести, кабинет переноса..."></textarea>
       <div style="margin-bottom:12px;">
@@ -1162,8 +1403,8 @@
         <span class="chip-template" onclick="appendToId('cnModalTextarea', 'Взять ноутбуки. ')">💻 Ноутбуки</span>
       </div>
       <div class="row">
-        <button class="btn-glass btn-block" onclick="closeClassNoteModal()">Отмена</button>
-        <button class="btn-grad btn-block" onclick="saveClassNoteModal()">Сохранить</button>
+        <button type="button" class="btn-glass btn-block" onclick="closeClassNoteModal()">Отмена</button>
+        <button type="button" class="btn-grad btn-block" onclick="saveClassNoteModal()">Сохранить</button>
       </div>
     </div>
   </div>
@@ -1173,7 +1414,7 @@
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:10px;">
         <div style="font-weight:800; font-size:0.98rem;">📚 Домашнее задание</div>
-        <button class="btn-glass btn-sm" onclick="closeHwModal()">✕ Отмена</button>
+        <button type="button" class="btn-glass btn-sm" onclick="closeHwModal()">✕ Отмена</button>
       </div>
 
       <label class="field-lbl">ПРЕДМЕТ</label>
@@ -1195,8 +1436,8 @@
       </div>
 
       <div class="row">
-        <button class="btn-grad btn-block" onclick="saveHomeworkItem(false)">✅ Сохранить</button>
-        <button class="btn-accent-outline btn-block" onclick="saveHomeworkItem(true)">📢 + В чат</button>
+        <button type="button" class="btn-grad btn-block" onclick="saveHomeworkItem(false)">✅ Сохранить</button>
+        <button type="button" class="btn-accent-outline btn-block" onclick="saveHomeworkItem(true)">📢 + В чат</button>
       </div>
     </div>
   </div>
@@ -1206,7 +1447,7 @@
     <div class="modal-sheet">
       <div class="between" style="margin-bottom:12px;">
         <div style="font-weight:800; font-size:0.98rem;">👤 Карточка одногруппника</div>
-        <button class="btn-glass btn-sm" onclick="closeStuEditModal()">✕ Отмена</button>
+        <button type="button" class="btn-glass btn-sm" onclick="closeStuEditModal()">✕ Отмена</button>
       </div>
 
       <label class="field-lbl">ФИО СТУДЕНТА</label>
@@ -1248,8 +1489,8 @@
       </div>
 
       <div class="row">
-        <button class="btn-glass btn-block" onclick="closeStuEditModal()">Отмена</button>
-        <button class="btn-grad btn-block" onclick="saveStudentEdits()">💾 Сохранить</button>
+        <button type="button" class="btn-glass btn-block" onclick="closeStuEditModal()">Отмена</button>
+        <button type="button" class="btn-grad btn-block" onclick="saveStudentEdits()">💾 Сохранить</button>
       </div>
     </div>
   </div>
@@ -1269,13 +1510,14 @@
       </div>
 
       <div class="hdr-actions">
-        <button class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Ссылки и синхронизация">🔗</button>
+        <button type="button" class="btn-glass btn-sm" onclick="handleCloudBtnClick()" title="Ссылки и синхронизация">🔗</button>
         <div class="theme-dots" title="Выбор темы оформления">
+          <div class="theme-dot" data-t="tg" style="background:linear-gradient(135deg,#2aabee,#229ed9);" onclick="setTheme('tg')" title="Тема Telegram"></div>
           <div class="theme-dot active" data-t="indigo" style="background:#6366f1;" onclick="setTheme('indigo')" title="Indigo"></div>
           <div class="theme-dot" data-t="emerald" style="background:#10b981;" onclick="setTheme('emerald')" title="Emerald"></div>
           <div class="theme-dot" data-t="sunset" style="background:#f97316;" onclick="setTheme('sunset')" title="Sunset"></div>
           <div class="theme-dot" data-t="crimson" style="background:#f43f5e;" onclick="setTheme('crimson')" title="Crimson"></div>
-          <div class="theme-dot" data-t="cyber" style="background:#ff2a5f; box-shadow:0 0 6px rgba(255,42,95,0.7);" onclick="setTheme('cyber')" title="Neo-Brutalist Cyber"></div>
+          <div class="theme-dot" data-t="cyber" style="background:#ff2a5f;" onclick="setTheme('cyber')" title="Cyber"></div>
         </div>
       </div>
     </div>
@@ -1289,16 +1531,16 @@
       <button type="button" class="badge badge-accent" id="btnTimezoneBadge" onclick="openTimezoneModal()" style="cursor:pointer; padding:3px 8px; font-size:0.68rem;" title="Сменить часовой пояс расписания">
         🕒 <span id="lblActiveTz">МСК+2</span>
       </button>
-      <button class="btn-accent-outline btn-sm" style="padding:3px 8px; font-size:0.68rem;" onclick="syncScheduleFromNgieuApi(true)">
-        🔄 Синхр. с НГИЭУ
+      <button type="button" class="btn-accent-outline btn-sm" style="padding:3px 8px; font-size:0.68rem;" onclick="syncScheduleFromNgieuApi(true)">
+        🔄 НГИЭУ
       </button>
     </div>
     <div class="row" style="gap:6px;">
-      <button class="btn-glass btn-sm" id="btnPreviewStudent" style="display:none; padding:4px 8px; font-size:0.7rem;" onclick="togglePreviewAsStudent()">
+      <button type="button" class="btn-glass btn-sm" id="btnPreviewStudent" style="display:none; padding:4px 8px; font-size:0.7rem;" onclick="togglePreviewAsStudent()">
         👁️ Вид студента
       </button>
-      <button class="btn-glass btn-sm" style="padding:4px 8px; font-size:0.7rem;" onclick="openGroupSwitcher()">
-        🔄 Сменить группу
+      <button type="button" class="btn-glass btn-sm" style="padding:4px 8px; font-size:0.7rem;" onclick="openGroupSwitcher()">
+        🔄 Группа
       </button>
     </div>
   </div>
@@ -1309,10 +1551,10 @@
       <div class="card card-hero">
         <div class="between">
           <span class="badge badge-accent">⏱️ Расписание пар НГИЭУ</span>
-          <span style="font-size:0.84rem; font-weight:800;" id="liveClockText">00:00</span>
+          <span class="mono" style="font-size:0.86rem; font-weight:700; letter-spacing:0.02em;" id="liveClockText">00:00:00</span>
         </div>
-        <div style="font-size:1.05rem; font-weight:800; margin-top:8px;" id="liveClassStatus">Сверка расписания...</div>
-        <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;" id="liveClassSub">Синхронизировано с базой НГИЭУ</div>
+        <div style="font-size:1.06rem; font-weight:800; letter-spacing:-0.02em; margin-top:8px;" id="liveClassStatus">Сверка расписания...</div>
+        <div style="font-size:0.76rem; color:var(--text-muted); margin-top:3px;" id="liveClassSub">Синхронизировано с базой НГИЭУ</div>
         <div class="progress-track">
           <div class="progress-fill" id="liveClassProgress" style="width: 0%;"></div>
         </div>
@@ -1341,13 +1583,13 @@
 
       <div class="section-head">
         <span>🔥 Ближайшие домашние задания</span>
-        <button class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', null, null)">+ ДЗ</button>
+        <button type="button" class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', null, null)">+ ДЗ</button>
       </div>
       <div id="dashHomeworkBox"></div>
 
       <div class="section-head">
         <span>🎂 Ближайшие дни рождения</span>
-        <button class="btn-glass btn-sm" onclick="openTab('vault', document.querySelectorAll('.dock-btn')[4]); switchVaultSub('group');">Все →</button>
+        <button type="button" class="btn-glass btn-sm" onclick="openTab('vault', document.querySelectorAll('.dock-btn')[4]); switchVaultSub('group');">Все →</button>
       </div>
       <div id="dashBirthdaysBox"></div>
 
@@ -1381,20 +1623,20 @@
 
         <div id="journalSubgroupFilterBox" style="display:none; margin-top:6px; margin-bottom:8px;">
           <div class="pill-group" style="margin-bottom:0;">
-            <button class="active" id="subFilterAll" onclick="setSubgroupFilter('all')">Вся группа</button>
-            <button id="subFilter1" onclick="setSubgroupFilter('1 подгруппа')">1 подгруппа</button>
-            <button id="subFilter2" onclick="setSubgroupFilter('2 подгруппа')">2 подгруппа</button>
+            <button type="button" class="active" id="subFilterAll" onclick="setSubgroupFilter('all')">Вся группа</button>
+            <button type="button" id="subFilter1" onclick="setSubgroupFilter('1 подгруппа')">1 подгруппа</button>
+            <button type="button" id="subFilter2" onclick="setSubgroupFilter('2 подгруппа')">2 подгруппа</button>
           </div>
         </div>
 
         <div class="between" style="flex-wrap:wrap; margin-top:6px;">
           <div class="row">
-            <button class="btn-glass btn-sm admin-only" onclick="markAllHere()">✓ Все здесь</button>
-            <button class="btn-glass btn-sm" id="btnToggleJournalSub" onclick="toggleJournalSubgroupBar()">👥 Подгруппы</button>
+            <button type="button" class="btn-glass btn-sm admin-only" onclick="markAllHere()">✓ Все здесь</button>
+            <button type="button" class="btn-glass btn-sm" id="btnToggleJournalSub" onclick="toggleJournalSubgroupBar()">👥 Подгруппы</button>
           </div>
           <div class="row admin-only">
-            <button class="btn-accent-outline btn-sm" onclick="sendReportToGroupChat()">📢 В чат</button>
-            <button class="btn-grad btn-sm" onclick="shareSmartReport()">📋 Рапортичка</button>
+            <button type="button" class="btn-accent-outline btn-sm" onclick="sendReportToGroupChat()">📢 В чат</button>
+            <button type="button" class="btn-grad btn-sm" onclick="shareSmartReport()">📋 Рапортичка</button>
           </div>
         </div>
       </div>
@@ -1410,10 +1652,10 @@
     <section id="pane-schedule" class="tab-pane">
       <div class="between" style="margin-bottom:8px;">
         <div class="pill-group" style="margin-bottom:0; flex:1;">
-          <button id="btnWeekOdd" class="active" onclick="switchScheduleWeek('odd')">I Неделя (Нечетная)</button>
-          <button id="btnWeekEven" onclick="switchScheduleWeek('even')">II Неделя (Четная)</button>
+          <button type="button" id="btnWeekOdd" class="active" onclick="switchScheduleWeek('odd')">I Неделя (Нечетная)</button>
+          <button type="button" id="btnWeekEven" onclick="switchScheduleWeek('even')">II Неделя (Четная)</button>
         </div>
-        <button class="btn-accent-outline btn-sm" style="margin-left:8px;" onclick="syncScheduleFromNgieuApi(true)" title="Синхронизировать сетку с сервером НГИЭУ">
+        <button type="button" class="btn-accent-outline btn-sm" style="margin-left:8px;" onclick="syncScheduleFromNgieuApi(true)" title="Синхронизировать сетку с сервером НГИЭУ">
           🔄 Обновить
         </button>
       </div>
@@ -1442,13 +1684,13 @@
             <input type="text" id="addSchedTeacher" placeholder="Преподаватель" style="width:58%;">
           </div>
           <input type="text" id="addSchedInitNote" placeholder="Заметка к паре (необязательно)">
-          <button class="btn-grad btn-block" onclick="createScheduleItem()">Сохранить пару</button>
+          <button type="button" class="btn-grad btn-block" onclick="createScheduleItem()">Сохранить пару</button>
         </div>
       </details>
 
       <div class="section-head" style="margin-top:20px;">
         <span>📚 Чек-лист домашних заданий</span>
-        <button class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', state.selectedDay, state.currentWeekType)">+ Новое ДЗ</button>
+        <button type="button" class="btn-accent-outline btn-sm admin-only" onclick="openHwModal('', state.selectedDay, state.currentWeekType)">+ Новое ДЗ</button>
       </div>
       <div id="allHomeworksList"></div>
     </section>
@@ -1456,8 +1698,8 @@
     <!-- ВКЛАДКА 4: КАЗНА И КОМАНДЫ -->
     <section id="pane-lab" class="tab-pane">
       <div class="pill-group">
-        <button id="btnLabMoney" class="active" onclick="switchLabMode('collections')">💰 Казна и Сборы</button>
-        <button id="btnLabTeams" onclick="switchLabMode('teams')">⚡ Генератор команд</button>
+        <button type="button" id="btnLabMoney" class="active" onclick="switchLabMode('collections')">💰 Казна и Сборы</button>
+        <button type="button" id="btnLabTeams" onclick="switchLabMode('teams')">⚡ Генератор команд</button>
       </div>
 
       <div id="labCollectionsView">
@@ -1466,7 +1708,7 @@
           <input type="text" id="colTitle" placeholder="Напр.: Зачетки в деканат / Сбор на мероприятие">
           <div class="row">
             <input type="number" id="colAmount" placeholder="Сумма в ₽ (0 если документы)" style="margin-bottom:0;">
-            <button class="btn-grad" style="white-space:nowrap;" onclick="createCollection()">Создать</button>
+            <button type="button" class="btn-grad" style="white-space:nowrap;" onclick="createCollection()">Создать</button>
           </div>
         </div>
         <div id="collectionsList"></div>
@@ -1485,7 +1727,7 @@
               <option value="4">По 4 человека</option>
               <option value="5">По 5 человек</option>
             </select>
-            <button class="btn-grad" style="white-space:nowrap;" onclick="generateRandomTeams()">Разделить</button>
+            <button type="button" class="btn-grad" style="white-space:nowrap;" onclick="generateRandomTeams()">Разделить</button>
           </div>
         </div>
         <div id="generatedTeamsBox"></div>
@@ -1495,9 +1737,9 @@
     <!-- ВКЛАДКА 5: БАЗА -->
     <section id="pane-vault" class="tab-pane">
       <div class="pill-group">
-        <button id="vBtnGroup" class="active" onclick="switchVaultSub('group')">👥 Группа</button>
-        <button id="vBtnNotes" onclick="switchVaultSub('notes')">📝 Заметки</button>
-        <button id="vBtnFiles" onclick="switchVaultSub('files')">📎 Файлы</button>
+        <button type="button" id="vBtnGroup" class="active" onclick="switchVaultSub('group')">👥 Группа</button>
+        <button type="button" id="vBtnNotes" onclick="switchVaultSub('notes')">📝 Заметки</button>
+        <button type="button" id="vBtnFiles" onclick="switchVaultSub('files')">📎 Файлы</button>
       </div>
 
       <div id="vaultGroupBox">
@@ -1533,19 +1775,19 @@
                 <option value="2 подгруппа">2 подгруппа</option>
               </select>
             </div>
-            <button class="btn-grad btn-block" onclick="addSingleStudent()">Добавить студента</button>
+            <button type="button" class="btn-grad btn-block" onclick="addSingleStudent()">Добавить студента</button>
 
             <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
               <label class="field-lbl">⚡ ИЛИ БЫСТРЫЙ ИМПОРТ СПИСКОМ</label>
               <textarea id="gBulkText" rows="3" placeholder="Иванов Иван&#10;Петров Петр..."></textarea>
-              <button class="btn-glass btn-block" onclick="addBulkStudents()">Загрузить список</button>
+              <button type="button" class="btn-glass btn-block" onclick="addBulkStudents()">Загрузить список</button>
             </div>
           </div>
         </details>
 
         <div class="section-head">
           <span>Состав группы (<span id="gCountLbl">0</span>)</span>
-          <button class="btn-glass btn-sm admin-only" id="btnManageSubgroups" onclick="toggleSubgroupEditMode()">👥 Подгруппы</button>
+          <button type="button" class="btn-glass btn-sm admin-only" id="btnManageSubgroups" onclick="toggleSubgroupEditMode()">👥 Подгруппы</button>
         </div>
         <div id="vaultStudentsList"></div>
 
@@ -1562,8 +1804,8 @@
               Файлы отправляются через <b>@Starostatikabot</b> или скачиваются на устройство.
             </p>
             <div class="row" style="margin-bottom:8px;">
-              <button class="btn-grad btn-block" onclick="exportBackupJSON()">⬇ Бэкап (.json)</button>
-              <button class="btn-accent-outline btn-block" onclick="exportJournalCSV()">📊 Журнал (.csv)</button>
+              <button type="button" class="btn-grad btn-block" onclick="exportBackupJSON()">⬇ Бэкап (.json)</button>
+              <button type="button" class="btn-accent-outline btn-block" onclick="exportJournalCSV()">📊 Журнал (.csv)</button>
             </div>
             <label class="field-lbl">Восстановить из файла .json:</label>
             <input type="file" accept=".json" onchange="importBackupJSON(event)" style="margin-bottom:0;">
@@ -1580,7 +1822,7 @@
             <span class="chip-template" onclick="appendToId('nBody', 'Сдать зачетные книжки в деканат. ')">🪪 Зачетки</span>
             <span class="chip-template" onclick="appendToId('nBody', 'Перенос занятия: ')">🔄 Перенос</span>
           </div>
-          <button class="btn-grad btn-block" onclick="saveNewNote()">Опубликовать заметку</button>
+          <button type="button" class="btn-grad btn-block" onclick="saveNewNote()">Опубликовать заметку</button>
         </div>
         <div id="vaultNotesList"></div>
       </div>
@@ -1591,7 +1833,7 @@
           <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Сохраняются в памяти браузера (IndexedDB).</p>
           <input type="file" id="vaultFileInput" style="padding:7px;">
           <input type="text" id="vaultFileTitle" placeholder="Описание файла (необязательно)">
-          <button class="btn-grad btn-block" onclick="saveFileToDB()">📥 Сохранить</button>
+          <button type="button" class="btn-grad btn-block" onclick="saveFileToDB()">📥 Сохранить</button>
         </div>
         <div id="vaultFilesList"></div>
       </div>
@@ -1600,50 +1842,55 @@
     <!-- ВКЛАДКА 6: ДУЭЛЬНАЯ АРЕНА PARRY -->
     <section id="pane-parry" class="tab-pane">
       <div class="parry-arena-wrap" id="parryArenaRoot">
+        <div class="between" style="margin-bottom:10px; gap:6px; flex-wrap:wrap;">
+          <span class="parry-conn-pill conn-offline" id="parryConnBadge" title="Статус подключения Parry">
+            <span class="parry-conn-dot" id="parryConnDot"></span>
+            <span id="parryConnText">Офлайн • Ожидание</span>
+          </span>
+          <div class="parry-mono-font" style="font-size:0.72rem; color:#94a3b8;">
+            КОМНАТА: <strong style="color:#fff;" id="parryRoomLbl">b26bio_duel</strong>
+            • ELO: <strong style="color:#38bdf8;" id="parryEloLbl">1000</strong>
+          </div>
+        </div>
+
         <div class="parry-symbiosis-bar">
           <div>
-            <span class="parry-title-font" style="color:#38bdf8; font-size:0.7rem;">📚 ДИСЦИПЛИНА:</span>
+            <span class="parry-title-font" style="color:#38bdf8; font-size:0.66rem;">📚 ДИСЦИПЛИНА:</span>
             <strong id="parrySubjLbl">Сверка с расписанием...</strong>
           </div>
-          <div id="parryBuffBadge" class="parry-mono-font" style="color:#22c55e; font-weight:800;">
+          <div id="parryBuffBadge" class="parry-mono-font" style="color:#22c55e; font-weight:700;">
             ✓ БЫЛ: +15% HP | +1 AP
           </div>
         </div>
 
-        <div class="between" style="margin-bottom:10px; gap:6px; flex-wrap:wrap;">
-          <div class="parry-mono-font" style="font-size:0.74rem; color:#94a3b8;">
-            КОМНАТА: <strong style="color:#fff;" id="parryRoomLbl">b26bio_duel</strong>
-            • ELO: <strong style="color:#38bdf8;" id="parryEloLbl">1000</strong>
-          </div>
-          <div class="row">
-            <button type="button" class="btn-sm" style="background:#38bdf8; color:#08080c; border:2px solid #000; font-family:'Unbounded',sans-serif; font-size:0.65rem;" onclick="startParryMatch(false)">
-              🌐 1v1 ОНЛАЙН
-            </button>
-            <button type="button" class="btn-sm" style="background:#ff2a5f; color:#fff; border:2px solid #000; font-family:'Unbounded',sans-serif; font-size:0.65rem;" onclick="startParryMatch(true)">
-              🤖 БОЙ С БОТОМ
-            </button>
-          </div>
+        <div class="row" style="margin-bottom:11px;">
+          <button type="button" class="btn-sm" style="flex:1; background:#38bdf8; color:#08080c; font-family:'Unbounded',sans-serif; font-size:0.64rem;" onclick="startParryMatch(false)">
+            🌐 1v1 ОНЛАЙН
+          </button>
+          <button type="button" class="btn-sm" style="flex:1; background:#ff2a5f; color:#fff; font-family:'Unbounded',sans-serif; font-size:0.64rem;" onclick="startParryMatch(true)">
+            🤖 БОЙ С БОТОМ
+          </button>
         </div>
 
         <div class="parry-hud-grid">
           <div class="parry-fighter-box">
             <div class="between">
-              <span style="font-weight:800; font-size:0.8rem;" id="parryMyName">Вы</span>
-              <span class="parry-mono-font" style="font-size:0.78rem; color:#22c55e;" id="parryMyHpTxt">115/115</span>
+              <span style="font-weight:700; font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="parryMyName">Вы</span>
+              <span class="parry-mono-font" style="font-size:0.74rem; color:#4ade80;" id="parryMyHpTxt">115/115</span>
             </div>
             <div class="parry-hp-track">
               <div class="parry-hp-fill" id="parryMyHpBar" style="width:100%;"></div>
             </div>
           </div>
 
-          <div class="parry-title-font" style="font-size:0.85rem; color:#ff2a5f; text-align:center;">
+          <div class="parry-title-font" style="font-size:0.82rem; color:#ff2a5f; text-align:center;">
             VS<br><span class="parry-mono-font" style="font-size:0.68rem; color:#f8fafc;" id="parryRoundLbl">1/5</span>
           </div>
 
           <div class="parry-fighter-box enemy">
             <div class="between">
-              <span class="parry-mono-font" style="font-size:0.78rem; color:#ff2a5f;" id="parryOppHpTxt">100/100</span>
-              <span style="font-weight:800; font-size:0.8rem;" id="parryOppName">Соперник</span>
+              <span class="parry-mono-font" style="font-size:0.74rem; color:#fb7185;" id="parryOppHpTxt">100/100</span>
+              <span style="font-weight:700; font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="parryOppName">Соперник</span>
             </div>
             <div class="parry-hp-track">
               <div class="parry-hp-fill enemy" id="parryOppHpBar" style="width:100%;"></div>
@@ -1652,7 +1899,7 @@
         </div>
 
         <div class="parry-lane">
-          <span class="parry-mono-font" style="font-size:0.72rem; color:#94a3b8;" id="parryStatusBanner">
+          <span class="parry-mono-font" style="font-size:0.71rem; color:#94a3b8;" id="parryStatusBanner">
             Нажмите «1v1 ОНЛАЙН» или «БОЙ С БОТОМ» для старта
           </span>
           <div id="parryProjectileEl" class="parry-projectile">⚡ АРГУМЕНТ (18 HP)</div>
@@ -1661,10 +1908,10 @@
         <div id="parryMainQuestionArea">
           <div class="parry-q-box">
             <div class="between" style="margin-bottom:6px;">
-              <span class="badge" style="background:#ff2a5f; color:#fff; border:1px solid #000;" id="parryQTopicBadge">ПОДАЧА</span>
+              <span class="badge" style="background:#ff2a5f; color:#fff; border-color:transparent;" id="parryQTopicBadge">ПОДАЧА</span>
               <span class="parry-mono-font" style="font-size:0.72rem; color:#38bdf8;" id="parryMultBadge">УРОН x1 (18 HP)</span>
             </div>
-            <div style="font-weight:700; font-size:0.92rem; line-height:1.35;" id="parryQuestionText">
+            <div style="font-weight:600; font-size:0.9rem; line-height:1.4;" id="parryQuestionText">
               Готовы к интеллектуальной дуэли? Вопросы подстраиваются под текущую пару из расписания НГИЭУ.
             </div>
           </div>
@@ -1672,16 +1919,16 @@
         </div>
 
         <div id="parryBlitzOverlay" class="parry-blitz-overlay">
-          <div class="parry-title-font" style="color:#ff2a5f; font-size:0.95rem;">
+          <div class="parry-title-font" style="color:#ff2a5f; font-size:0.9rem;">
             🛡️ ОКНО ПАРИРОВАНИЯ!
           </div>
-          <div class="parry-mono-font" style="font-size:1.5rem; font-weight:800; color:#f8fafc; margin:4px 0;" id="parryTimerDisplay">
+          <div class="parry-mono-font" style="font-size:1.55rem; font-weight:800; color:#f8fafc; margin:4px 0;" id="parryTimerDisplay">
             3.0s
           </div>
           <div class="parry-hp-track" style="margin-bottom:10px;">
             <div id="parryTimerBar" style="height:100%; width:100%; background:#38bdf8;"></div>
           </div>
-          <div style="font-size:0.88rem; font-weight:700; padding:8px; background:#141421; border:2px solid #000; border-radius:8px;" id="parryBlitzStatement">
+          <div style="font-size:0.86rem; font-weight:600; padding:10px; background:#151521; border:1px solid rgba(255,255,255,0.1); border-radius:8px;" id="parryBlitzStatement">
             Утверждение для парирования...
           </div>
           <div class="parry-blitz-btn-row">
@@ -1696,32 +1943,32 @@
   <div id="toast">Готово</div>
 
   <nav class="floating-dock">
-    <button class="dock-btn active" onclick="openTab('home', this)">
+    <button type="button" class="dock-btn active" data-tab="home" onclick="openTab('home', this)">
       <span class="ico">🏠</span>
       <span>Центр</span>
     </button>
-    <button class="dock-btn" onclick="openTab('journal', this)">
+    <button type="button" class="dock-btn" data-tab="journal" onclick="openTab('journal', this)">
       <span class="ico">☑️</span>
       <span>Журнал</span>
     </button>
-    <button class="dock-btn" onclick="openTab('schedule', this)">
+    <button type="button" class="dock-btn" data-tab="schedule" onclick="openTab('schedule', this)">
       <span class="ico">📅</span>
       <span>Пары и ДЗ</span>
     </button>
-    <button class="dock-btn" onclick="openTab('lab', this)">
+    <button type="button" class="dock-btn" data-tab="lab" onclick="openTab('lab', this)">
       <span class="ico">💎</span>
       <span>Казна</span>
     </button>
-    <button class="dock-btn" onclick="openTab('vault', this)">
+    <button type="button" class="dock-btn" data-tab="vault" onclick="openTab('vault', this)">
       <span class="ico">👥</span>
       <span>Группа</span>
     </button>
-    <button class="dock-btn parry-dock-btn" onclick="openTab('parry', this)">
+    <button type="button" class="dock-btn parry-dock-btn" data-tab="parry" onclick="openTab('parry', this)">
       <span class="ico">⚔️</span>
       <span>Parry</span>
     </button>
   </nav>
-<!-- КОНЕЦ ЧАСТИ 1 --><!-- ЧАСТЬ 2 ИЗ 2: Скрипты, пересчёт часовых поясов, логика тем, базы данных и движок PARRY -->
+<!-- КОНЕЦ ЧАСТИ 1 --><!-- ЧАСТЬ 2 ИЗ 2: Скрипты, таймзоны, исправление нумерации пар, очередь синхронизации и стабильный движок PARRY -->
   <script>
     // ================= 0. КОНФИГУРАЦИЯ И КЛЮЧИ СЕРВЕРОВ =================
     const DEFAULT_CLOUD_CONFIG = {
@@ -1772,6 +2019,17 @@
       offsetHours: 2
     };
 
+    // Очередь и debounce синхронизации с Supabase
+    let cloudPushDebounceTimer = null;
+    let cloudPushInFlight = false;
+    let cloudPushQueued = false;
+    let cloudPushQueuedToast = false;
+    let stateRevision = 0;
+
+    // Таймер живого радара звонков (1 сек)
+    let bellRadarIntervalId = null;
+    const bellDomCache = { clock: '', status: '', sub: '', width: '' };
+
     function cleanSupabaseUrl(rawUrl) {
       if (!rawUrl) return DEFAULT_CLOUD_CONFIG.supabaseUrl;
       return rawUrl.trim().replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
@@ -1821,17 +2079,126 @@
     let editingStudentId = null;
     let editingStudentSubgroup = '';
 
-    function haptic(ms = 10) {
-      if (tgApp && tgApp.HapticFeedback) {
-        try { tgApp.HapticFeedback.impactOccurred('light'); return; } catch (e) {}
-      }
-      if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} }
+    // ================= УТИЛИТЫ БЕЗОПАСНОСТИ, БУФЕРА И HAPTIC =================
+    function esc(s) {
+      if (s === null || s === undefined) return '';
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
     }
 
-    // ================= 1. ЧАСОВЫЕ ПОЯСА И АДАПТАЦИЯ ВРЕМЕНИ =================
+    // Безопасное экранирование строковых аргументов внутри inline onclick="..."
+    function escJsAttr(s) {
+      if (s === null || s === undefined) return '';
+      return String(s)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n')
+        .replace(/<\//g, '<\\/')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function haptic(type = 'light') {
+      if (tgApp && tgApp.HapticFeedback) {
+        try {
+          if (type === 'success' || type === 'warning' || type === 'error') {
+            tgApp.HapticFeedback.notificationOccurred(type);
+            return;
+          }
+          if (type === 'select') {
+            tgApp.HapticFeedback.selectionChanged();
+            return;
+          }
+          const style = (type === 'heavy' || type === 'medium' || type === 'soft' || type === 'rigid')
+            ? type
+            : (typeof type === 'number' && type >= 18 ? 'medium' : 'light');
+          tgApp.HapticFeedback.impactOccurred(style);
+          return;
+        } catch (e) {}
+      }
+      if (navigator.vibrate) {
+        const ms = typeof type === 'number' ? type : (type === 'heavy' ? 24 : (type === 'medium' ? 14 : 8));
+        try { navigator.vibrate(ms); } catch (e) {}
+      }
+    }
+
+    function copyToClipboardSafe(text, successMsg = 'Скопировано в буфер обмена') {
+      if (!text) return Promise.resolve(false);
+      const fallbackCopy = () => {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if (ok) {
+            if (successMsg) toast(successMsg);
+            return true;
+          }
+        } catch (e) {}
+        toast('Не удалось скопировать текст');
+        return false;
+      };
+
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        return navigator.clipboard.writeText(text)
+          .then(() => {
+            if (successMsg) toast(successMsg);
+            return true;
+          })
+          .catch(() => fallbackCopy());
+      }
+      return Promise.resolve(fallbackCopy());
+    }
+
+    // ================= 1. ЧАСОВЫЕ ПОЯСА И ТОЧНЫЙ РАСЧЁТ ДАТ =================
     function getDeviceMskOffsetHours() {
       const deviceUtcOffsetMinutes = -new Date().getTimezoneOffset();
       return Math.round((deviceUtcOffsetMinutes - 180) / 60);
+    }
+
+    // Возвращает компоненты даты/времени строго в выбранном часовом поясе (UTC+3 + offsetHours)
+    function getTzDateParts(dateObj = new Date(), offsetFromMsk = timezoneConfig.offsetHours) {
+      const off = (typeof offsetFromMsk === 'number' && !isNaN(offsetFromMsk)) ? offsetFromMsk : 0;
+      const totalOffsetMin = (3 + off) * 60;
+      const d = new Date(dateObj.getTime() + totalOffsetMin * 60000);
+      const year = d.getUTCFullYear();
+      const month = d.getUTCMonth() + 1;
+      const day = d.getUTCDate();
+      return {
+        year,
+        month,
+        day,
+        dayOfWeek: d.getUTCDay(), // 0 = Вс, 1 = Пн ... 6 = Сб
+        hours: d.getUTCHours(),
+        minutes: d.getUTCMinutes(),
+        seconds: d.getUTCSeconds(),
+        ymd: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        ruDate: `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}.${year}`
+      };
+    }
+
+    function getTzYMD(addDays = 0) {
+      const base = new Date(Date.now() + addDays * 86400000);
+      return getTzDateParts(base).ymd;
+    }
+
+    function diffYmdDays(ymdA, ymdB) {
+      const pA = String(ymdA || '').split('-').map(Number);
+      const pB = String(ymdB || '').split('-').map(Number);
+      if (pA.length !== 3 || pB.length !== 3) return 0;
+      const msA = Date.UTC(pA[0], pA[1] - 1, pA[2]);
+      const msB = Date.UTC(pB[0], pB[1] - 1, pB[2]);
+      return Math.round((msA - msB) / 86400000);
     }
 
     function initUserTimezone() {
@@ -1851,11 +2218,15 @@
 
     function saveTimezoneConfig() {
       localStorage.setItem(TIMEZONE_STORAGE_KEY, JSON.stringify(timezoneConfig));
+      stateRevision++;
       updateTimezoneBadgeUI();
       populateSchedulePairSelect();
       updateLiveBellRadar();
       renderScheduleView();
       refreshDashboard();
+      if (document.getElementById('pane-parry')?.classList.contains('active')) {
+        initParrySymbiosisUI();
+      }
     }
 
     function updateTimezoneBadgeUI() {
@@ -1876,12 +2247,13 @@
     }
 
     function openTimezoneModal() {
-      haptic(8);
+      haptic('light');
       const autoOffset = getDeviceMskOffsetHours();
       const sign = autoOffset >= 0 ? '+' : '';
       const lblAuto = document.getElementById('lblDeviceTzDetected');
       if (lblAuto) {
-        lblAuto.textContent = `Ваше устройство: UTC${autoOffset >= -3 ? '+' + (autoOffset + 3) : autoOffset + 3} (МСК${sign}${autoOffset} ч)`;
+        const utcVal = autoOffset + 3;
+        lblAuto.textContent = `Ваше устройство: UTC${utcVal >= 0 ? '+' + utcVal : utcVal} (МСК${sign}${autoOffset} ч)`;
       }
       updateTimezoneBadgeUI();
       document.getElementById('timezoneModal').classList.add('active');
@@ -1892,7 +2264,7 @@
     }
 
     function applyTimezoneOffset(offset, mode = 'custom') {
-      haptic(10);
+      haptic('select');
       timezoneConfig.offsetHours = offset;
       timezoneConfig.mode = mode;
       saveTimezoneConfig();
@@ -1901,7 +2273,7 @@
     }
 
     function applyAutoTimezone() {
-      haptic(10);
+      haptic('select');
       const autoOffset = getDeviceMskOffsetHours();
       timezoneConfig.offsetHours = autoOffset;
       timezoneConfig.mode = 'auto';
@@ -1968,6 +2340,34 @@
       return 93;
     }
 
+    // Привязка номера пары строго к сетке BASE_BELLS_MSK по time_start (чинит баг 12:05 -> 3 пара)
+    function resolvePairNumByTimeStart(entry) {
+      const rawStart = String(entry.time_start || '').trim();
+      const mTime = rawStart.match(/(\d{1,2}):(\d{2})/);
+      if (mTime) {
+        const startMins = parseInt(mTime[1], 10) * 60 + parseInt(mTime[2], 10);
+        let bestBell = null;
+        let minDiff = Infinity;
+        for (const b of BASE_BELLS_MSK) {
+          const diff = Math.abs(startMins - b.startMin);
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestBell = b;
+          }
+        }
+        if (bestBell && minDiff <= 25) {
+          return String(bestBell.num);
+        }
+      }
+      const matchNum = String(entry.class_hour_name || '').match(/\d+/);
+      return matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
+    }
+
+    function stripAutoChangePrefix(note) {
+      if (!note) return '';
+      return String(note).replace(/^🔄\s*Замена занятия!\s*/i, '').trim();
+    }
+
     async function syncScheduleFromNgieuApi(showNotification = true) {
       const gId = getNgieuGroupId();
       const elGrp = document.getElementById('ngieuGrpIdDisplay');
@@ -1975,15 +2375,11 @@
 
       if (showNotification) toast('⏳ Загрузка расписания НГИЭУ...');
 
-      const now = new Date();
-      const monday = new Date(now);
-      const dayOfWeek = (monday.getDay() + 6) % 7;
-      monday.setDate(monday.getDate() - dayOfWeek - 7);
-      const sunday = new Date(monday);
-      sunday.setDate(sunday.getDate() + 21);
-
-      const dFrom = monday.toISOString().slice(0, 10);
-      const dTo = sunday.toISOString().slice(0, 10);
+      // Расчёт диапазона дат по выбранной таймзоне без UTC-сдвига
+      const tzNow = getTzDateParts();
+      const dayOfWeekMon0 = (tzNow.dayOfWeek + 6) % 7;
+      const dFrom = getTzYMD(-dayOfWeekMon0 - 7);
+      const dTo = getTzYMD(-dayOfWeekMon0 + 14);
       const targetUrl = `https://grkefffovuisfvqgwugj.supabase.co/functions/v1/get-schedule?groupId=${gId}&dateFrom=${dFrom}&dateTo=${dTo}`;
 
       try {
@@ -2001,10 +2397,22 @@
           return;
         }
 
-        const sortedEntries = entries.sort((a, b) => {
+        // Сохраняем пользовательские заметки classNote перед обновлением сетки
+        const existingNotesBySlot = new Map();
+        const existingNotesBySubjectSlot = new Map();
+        (state.schedule || []).forEach(oldItem => {
+          const userNote = stripAutoChangePrefix(oldItem.classNote);
+          if (!userNote) return;
+          const slotKey = `${oldItem.week}_${oldItem.day}_${oldItem.num}`;
+          existingNotesBySlot.set(slotKey, userNote);
+          const subjKey = `${slotKey}_${String(oldItem.subject || '').trim().toLowerCase()}`;
+          existingNotesBySubjectSlot.set(subjKey, userNote);
+        });
+
+        const sortedEntries = entries.slice().sort((a, b) => {
           const aIsChange = (a.source_kind === 'change' || a.occurrence_status === 'SUCCESSOR' || a.occurrence_status === 'ADDED');
           const bIsChange = (b.source_kind === 'change' || b.occurrence_status === 'SUCCESSOR' || b.occurrence_status === 'ADDED');
-          return aIsChange - bIsChange;
+          return Number(aIsChange) - Number(bIsChange);
         });
 
         const scheduleMap = new Map();
@@ -2016,10 +2424,10 @@
           const dayCode = DAY_NAME_MAP[wDayName] || 'ПН';
 
           const tag = (entry.template_tag_code || entry.template_tag_name || '').toLowerCase();
-          let weekType = (tag.includes('down') || tag.includes('ii') || tag.includes('нижн')) ? 'even' : 'odd';
+          const weekType = (tag.includes('down') || tag.includes('ii') || tag.includes('нижн')) ? 'even' : 'odd';
 
-          const matchNum = (entry.class_hour_name || '').match(/\d+/);
-          const num = matchNum ? matchNum[0] : String(entry.class_hour_id || '1');
+          // Точный номер пары по BASE_BELLS_MSK
+          const num = resolvePairNumByTimeStart(entry);
 
           let type = 'Лекция';
           const typeName = (entry.subject_type_name || '').toLowerCase();
@@ -2028,20 +2436,28 @@
           else if (typeName.includes('зачет') || typeName.includes('экз')) type = 'Зачет / Экз';
 
           const isChange = (entry.source_kind === 'change' || entry.occurrence_status === 'SUCCESSOR' || entry.occurrence_status === 'ADDED');
+          const subjectName = entry.subject_name || entry.activity_type_name || 'Дисциплина';
           const slotKey = `${weekType}_${dayCode}_${num}`;
+          const subjKey = `${slotKey}_${subjectName.trim().toLowerCase()}`;
+
+          const preservedUserNote = existingNotesBySubjectSlot.get(subjKey) || existingNotesBySlot.get(slotKey) || '';
+          let finalNote = preservedUserNote;
+          if (isChange) {
+            finalNote = preservedUserNote ? `🔄 Замена занятия!\n${preservedUserNote}` : '🔄 Замена занятия!';
+          }
 
           scheduleMap.set(slotKey, {
-            id: 'ngieu_' + (entry.entry_id || (Date.now() + Math.random())),
+            id: 'ngieu_' + (entry.entry_id || (Date.now() + '_' + Math.random().toString(36).slice(2, 7))),
             week: weekType,
             day: dayCode,
             num: String(num),
             type,
-            subject: entry.subject_name || entry.activity_type_name || 'Дисциплина',
+            subject: subjectName,
             room: entry.classroom_name || '',
             teacher: entry.instructor_display || '',
-            timeStart: entry.time_start || '',
-            timeEnd: entry.time_end || '',
-            classNote: isChange ? '🔄 Замена занятия!' : ''
+            timeStart: entry.time_start ? String(entry.time_start).slice(0, 5) : '',
+            timeEnd: entry.time_end ? String(entry.time_end).slice(0, 5) : '',
+            classNote: finalNote
           });
         });
 
@@ -2049,8 +2465,8 @@
 
         if (newScheduleItems.length > 0) {
           state.schedule = newScheduleItems;
+          // Единый вызов saveState() без дублирующего pushToCloud
           saveState();
-          if (typeof pushToCloud === 'function') await pushToCloud(false);
           renderScheduleView();
           refreshDashboard();
           if (showNotification) toast(`✅ Загружено ${newScheduleItems.length} пар с заменами!`);
@@ -2146,7 +2562,7 @@
 
       if (trueAdm) {
         previewBtn.style.display = 'inline-flex';
-        previewBtn.textContent = previewAsStudent ? '👑 В режим Старосты' : '👁️ Вид студента';
+        previewBtn.textContent = previewAsStudent ? '👑 Режим Старосты' : '👁️ Вид студента';
         previewBtn.classList.toggle('btn-accent-outline', previewAsStudent);
       } else {
         previewBtn.style.display = 'none';
@@ -2157,13 +2573,13 @@
         roleBadge.className = 'badge badge-accent';
       } else {
         const uName = tgUser ? (tgUser.first_name || tgUser.username || 'Студент') : 'Студент';
-        roleBadge.textContent = `🎓 ${uName} • Вход старосты 🔐`;
+        roleBadge.textContent = `🎓 ${uName} • Вход 🔐`;
         roleBadge.className = 'badge badge-ok';
       }
     }
 
     function togglePreviewAsStudent() {
-      haptic(12);
+      haptic('select');
       previewAsStudent = !previewAsStudent;
       applyRoleUI();
       refreshAllViews();
@@ -2171,7 +2587,7 @@
     }
 
     function openUnlockAdminModal() {
-      haptic(10);
+      haptic('light');
       document.getElementById('unlockModalGrpName').textContent = state.groupName || cloudCfg.groupId;
       document.getElementById('unlockSecretInput').value = '';
       document.getElementById('unlockAdminModal').classList.add('active');
@@ -2191,8 +2607,10 @@
         closeUnlockAdminModal();
         applyRoleUI();
         refreshAllViews();
+        haptic('success');
         toast(`👑 Права Старосты группы ${state.groupName} подтверждены!`);
       } else {
+        haptic('error');
         toast('❌ Неверный секретный ключ старосты');
       }
     }
@@ -2231,7 +2649,7 @@
       copyTextQuick(link, 'Секретная ТГ-ссылка Старосты');
     }
 
-    // ================= 4. ОБЛАКО SUPABASE И ПРЕДОТВРАЩЕНИЕ ОБУЗА =================
+    // ================= 4. ОБЛАКО SUPABASE (ОЧЕРЕДЬ, DEBOUNCE И ЗАЩИТА ОТ ГОНОК) =================
     function loadCloudConfig() {
       const raw = localStorage.getItem(CLOUD_CFG_KEY);
       if (raw) {
@@ -2294,7 +2712,7 @@
       if (!isCloudConfigured()) return;
       const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
       try {
-        updateCloudHeaderStatus(`НГИЭУ • Синхронизация...`, true);
+        updateCloudHeaderStatus('НГИЭУ • Синхронизация...', true);
         const url = `${baseUrl}/rest/v1/group_store?id=eq.${encodeURIComponent(cloudCfg.groupId)}&select=state_json,updated_at`;
         const res = await fetch(url, {
           method: 'GET',
@@ -2313,10 +2731,11 @@
           state = Object.assign(getDefaultStateForGroup(remoteState.groupName || state.groupName), remoteState);
           state.theme = localTheme || state.theme || 'indigo';
           state.isSetupCompleted = true;
+          stateRevision++;
           localStorage.setItem(STORAGE_KEY + '_' + cloudCfg.groupId, JSON.stringify(state));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           refreshAllViews();
-          updateCloudHeaderStatus(`НГИЭУ • Синхронизировано`, true);
+          updateCloudHeaderStatus('НГИЭУ • Синхронизировано', true);
           if (showToastMsg) toast(`☁️ Данные группы ${state.groupName} загружены`);
         } else {
           if (isTrueAdmin()) {
@@ -2330,6 +2749,22 @@
       }
     }
 
+    function scheduleCloudPush(showToastMsg = false, immediate = false) {
+      if (!isCloudConfigured() || !isTrueAdmin()) return;
+      if (cloudPushDebounceTimer) {
+        clearTimeout(cloudPushDebounceTimer);
+        cloudPushDebounceTimer = null;
+      }
+      if (immediate) {
+        pushToCloud(showToastMsg);
+        return;
+      }
+      cloudPushDebounceTimer = setTimeout(() => {
+        cloudPushDebounceTimer = null;
+        pushToCloud(showToastMsg);
+      }, 400);
+    }
+
     async function pushToCloud(showToastMsg = false) {
       if (!isCloudConfigured()) return;
       if (!isTrueAdmin()) {
@@ -2337,12 +2772,28 @@
         return;
       }
 
+      if (cloudPushDebounceTimer) {
+        clearTimeout(cloudPushDebounceTimer);
+        cloudPushDebounceTimer = null;
+      }
+
+      // Блокировка гонки запросов: если запись уже идёт, ставим в очередь один повторный сброс
+      if (cloudPushInFlight) {
+        cloudPushQueued = true;
+        cloudPushQueuedToast = cloudPushQueuedToast || showToastMsg;
+        return;
+      }
+
+      cloudPushInFlight = true;
       const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
+      const snapshotState = JSON.parse(JSON.stringify(state));
+      const targetGroupId = cloudCfg.groupId;
+
       try {
         const url = `${baseUrl}/rest/v1/group_store`;
         const payload = {
-          id: cloudCfg.groupId,
-          state_json: state,
+          id: targetGroupId,
+          state_json: snapshotState,
           updated_at: new Date().toISOString()
         };
         const res = await fetch(url, {
@@ -2356,11 +2807,19 @@
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        updateCloudHeaderStatus(`НГИЭУ • Сохранено в облаке`, true);
-        if (showToastMsg) toast(`☁️ Группа ${state.groupName} сохранена в облаке`);
+        updateCloudHeaderStatus('НГИЭУ • Сохранено в облаке', true);
+        if (showToastMsg) toast(`☁️ Группа ${snapshotState.groupName} сохранена в облаке`);
       } catch (err) {
         updateCloudHeaderStatus('⚠️ Ошибка сохранения в облако', false);
         if (showToastMsg) toast('Ошибка связи с облаком Supabase');
+      } finally {
+        cloudPushInFlight = false;
+        if (cloudPushQueued) {
+          const nextToast = cloudPushQueuedToast;
+          cloudPushQueued = false;
+          cloudPushQueuedToast = false;
+          scheduleCloudPush(nextToast, false);
+        }
       }
     }
 
@@ -2370,6 +2829,7 @@
       if (masterInp === null) return;
 
       if (!isValidMasterPassword(masterInp)) {
+        haptic('error');
         toast('❌ Неверный мастер-пароль! Удаление отклонено.');
         return;
       }
@@ -2443,7 +2903,7 @@
           const gTitle = (r.state_json && r.state_json.groupName) ? r.state_json.groupName : r.id;
           const stuCount = (r.state_json && Array.isArray(r.state_json.students)) ? r.state_json.students.length : 0;
           const activeCls = (r.id === cloudCfg.groupId) ? 'active' : '';
-          return `<button type="button" class="group-chip-btn ${activeCls}" onclick="selectExistingUniversityGroup('${esc(r.id)}', '${esc(gTitle)}')">🏛️ ${esc(gTitle)} <span style="opacity:0.65; font-size:0.68rem;">(${stuCount})</span></button>`;
+          return `<button type="button" class="group-chip-btn ${activeCls}" data-gid="${esc(r.id)}" onclick="selectExistingUniversityGroup('${escJsAttr(r.id)}', '${escJsAttr(gTitle)}')">🏛️ ${esc(gTitle)} <span style="opacity:0.65; font-size:0.68rem;">(${stuCount})</span></button>`;
         }).join('');
       } catch (e) {
         selectStu.innerHTML = `<option value="${esc(cloudCfg.groupId)}">${esc(state.groupName || 'Б-26БиО')}</option>`;
@@ -2453,12 +2913,12 @@
 
     function onSelectDropdownGroup(grpId) {
       document.querySelectorAll('#obExistingGroupsList .group-chip-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${grpId}'`));
+        btn.classList.toggle('active', btn.dataset.gid === grpId);
       });
     }
 
     function openGroupSwitcher() {
-      haptic(10);
+      haptic('light');
       document.getElementById('obGroupName').value = '';
       document.getElementById('obMasterPassword').value = '';
       document.getElementById('obLeaderSecret').value = '';
@@ -2468,12 +2928,12 @@
     }
 
     function closeGroupSwitcher() {
-      haptic(8);
+      haptic('light');
       document.getElementById('onboardingOverlay').classList.remove('active');
     }
 
     function switchOnboardMode(mode) {
-      haptic(8);
+      haptic('select');
       document.getElementById('obTabStudent').classList.toggle('active', mode === 'student');
       document.getElementById('obTabLeader').classList.toggle('active', mode === 'leader');
       document.getElementById('obStudentPane').style.display = mode === 'student' ? 'block' : 'none';
@@ -2481,7 +2941,7 @@
     }
 
     function switchLeaderSubMode(subMode) {
-      haptic(8);
+      haptic('select');
       leaderModalSubMode = subMode;
       document.getElementById('ldrModeLoginBtn').classList.toggle('active', subMode === 'login');
       document.getElementById('ldrModeCreateBtn').classList.toggle('active', subMode === 'create');
@@ -2491,7 +2951,8 @@
     }
 
     async function selectExistingUniversityGroup(grpId, grpName) {
-      haptic(12);
+      haptic('medium');
+      cleanupParryChannel(true);
       cloudCfg.groupId = grpId;
       state = getDefaultStateForGroup(grpName);
       localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
@@ -2525,17 +2986,21 @@
         if (existingRemote) {
           const remoteSecret = (existingRemote.leaderSecret || 'b26leader').trim();
           if (secretInput !== remoteSecret && !isValidMasterPassword(secretInput)) {
+            haptic('error');
             return toast('❌ Неверный секретный ключ старосты для группы ' + gName);
           }
+          cleanupParryChannel(true);
           cloudCfg.groupId = targetId;
           cloudCfg.adminSecret = remoteSecret;
           state = Object.assign(getDefaultStateForGroup(gName), existingRemote);
+          stateRevision++;
           saveGroupUnlock(targetId, remoteSecret);
           localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           previewAsStudent = false;
           closeGroupSwitcher();
           refreshAllViews();
+          haptic('success');
           toast(`👑 Вы вошли как Староста группы ${gName}`);
           await syncScheduleFromNgieuApi(false);
           return;
@@ -2550,7 +3015,10 @@
       const newSecret = secretInput || 'b26leader';
 
       if (!gName) return toast('⚠️ Укажите название новой группы');
-      if (!isValidMasterPassword(masterPass)) return toast('🛡️ Неверный мастер-пароль Старостата!');
+      if (!isValidMasterPassword(masterPass)) {
+        haptic('error');
+        return toast('🛡️ Неверный мастер-пароль Старостата!');
+      }
 
       const newGrpId = groupNameToId(gName);
       const alreadyInCloud = await checkGroupExistsInCloud(newGrpId);
@@ -2560,12 +3028,14 @@
         return;
       }
 
+      cleanupParryChannel(true);
       cloudCfg.groupId = newGrpId;
       cloudCfg.adminSecret = newSecret;
       state = getDefaultStateForGroup(gName);
       state.groupName = gName;
       state.leaderSecret = newSecret;
       state.currentWeekType = wType;
+      stateRevision++;
 
       if (lName) {
         state.students.push({
@@ -2587,11 +3057,12 @@
       refreshAllViews();
       await pushToCloud(true);
       await syncScheduleFromNgieuApi(false);
+      haptic('success');
       toast(`👑 Создана новая группа ${gName}!`);
     }
 
     function handleCloudBtnClick() {
-      haptic(10);
+      haptic('light');
       if (!isTrueAdmin()) {
         openUnlockAdminModal();
         return;
@@ -2631,7 +3102,8 @@
       localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cloudCfg));
       closeCloudModal();
       applyRoleUI();
-      saveState();
+      saveState(true);
+      haptic('success');
       toast('Настройки сохранены');
     }
 
@@ -2645,6 +3117,7 @@
           });
           const data = await res.json();
           if (data.ok) {
+            haptic('success');
             toast('📢 Опубликовано в чате группы!');
             return true;
           }
@@ -2653,7 +3126,7 @@
       if (navigator.share) {
         try { await navigator.share({ text }); return true; } catch (e) {}
       }
-      navigator.clipboard.writeText(text).then(() => toast('Скопировано в буфер обмена'));
+      await copyToClipboardSafe(text, 'Скопировано в буфер обмена');
       return false;
     }
 
@@ -2675,6 +3148,7 @@
         });
         const data = await res.json();
         if (data.ok) {
+          haptic('success');
           toast('📥 Файл отправлен в Telegram!');
           return true;
         }
@@ -2682,7 +3156,7 @@
       return false;
     }
 
-    // ================= 5. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ТЕМАМИ =================
+    // ================= 5. УПРАВЛЕНИЕ СОСТОЯНИЕМ И ТЕМАМИ (TELEGRAM THEME) =================
     function refreshAllViews() {
       applyRoleUI();
       populateSchedulePairSelect();
@@ -2716,31 +3190,55 @@
       refreshAllViews();
     }
 
-    function saveState() {
+    function saveState(immediateCloud = false) {
+      stateRevision++;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       localStorage.setItem(STORAGE_KEY + '_' + cloudCfg.groupId, JSON.stringify(state));
       refreshDashboard();
       if (isAdminEffective() && isCloudConfigured()) {
-        pushToCloud(false);
+        scheduleCloudPush(false, immediateCloud);
       }
     }
 
+    let toastTimer = null;
     function toast(msg) {
-      haptic(12);
+      haptic('light');
       const el = document.getElementById('toast');
+      if (!el) return;
       el.textContent = msg;
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 2500);
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    function syncTelegramThemeVars() {
+      if (!tgApp) return;
+      const scheme = tgApp.colorScheme === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-tg-scheme', scheme);
+      document.body.setAttribute('data-tg-scheme', scheme);
+      if (tgApp.themeParams) {
+        const tp = tgApp.themeParams;
+        const root = document.documentElement.style;
+        if (tp.bg_color) root.setProperty('--tg-theme-bg-color', tp.bg_color);
+        if (tp.secondary_bg_color) root.setProperty('--tg-theme-secondary-bg-color', tp.secondary_bg_color);
+        if (tp.section_bg_color) root.setProperty('--tg-theme-section-bg-color', tp.section_bg_color);
+        if (tp.text_color) root.setProperty('--tg-theme-text-color', tp.text_color);
+        if (tp.hint_color) root.setProperty('--tg-theme-hint-color', tp.hint_color);
+        if (tp.subtitle_text_color) root.setProperty('--tg-theme-subtitle-text-color', tp.subtitle_text_color);
+        if (tp.button_color) root.setProperty('--tg-theme-button-color', tp.button_color);
+        if (tp.button_text_color) root.setProperty('--tg-theme-button-text-color', tp.button_text_color);
+      }
     }
 
     function setTheme(themeName) {
-      haptic(8);
+      haptic('select');
       state.theme = themeName;
       applyTheme(themeName);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function applyTheme(themeName) {
+      syncTelegramThemeVars();
       document.documentElement.setAttribute('data-theme', themeName);
       document.body.setAttribute('data-theme', themeName);
       document.querySelectorAll('.theme-dot').forEach(d => {
@@ -2748,9 +3246,21 @@
       });
       if (tgApp && tgApp.setHeaderColor && tgApp.setBackgroundColor) {
         try {
-          const bg = themeName === 'cyber' ? '#08080c' : (themeName === 'emerald' ? '#07120e' : (themeName === 'sunset' ? '#120c09' : (themeName === 'crimson' ? '#12080c' : '#0b0f19')));
-          tgApp.setHeaderColor(bg);
-          tgApp.setBackgroundColor(bg);
+          if (themeName === 'tg' && tgApp.themeParams && tgApp.themeParams.bg_color) {
+            tgApp.setHeaderColor(tgApp.themeParams.bg_color);
+            tgApp.setBackgroundColor(tgApp.themeParams.bg_color);
+          } else {
+            const bgMap = {
+              cyber: '#07070b',
+              emerald: '#060d0a',
+              sunset: '#0e0a08',
+              crimson: '#0f070a',
+              indigo: '#09090b'
+            };
+            const bg = bgMap[themeName] || '#09090b';
+            tgApp.setHeaderColor(bg);
+            tgApp.setBackgroundColor(bg);
+          }
         } catch (e) {}
       }
     }
@@ -2762,16 +3272,18 @@
       if (parts.length !== 3 || !parts[1] || !parts[2]) return null;
       const [bYear, bMonth, bDay] = parts;
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const tzNow = getTzDateParts();
+      const todayUtc = Date.UTC(tzNow.year, tzNow.month - 1, tzNow.day);
 
-      let nextBday = new Date(today.getFullYear(), bMonth - 1, bDay);
-      if (nextBday < today) {
-        nextBday = new Date(today.getFullYear() + 1, bMonth - 1, bDay);
+      let nextYear = tzNow.year;
+      let nextBdayUtc = Date.UTC(nextYear, bMonth - 1, bDay);
+      if (nextBdayUtc < todayUtc) {
+        nextYear += 1;
+        nextBdayUtc = Date.UTC(nextYear, bMonth - 1, bDay);
       }
 
-      const diffDays = Math.round((nextBday - today) / (1000 * 60 * 60 * 24));
-      const turningAge = (bYear > 1920) ? (nextBday.getFullYear() - bYear) : null;
+      const diffDays = Math.round((nextBdayUtc - todayUtc) / 86400000);
+      const turningAge = (bYear > 1920) ? (nextYear - bYear) : null;
       const shortDate = `${String(bDay).padStart(2, '0')}.${String(bMonth).padStart(2, '0')}`;
       const fullDate = `${shortDate}.${bYear}`;
 
@@ -2827,7 +3339,7 @@
 
     function openClassNoteModal(classId) {
       if (!isAdminEffective()) return;
-      haptic(8);
+      haptic('light');
       const item = state.schedule.find(s => s.id === classId);
       if (!item) return;
       activeClassIdForNote = classId;
@@ -2848,20 +3360,21 @@
         item.classNote = document.getElementById('cnModalTextarea').value.trim();
         saveState();
         renderScheduleView();
+        haptic('success');
         toast('Заметка сохранена');
       }
       closeClassNoteModal();
     }
 
     function calculateSmartDueDate(subjectName, mode) {
-      const now = new Date();
+      const tzNow = getTzDateParts();
       const matches = [];
       const cleanSubj = (subjectName || '').trim().toLowerCase();
-      const currentDayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+      const currentDayOfWeek = tzNow.dayOfWeek === 0 ? 7 : tzNow.dayOfWeek;
 
       for (let offset = 1; offset <= 35; offset++) {
-        const future = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
-        const fDayJS = future.getDay();
+        const futureParts = getTzDateParts(new Date(Date.now() + offset * 86400000));
+        const fDayJS = futureParts.dayOfWeek;
         if (fDayJS === 0) continue;
 
         const dayCode = DAYS[fDayJS - 1];
@@ -2879,27 +3392,24 @@
         );
 
         if (hasSubj) {
-          const yyyy = future.getFullYear();
-          const mm = String(future.getMonth() + 1).padStart(2, '0');
-          const dd = String(future.getDate()).padStart(2, '0');
-          matches.push(`${yyyy}-${mm}-${dd}`);
+          matches.push(futureParts.ymd);
         }
       }
 
       if (mode === 'next') {
         if (matches.length >= 1) return matches[0];
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7).toISOString().slice(0, 10);
+        return getTzYMD(7);
       }
       if (mode === 'skip') {
         if (matches.length >= 2) return matches[1];
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14).toISOString().slice(0, 10);
+        return getTzYMD(14);
       }
-      return now.toISOString().slice(0, 10);
+      return tzNow.ymd;
     }
 
     function openHwModal(subject = '', fromDay = null, fromWeek = null) {
       if (!isAdminEffective()) return;
-      haptic(10);
+      haptic('light');
       hwContext = { subject, fromDay, fromWeek, mode: 'next' };
       document.getElementById('hwSubjectInput').value = subject || '';
       document.getElementById('hwTaskInput').value = '';
@@ -2912,7 +3422,7 @@
     }
 
     function selectHwDeadlineMode(mode) {
-      haptic(8);
+      haptic('select');
       hwContext.mode = mode;
       document.getElementById('hwBtnNext').classList.toggle('active', mode === 'next');
       document.getElementById('hwBtnSkip').classList.toggle('active', mode === 'skip');
@@ -2943,7 +3453,7 @@
     function saveHomeworkItem(announceToChat = false) {
       const subject = document.getElementById('hwSubjectInput').value.trim();
       const task = document.getElementById('hwTaskInput').value.trim();
-      const dueDate = document.getElementById('hwDueDateInput').value || new Date().toISOString().slice(0, 10);
+      const dueDate = document.getElementById('hwDueDateInput').value || getTzYMD(0);
 
       if (!subject || !task) return toast('Заполните предмет и задание');
 
@@ -2960,6 +3470,7 @@
       closeHwModal();
       saveState();
       renderScheduleView();
+      haptic('success');
       toast('ДЗ сохранено');
 
       if (announceToChat) {
@@ -2970,7 +3481,7 @@
     }
 
     function toggleHwDone(hwId) {
-      haptic(12);
+      haptic('select');
       const idx = myDoneHwIds.indexOf(hwId);
       if (idx === -1) myDoneHwIds.push(hwId);
       else myDoneHwIds.splice(idx, 1);
@@ -2992,11 +3503,9 @@
 
     function formatDeadlineBadge(dueDateStr, isDone) {
       if (isDone) return `<span class="badge badge-ok">✓ Выполнено</span>`;
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const due = new Date(dueDateStr + 'T00:00:00');
-      const diffDays = Math.round((due - today) / (1000 * 60 * 60 * 24));
-      const shortDate = dueDateStr.split('-').reverse().slice(0,2).join('.');
+      const todayYmd = getTzYMD(0);
+      const diffDays = diffYmdDays(dueDateStr, todayYmd);
+      const shortDate = String(dueDateStr || '').split('-').reverse().slice(0, 2).join('.');
 
       if (diffDays < 0) return `<span class="badge badge-err">Просрочено (${shortDate})</span>`;
       if (diffDays === 0) return `<span class="badge badge-err">🔥 Сегодня</span>`;
@@ -3005,66 +3514,113 @@
     }
 
     function appendToId(elId, text) {
-      haptic(8);
+      haptic('light');
       const el = document.getElementById(elId);
       if (!el) return;
       el.value = (el.value ? el.value + ' ' : '') + text;
       el.focus();
     }
 
-    // ================= 8. РАДАР ЗВОНКОВ С АДАПТАЦИЕЙ ВРЕМЕНИ =================
+    // ================= 8. ЖИВОЙ РАДАР ЗВОНКОВ (ОБНОВЛЕНИЕ РАЗ В СЕКУНДУ) =================
+    function setTextIfChanged(id, val, cacheKey) {
+      if (bellDomCache[cacheKey] === val) return;
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = val;
+        bellDomCache[cacheKey] = val;
+      }
+    }
+
     function updateLiveBellRadar() {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mm = String(now.getMinutes()).padStart(2, '0');
-      const clockEl = document.getElementById('liveClockText');
-      if (clockEl) clockEl.textContent = `${hh}:${mm}`;
+      const tzNow = getTzDateParts();
+      const clockStr = `${String(tzNow.hours).padStart(2, '0')}:${String(tzNow.minutes).padStart(2, '0')}:${String(tzNow.seconds).padStart(2, '0')}`;
+      setTextIfChanged('liveClockText', clockStr, 'clock');
 
-      const curMin = now.getHours() * 60 + now.getMinutes();
-      const statusEl = document.getElementById('liveClassStatus');
-      const subEl = document.getElementById('liveClassSub');
-      const progEl = document.getElementById('liveClassProgress');
-      if (!statusEl || !subEl || !progEl) return;
-
+      const curSec = tzNow.hours * 3600 + tzNow.minutes * 60 + tzNow.seconds;
       const bells = getBellSchedule();
       const offset = timezoneConfig.offsetHours || 0;
-      const tzLabel = offset === 0 ? 'по МСК' : (offset > 0 ? `МСК+${offset}` : `МСК${offset}`);
+      const tzLabel = offset === 0 ? 'МСК' : (offset > 0 ? `МСК+${offset}` : `МСК${offset}`);
 
-      if (curMin < bells[0].startMin) {
-        const wait = bells[0].startMin - curMin;
-        statusEl.textContent = `До 1-й пары ${wait} мин.`;
-        subEl.textContent = `Начало в ${bells[0].start} (${tzLabel})`;
-        progEl.style.width = '0%';
-        return;
-      }
+      let statusText = 'Пары окончены';
+      let subText = `Свободное время (${tzLabel})`;
+      let pctStr = '0%';
 
-      for (let i = 0; i < bells.length; i++) {
-        const b = bells[i];
-        if (curMin >= b.startMin && curMin < b.endMin) {
-          const passed = curMin - b.startMin;
-          const total = b.endMin - b.startMin;
-          const left = b.endMin - curMin;
-          const pct = Math.min(100, Math.round((passed / total) * 100));
-          statusEl.textContent = `Идет ${b.num} пара • осталось ${left} мин.`;
-          subEl.textContent = `${b.start} – ${b.end} (${pct}%) • Перемена: ${b.breakAfter} мин. (${tzLabel})`;
-          progEl.style.width = pct + '%';
-          return;
-        }
-        if (i < bells.length - 1) {
-          const nextB = bells[i + 1];
-          if (curMin >= b.endMin && curMin < nextB.startMin) {
-            const isBig = (b.breakAfter === 55);
-            const waitNext = nextB.startMin - curMin;
-            statusEl.textContent = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${waitNext} мин.`;
-            subEl.textContent = `Следующая пара: ${nextB.start} – ${nextB.end} (${tzLabel})`;
-            progEl.style.width = '100%';
-            return;
+      const firstStartSec = bells[0].startMin * 60;
+      if (curSec < firstStartSec) {
+        const waitSec = firstStartSec - curSec;
+        const waitMin = Math.ceil(waitSec / 60);
+        statusText = `До 1-й пары ${waitMin} мин.`;
+        subText = `Начало в ${bells[0].start} (${tzLabel})`;
+        pctStr = '0%';
+      } else {
+        let matched = false;
+        for (let i = 0; i < bells.length; i++) {
+          const b = bells[i];
+          const startSec = b.startMin * 60;
+          const endSec = b.endMin * 60;
+
+          if (curSec >= startSec && curSec < endSec) {
+            const passedSec = curSec - startSec;
+            const totalSec = endSec - startSec;
+            const leftSec = endSec - curSec;
+            const leftMin = Math.floor(leftSec / 60);
+            const leftRemSec = leftSec % 60;
+            const pct = Math.min(100, (passedSec / totalSec) * 100);
+            statusText = `Идёт ${b.num} пара • осталось ${leftMin}:${String(leftRemSec).padStart(2, '0')}`;
+            subText = `${b.start} – ${b.end} (${Math.round(pct)}%) • Перемена: ${b.breakAfter} мин. (${tzLabel})`;
+            pctStr = pct.toFixed(2) + '%';
+            matched = true;
+            break;
+          }
+
+          if (i < bells.length - 1) {
+            const nextB = bells[i + 1];
+            const nextStartSec = nextB.startMin * 60;
+            if (curSec >= endSec && curSec < nextStartSec) {
+              const isBig = (b.breakAfter === 55);
+              const breakTotalSec = nextStartSec - endSec;
+              const breakPassedSec = curSec - endSec;
+              const waitSec = nextStartSec - curSec;
+              const waitMin = Math.floor(waitSec / 60);
+              const waitRemSec = waitSec % 60;
+              const pct = Math.min(100, (breakPassedSec / breakTotalSec) * 100);
+              statusText = `${isBig ? '☕ Большой перерыв (55 м)' : 'Перемена (10 м)'} • до ${nextB.num} пары ${waitMin}:${String(waitRemSec).padStart(2, '0')}`;
+              subText = `Следующая пара: ${nextB.start} – ${nextB.end} (${tzLabel})`;
+              pctStr = pct.toFixed(2) + '%';
+              matched = true;
+              break;
+            }
           }
         }
+        if (!matched) {
+          statusText = 'Пары окончены';
+          subText = `Свободное время (${tzLabel})`;
+          pctStr = '0%';
+        }
       }
-      statusEl.textContent = 'Пары окончены';
-      subEl.textContent = `Свободное время (${tzLabel})`;
-      progEl.style.width = '0%';
+
+      setTextIfChanged('liveClassStatus', statusText, 'status');
+      setTextIfChanged('liveClassSub', subText, 'sub');
+      if (bellDomCache.width !== pctStr) {
+        const progEl = document.getElementById('liveClassProgress');
+        if (progEl) {
+          progEl.style.width = pctStr;
+          bellDomCache.width = pctStr;
+        }
+      }
+    }
+
+    function startBellRadarTicker() {
+      stopBellRadarTicker();
+      updateLiveBellRadar();
+      bellRadarIntervalId = setInterval(updateLiveBellRadar, 1000);
+    }
+
+    function stopBellRadarTicker() {
+      if (bellRadarIntervalId) {
+        clearInterval(bellRadarIntervalId);
+        bellRadarIntervalId = null;
+      }
     }
 
     // ================= 9. ФАЙЛЫ INDEXEDDB =================
@@ -3110,13 +3666,14 @@
           size: (f.size / 1024).toFixed(1) + ' КБ',
           dataUrl: reader.result,
           pinned: true,
-          date: new Date().toLocaleDateString('ru-RU')
+          date: getTzDateParts().ruDate
         };
         const tx = db.transaction(STORE_NAME, 'readwrite');
         tx.objectStore(STORE_NAME).put(item);
         tx.oncomplete = () => {
           inp.value = '';
           document.getElementById('vaultFileTitle').value = '';
+          haptic('success');
           toast('Файл сохранен');
           renderVaultFiles();
           refreshDashboard();
@@ -3155,19 +3712,20 @@
       }
       box.innerHTML = files.map(f => {
         const isImg = f.type && f.type.startsWith('image/');
+        const safeId = escJsAttr(f.id);
         return `
           <div class="card">
             <div class="between">
               <div>
                 <div style="font-weight:700; font-size:0.88rem;">📄 ${esc(f.name)}</div>
-                <div style="font-size:0.7rem; color:var(--text-muted);">${f.size} • ${f.date}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">${esc(f.size)} • ${esc(f.date)}</div>
               </div>
               <div class="row admin-only">
-                <button class="btn-glass btn-sm" onclick="toggleFilePin('${f.id}')">${f.pinned ? '📌' : '📍'}</button>
-                <button class="btn-danger btn-sm" onclick="removeFileFromDB('${f.id}')">✕</button>
+                <button type="button" class="btn-glass btn-sm" onclick="toggleFilePin('${safeId}')">${f.pinned ? '📌' : '📍'}</button>
+                <button type="button" class="btn-danger btn-sm" onclick="removeFileFromDB('${safeId}')">✕</button>
               </div>
             </div>
-            ${isImg ? `<img src="${f.dataUrl}" class="preview-img">` : ''}
+            ${isImg ? `<img src="${f.dataUrl}" class="preview-img" loading="lazy">` : ''}
             <div style="margin-top:8px;">
               <a href="${f.dataUrl}" download="${esc(f.origName)}" class="btn-glass btn-sm" style="text-decoration:none;">⬇ Скачать / Открыть</a>
             </div>
@@ -3178,9 +3736,10 @@
 
     // ================= 10. КАРТОЧКИ ПАР И ДАШБОРД =================
     function openTab(tabName, btnEl) {
-      haptic(8);
+      haptic('select');
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-      document.getElementById('pane-' + tabName).classList.add('active');
+      const pane = document.getElementById('pane-' + tabName);
+      if (pane) pane.classList.add('active');
       document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
       if (btnEl) btnEl.classList.add('active');
 
@@ -3218,7 +3777,7 @@
               <div style="font-weight:700; font-size:0.8rem;">📚 ${esc(h.task)}</div>
               <div style="margin-top:3px;">${formatDeadlineBadge(h.dueDate, doneByMe)}</div>
             </div>
-            <button class="btn-glass btn-sm" onclick="toggleHwDone('${h.id}')">${doneByMe ? '↩' : '✓'}</button>
+            <button type="button" class="btn-glass btn-sm" onclick="toggleHwDone('${escJsAttr(h.id)}')">${doneByMe ? '↩' : '✓'}</button>
           </div>
         `;
       }).join('');
@@ -3227,22 +3786,22 @@
         <div class="card">
           <div class="between">
             <div>
-              <span class="badge badge-accent">${c.num} пара ${timeStr ? '• ' + timeStr : ''}</span>
-              ${mskHint ? `<span class="badge" title="Время по МСК" style="font-size:0.64rem; opacity:0.85;">🕒 ${mskHint}</span>` : ''}
+              <span class="badge badge-accent">${esc(c.num)} пара ${timeStr ? '• ' + esc(timeStr) : ''}</span>
+              ${mskHint ? `<span class="badge" title="Время по МСК" style="font-size:0.64rem; opacity:0.85;">🕒 ${esc(mskHint)}</span>` : ''}
               <span class="badge">${esc(c.type)}</span>
               ${c.room ? `<span class="badge badge-warn">📍 ${esc(c.room)}</span>` : ''}
-              <div style="font-weight:800; font-size:0.96rem; margin-top:6px;">${esc(c.subject)}</div>
+              <div style="font-weight:800; font-size:0.95rem; margin-top:6px; letter-spacing:-0.01em;">${esc(c.subject)}</div>
             </div>
-            ${allowDelete ? `<button class="btn-danger btn-sm admin-only" onclick="removeSchedItem('${c.id}')">✕</button>` : ''}
+            ${allowDelete ? `<button type="button" class="btn-danger btn-sm admin-only" onclick="removeSchedItem('${escJsAttr(c.id)}')">✕</button>` : ''}
           </div>
           ${c.teacher ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">👨‍🏫 ${esc(c.teacher)}</div>` : ''}
           ${c.classNote ? `<div class="class-note-box">${esc(c.classNote)}</div>` : ''}
           ${hwHtml}
           <div class="row admin-only" style="margin-top:10px;">
-            <button class="btn-glass btn-sm" style="flex:1;" onclick="openClassNoteModal('${c.id}')">
+            <button type="button" class="btn-glass btn-sm" style="flex:1;" onclick="openClassNoteModal('${escJsAttr(c.id)}')">
               💬 ${c.classNote ? 'Заметка' : '+ Заметка'}
             </button>
-            <button class="btn-accent-outline btn-sm" style="flex:1;" onclick="openHwModal('${esc(c.subject)}', '${c.day}', '${c.week}')">
+            <button type="button" class="btn-accent-outline btn-sm" style="flex:1;" onclick="openHwModal('${escJsAttr(c.subject)}', '${escJsAttr(c.day)}', '${escJsAttr(c.week)}')">
               📚 + ДЗ
             </button>
           </div>
@@ -3258,7 +3817,8 @@
       const activeHw = (state.homeworks || []).filter(h => !isHwDoneByMe(h));
       document.getElementById('mActiveHwCount').textContent = activeHw.length;
 
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const tzNow = getTzDateParts();
+      const todayStr = tzNow.ymd;
       let absentCount = 0, pairsCounted = 0;
       Object.keys(state.attendance).forEach(k => {
         if (k.startsWith(todayStr)) {
@@ -3275,7 +3835,7 @@
         document.getElementById('mTodayAttendance').textContent = pct + '%';
       }
 
-      const jsDay = new Date().getDay();
+      const jsDay = tzNow.dayOfWeek;
       const dayCode = jsDay === 0 ? 'ПН' : DAYS[jsDay - 1];
       document.getElementById('dashDayName').textContent = jsDay === 0 ? 'План на ПН' : dayCode;
       document.getElementById('dashWeekBadge').textContent = state.currentWeekType === 'odd' ? 'I неделя' : 'II неделя';
@@ -3305,7 +3865,7 @@
               <div style="font-size:0.8rem; color:var(--text-muted); margin:5px 0 8px;">${esc(h.task)}</div>
               <div class="between">
                 <span style="font-size:0.68rem; color:var(--text-muted);">${esc(h.modeLabel || 'К дате')}</span>
-                <button class="btn-glass btn-sm" onclick="toggleHwDone('${h.id}')">✓ Выполнено</button>
+                <button type="button" class="btn-glass btn-sm" onclick="toggleHwDone('${escJsAttr(h.id)}')">✓ Выполнено</button>
               </div>
             </div>
           `;
@@ -3372,7 +3932,7 @@
 
     // ================= 11. РАСПИСАНИЕ И ЧЕК-ЛИСТ ДЗ =================
     function switchScheduleWeek(w) {
-      haptic(8);
+      haptic('select');
       state.currentWeekType = w;
       document.getElementById('btnWeekOdd').classList.toggle('active', w === 'odd');
       document.getElementById('btnWeekEven').classList.toggle('active', w === 'even');
@@ -3381,18 +3941,20 @@
     }
 
     function pickSchedDay(d) {
-      haptic(6);
+      haptic('select');
       state.selectedDay = d;
       renderScheduleView();
     }
 
     function renderScheduleView() {
       document.getElementById('addSchedDayLbl').textContent = state.selectedDay;
+      document.getElementById('btnWeekOdd').classList.toggle('active', state.currentWeekType === 'odd');
+      document.getElementById('btnWeekEven').classList.toggle('active', state.currentWeekType === 'even');
       populateSchedulePairSelect();
 
       const bar = document.getElementById('schedDaysBar');
       bar.innerHTML = DAYS.map(d => `
-        <button class="day-pill ${state.selectedDay === d ? 'active' : ''}" onclick="pickSchedDay('${d}')">${d}</button>
+        <button type="button" class="day-pill ${state.selectedDay === d ? 'active' : ''}" onclick="pickSchedDay('${escJsAttr(d)}')">${d}</button>
       `).join('');
 
       const list = state.schedule
@@ -3402,15 +3964,16 @@
       const box = document.getElementById('schedCardsList');
       box.innerHTML = list.length
         ? list.map(c => buildClassCardHTML(c, true)).join('')
-        : `<div class="empty-box">На ${state.selectedDay} пар нет.</div>`;
+        : `<div class="empty-box">На ${esc(state.selectedDay)} пар нет.</div>`;
 
       const allHwBox = document.getElementById('allHomeworksList');
       if (!state.homeworks || !state.homeworks.length) {
         allHwBox.innerHTML = '<div class="empty-box">Домашних заданий пока нет.</div>';
       } else {
-        const sorted = [...state.homeworks].sort((a, b) => (isHwDoneByMe(a) - isHwDoneByMe(b)) || a.dueDate.localeCompare(b.dueDate));
+        const sorted = [...state.homeworks].sort((a, b) => (Number(isHwDoneByMe(a)) - Number(isHwDoneByMe(b))) || a.dueDate.localeCompare(b.dueDate));
         allHwBox.innerHTML = sorted.map(h => {
           const doneByMe = isHwDoneByMe(h);
+          const safeId = escJsAttr(h.id);
           return `
             <div class="card" style="opacity:${doneByMe ? '0.55' : '1'};">
               <div class="between">
@@ -3419,8 +3982,8 @@
                   <div style="margin-top:3px;">${formatDeadlineBadge(h.dueDate, doneByMe)}</div>
                 </div>
                 <div class="row">
-                  <button class="btn-glass btn-sm" onclick="toggleHwDone('${h.id}')">${doneByMe ? '↩' : '✓ Готово'}</button>
-                  <button class="btn-danger btn-sm admin-only" onclick="deleteHwItem('${h.id}')">✕</button>
+                  <button type="button" class="btn-glass btn-sm" onclick="toggleHwDone('${safeId}')">${doneByMe ? '↩' : '✓ Готово'}</button>
+                  <button type="button" class="btn-danger btn-sm admin-only" onclick="deleteHwItem('${safeId}')">✕</button>
                 </div>
               </div>
               <div style="font-size:0.82rem; margin-top:6px; white-space:pre-wrap;">${esc(h.task)}</div>
@@ -3451,6 +4014,7 @@
       document.getElementById('addSchedInitNote').value = '';
       saveState();
       renderScheduleView();
+      haptic('success');
       toast('Пара добавлена');
     }
 
@@ -3475,7 +4039,7 @@
     }
 
     function toggleJournalSubgroupBar() {
-      haptic(8);
+      haptic('select');
       showSubgroupFilterInJournal = !showSubgroupFilterInJournal;
       const box = document.getElementById('journalSubgroupFilterBox');
       const btn = document.getElementById('btnToggleJournalSub');
@@ -3487,7 +4051,7 @@
     }
 
     function setSubgroupFilter(f) {
-      haptic(8);
+      haptic('select');
       state.subgroupFilter = f;
       document.getElementById('subFilterAll').classList.toggle('active', f === 'all');
       document.getElementById('subFilter1').classList.toggle('active', f === '1 подгруппа');
@@ -3505,7 +4069,7 @@
 
     function renderJournal() {
       const dInp = document.getElementById('jDate');
-      if (!dInp.value) dInp.value = new Date().toISOString().slice(0, 10);
+      if (!dInp.value) dInp.value = getTzYMD(0);
       const k = getJKey();
       const entry = state.attendance[k] || { subject: '', records: {} };
       document.getElementById('jSubject').value = entry.subject || '';
@@ -3533,7 +4097,7 @@
                   ${subAndNote ? `<div style="font-size:0.7rem; color:var(--text-muted);">${esc(subAndNote)}</div>` : ''}
                 </div>
               </div>
-              <button class="status-chip ${meta.cls}" onclick="toggleStuAttendance('${s.id}')">${meta.label}</button>
+              <button type="button" class="status-chip ${meta.cls}" onclick="toggleStuAttendance('${escJsAttr(s.id)}')">${meta.label}</button>
             </div>
           `;
         }).join('');
@@ -3543,7 +4107,7 @@
 
     function toggleStuAttendance(stuId) {
       if (!isAdminEffective()) return;
-      haptic(10);
+      haptic('light');
       const k = getJKey();
       if (!state.attendance[k]) state.attendance[k] = { subject: document.getElementById('jSubject').value, records: {} };
       const cur = state.attendance[k].records[stuId] || 'P';
@@ -3557,6 +4121,7 @@
       state.attendance[getJKey()] = { subject: document.getElementById('jSubject').value, records: {} };
       saveState();
       renderJournal();
+      haptic('success');
       toast('Все присутствуют');
     }
 
@@ -3621,7 +4186,7 @@
     async function shareSmartReport() {
       const txt = buildReportText();
       if (navigator.share) { try { await navigator.share({ title: 'Рапортичка', text: txt }); return; } catch (e) {} }
-      navigator.clipboard.writeText(txt).then(() => toast('Рапортичка скопирована'));
+      await copyToClipboardSafe(txt, 'Рапортичка скопирована');
     }
 
     async function sendReportToGroupChat() {
@@ -3630,7 +4195,7 @@
 
     // ================= 13. КАЗНА И РАНДОМАЙЗЕР КОМАНД =================
     function switchLabMode(mode) {
-      haptic(8);
+      haptic('select');
       document.getElementById('btnLabMoney').classList.toggle('active', mode === 'collections');
       document.getElementById('btnLabTeams').classList.toggle('active', mode === 'teams');
       document.getElementById('labCollectionsView').style.display = mode === 'collections' ? 'block' : 'none';
@@ -3647,12 +4212,13 @@
       document.getElementById('colAmount').value = '';
       saveState();
       renderCollections();
+      haptic('success');
       toast('Ведомость создана');
     }
 
     function toggleStudentPaid(colId, stuId) {
       if (!isAdminEffective()) return;
-      haptic(10);
+      haptic('light');
       const col = state.collections.find(c => c.id === colId);
       if (!col) return;
       const idx = col.paidIds.indexOf(stuId);
@@ -3686,6 +4252,7 @@
       }
       const effAdm = isAdminEffective();
       box.innerHTML = state.collections.map(col => {
+        const safeColId = escJsAttr(col.id);
         const doneCount = col.paidIds.length;
         const total = state.students.length || 1;
         const pct = Math.min(100, Math.round((doneCount / total) * 100));
@@ -3695,7 +4262,7 @@
             <div class="between" style="padding:6px 0; border-bottom:1px solid var(--border);">
               <span style="font-size:0.82rem;">${esc(s.name)}</span>
               ${effAdm ? `
-                <button class="btn-sm ${isPaid ? 'btn-grad' : 'btn-glass'}" onclick="toggleStudentPaid('${col.id}', '${s.id}')">
+                <button type="button" class="btn-sm ${isPaid ? 'btn-grad' : 'btn-glass'}" onclick="toggleStudentPaid('${safeColId}', '${escJsAttr(s.id)}')">
                   ${isPaid ? '✓ Сдал' : 'Отметить'}
                 </button>
               ` : `
@@ -3716,8 +4283,8 @@
                 </div>
               </div>
               <div class="row admin-only">
-                <button class="btn-glass btn-sm" onclick="copyDebtorsList('${col.id}')">📢 В чат</button>
-                <button class="btn-danger btn-sm" onclick="deleteCollection('${col.id}')">✕</button>
+                <button type="button" class="btn-glass btn-sm" onclick="copyDebtorsList('${safeColId}')">📢 В чат</button>
+                <button type="button" class="btn-danger btn-sm" onclick="deleteCollection('${safeColId}')">✕</button>
               </div>
             </div>
             <div class="progress-track" style="margin-bottom:8px;"><div class="progress-fill" style="width:${pct}%;"></div></div>
@@ -3728,9 +4295,13 @@
     }
 
     function generateRandomTeams() {
-      haptic(15);
+      haptic('medium');
       const size = Number(document.getElementById('teamSizeSelect').value) || 3;
-      const pool = [...state.students].sort(() => Math.random() - 0.5);
+      const pool = [...state.students];
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
       const teams = [];
       for (let i = 0; i < pool.length; i += size) teams.push(pool.slice(i, i + size));
       const box = document.getElementById('generatedTeamsBox');
@@ -3748,7 +4319,7 @@
 
     // ================= 14. БАЗА (СПИСОК ГРУППЫ, ЗАМЕТКИ, ЭКСПОРТ) =================
     function switchVaultSub(sub) {
-      haptic(8);
+      haptic('select');
       document.getElementById('vBtnGroup').classList.toggle('active', sub === 'group');
       document.getElementById('vBtnNotes').classList.toggle('active', sub === 'notes');
       document.getElementById('vBtnFiles').classList.toggle('active', sub === 'files');
@@ -3768,12 +4339,13 @@
         title: title || 'Объявление',
         body,
         pinned: false,
-        date: new Date().toLocaleDateString('ru-RU')
+        date: getTzDateParts().ruDate
       });
       document.getElementById('nTitle').value = '';
       document.getElementById('nBody').value = '';
       saveState();
       renderVaultNotes();
+      haptic('success');
       toast('Заметка сохранена');
     }
 
@@ -3793,25 +4365,28 @@
     function renderVaultNotes() {
       const box = document.getElementById('vaultNotesList');
       if (!state.notes.length) { box.innerHTML = '<div class="empty-box">Заметок пока нет.</div>'; return; }
-      box.innerHTML = state.notes.map(n => `
-        <div class="card">
-          <div class="between">
-            <div>
-              <div style="font-weight:700; font-size:0.88rem;">${esc(n.title)}</div>
-              <div style="font-size:0.68rem; color:var(--text-muted);">${n.date}</div>
+      box.innerHTML = state.notes.map(n => {
+        const safeId = escJsAttr(n.id);
+        return `
+          <div class="card">
+            <div class="between">
+              <div>
+                <div style="font-weight:700; font-size:0.88rem;">${esc(n.title)}</div>
+                <div style="font-size:0.68rem; color:var(--text-muted);">${esc(n.date)}</div>
+              </div>
+              <div class="row admin-only">
+                <button type="button" class="btn-glass btn-sm" onclick="toggleNotePin('${safeId}')">${n.pinned ? '📌' : '📍'}</button>
+                <button type="button" class="btn-danger btn-sm" onclick="deleteVaultNote('${safeId}')">✕</button>
+              </div>
             </div>
-            <div class="row admin-only">
-              <button class="btn-glass btn-sm" onclick="toggleNotePin('${n.id}')">${n.pinned ? '📌' : '📍'}</button>
-              <button class="btn-danger btn-sm" onclick="deleteVaultNote('${n.id}')">✕</button>
-            </div>
+            <div style="font-size:0.82rem; margin-top:6px; white-space:pre-wrap;">${esc(n.body)}</div>
           </div>
-          <div style="font-size:0.82rem; margin-top:6px; white-space:pre-wrap;">${esc(n.body)}</div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function toggleAddStuSubgroup() {
-      haptic(6);
+      haptic('light');
       const wrap = document.getElementById('addStuSubgroupWrap');
       const isHidden = wrap.style.display === 'none';
       wrap.style.display = isHidden ? 'block' : 'none';
@@ -3820,7 +4395,7 @@
 
     function toggleSubgroupEditMode() {
       if (!isAdminEffective()) return;
-      haptic(8);
+      haptic('select');
       showSubgroupControlsInGroup = !showSubgroupControlsInGroup;
       document.getElementById('btnManageSubgroups').classList.toggle('btn-accent-outline', showSubgroupControlsInGroup);
       renderVaultGroup();
@@ -3828,7 +4403,7 @@
 
     function cycleStudentSubgroup(stuId) {
       if (!isAdminEffective()) return;
-      haptic(10);
+      haptic('light');
       const s = state.students.find(x => x.id === stuId);
       if (!s) return;
       const order = ['', '1 подгруппа', '2 подгруппа'];
@@ -3865,6 +4440,7 @@
 
       saveState();
       renderVaultGroup();
+      haptic('success');
       toast('Студент добавлен');
     }
 
@@ -3886,12 +4462,13 @@
       document.getElementById('gBulkText').value = '';
       saveState();
       renderVaultGroup();
+      haptic('success');
       toast(`Добавлено: ${lines.length} чел.`);
     }
 
     function openStuEditModal(stuId) {
       if (!isAdminEffective()) return;
-      haptic(8);
+      haptic('light');
       const s = state.students.find(x => x.id === stuId);
       if (!s) return;
       editingStudentId = stuId;
@@ -3914,13 +4491,13 @@
     }
 
     function toggleEditSubgroupBox() {
-      haptic(6);
+      haptic('light');
       const box = document.getElementById('edSubgroupBox');
       box.style.display = box.style.display === 'none' ? 'block' : 'none';
     }
 
     function setEditSubgroup(val) {
-      haptic(6);
+      haptic('select');
       editingStudentSubgroup = val;
       syncEditSubgroupButtons();
     }
@@ -3948,6 +4525,7 @@
       closeStuEditModal();
       saveState();
       renderVaultGroup();
+      haptic('success');
       toast('Карточка сохранена');
     }
 
@@ -3960,7 +4538,7 @@
 
     function copyTextQuick(txt, label) {
       if (!txt) return;
-      navigator.clipboard.writeText(txt).then(() => toast(`${label} скопирована`));
+      copyToClipboardSafe(txt, `${label} скопирована`);
     }
 
     function renderVaultGroup() {
@@ -3974,20 +4552,21 @@
         box.innerHTML = '<div class="empty-box">В группе пока нет студентов.</div>';
       } else {
         box.innerHTML = sorted.map((s, i) => {
+          const safeId = escJsAttr(s.id);
           const bInfo = getBirthdayInfo(s.birthDate);
           const badges = [];
 
           if (s.subgroup) {
-            badges.push(`<span class="badge badge-accent" ${effAdm ? `onclick="cycleStudentSubgroup('${s.id}')" style="cursor:pointer;"` : ''}>👥 ${esc(s.subgroup)}</span>`);
+            badges.push(`<span class="badge badge-accent" ${effAdm ? `onclick="cycleStudentSubgroup('${safeId}')" style="cursor:pointer;"` : ''}>👥 ${esc(s.subgroup)}</span>`);
           } else if (effAdm && showSubgroupControlsInGroup) {
-            badges.push(`<span class="badge" onclick="cycleStudentSubgroup('${s.id}')" style="cursor:pointer; border-style:dashed;">+ Подгруппа</span>`);
+            badges.push(`<span class="badge" onclick="cycleStudentSubgroup('${safeId}')" style="cursor:pointer; border-style:dashed;">+ Подгруппа</span>`);
           }
 
           if (bInfo) badges.push(`<span class="badge ${bInfo.badgeCls}">${bInfo.label}</span>`);
-          if (s.phone) badges.push(`<span class="badge" onclick="copyTextQuick('${esc(s.phone)}', 'Телефон')" style="cursor:pointer;">📞 ${esc(s.phone)}</span>`);
+          if (s.phone) badges.push(`<span class="badge" onclick="copyTextQuick('${escJsAttr(s.phone)}', 'Телефон')" style="cursor:pointer;">📞 ${esc(s.phone)}</span>`);
           if (s.username) {
             const cleanUser = s.username.startsWith('@') ? s.username : '@' + s.username;
-            badges.push(`<span class="badge" onclick="copyTextQuick('${esc(cleanUser)}', 'Юзернейм')" style="cursor:pointer;">✈️ ${esc(cleanUser)}</span>`);
+            badges.push(`<span class="badge" onclick="copyTextQuick('${escJsAttr(cleanUser)}', 'Юзернейм')" style="cursor:pointer;">✈️ ${esc(cleanUser)}</span>`);
           }
           if (s.note) badges.push(`<span class="badge">📌 ${esc(s.note)}</span>`);
 
@@ -3998,8 +4577,8 @@
                 ${badges.length ? `<div class="wrap-tags">${badges.join('')}</div>` : ''}
               </div>
               <div class="row admin-only">
-                <button class="btn-glass btn-sm" onclick="openStuEditModal('${s.id}')" title="Редактировать">✏️</button>
-                <button class="btn-danger btn-sm" onclick="removeStudent('${s.id}')" title="Удалить">✕</button>
+                <button type="button" class="btn-glass btn-sm" onclick="openStuEditModal('${safeId}')" title="Редактировать">✏️</button>
+                <button type="button" class="btn-danger btn-sm" onclick="removeStudent('${safeId}')" title="Удалить">✕</button>
               </div>
             </div>
           `;
@@ -4037,7 +4616,7 @@
       if (sentToTg) return;
 
       const a = document.createElement('a');
-      a.href = "data:text/json;charset=utf-8," + encodeURIComponent(str);
+      a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(str);
       a.download = fn;
       a.click();
     }
@@ -4054,8 +4633,9 @@
             state = Object.assign(state, data);
             state.isSetupCompleted = true;
             if (state.groupName) cloudCfg.groupId = groupNameToId(state.groupName);
-            saveState();
+            saveState(true);
             refreshAllViews();
+            haptic('success');
             toast('База восстановлена');
           }
         } catch (err) { toast('Ошибка файла JSON'); }
@@ -4087,12 +4667,7 @@
       a.click();
     }
 
-    function esc(s) {
-      if (!s) return '';
-      return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-    }
-
-    // ================= 15. МОДУЛЬ «СТАРОСТАТ: PARRY» (ZERO-LAG ENGINE) =================
+    // ================= 15. МОДУЛЬ «СТАРОСТАТ: PARRY» (СТАБИЛЬНЫЙ REALTIME + FALLBACK) =================
     const PARRY_FALLBACK_QUESTIONS = [
       {
         subject_id: 'databases',
@@ -4145,6 +4720,15 @@
     let parryChannel = null;
     let parryRafId = null;
     let parryBotTimer = null;
+    let parryReconnectTimer = null;
+    let parryPollingTimer = null;
+    let parryReconnectAttempt = 0;
+    let parryConnectSessionId = 0;
+    let parrySuspendedOnHide = false;
+    let parryCachedQuestions = null;
+    let parryLastSymCacheKey = '';
+    let parryLastSymResult = null;
+    const parryHudCache = { myHp: '', oppHp: '', myBar: '', oppBar: '', round: '', mult: '', connKey: '' };
 
     let parryState = {
       isBotMode: true,
@@ -4174,6 +4758,38 @@
       finished: false
     };
 
+    function getParrySupaClient() {
+      if (!parrySupaClient && window.supabase) {
+        parrySupaClient = window.supabase.createClient(
+          cleanSupabaseUrl(cloudCfg.supabaseUrl),
+          cloudCfg.supabaseKey,
+          {
+            realtime: {
+              params: { eventsPerSecond: 10 }
+            }
+          }
+        );
+      }
+      return parrySupaClient;
+    }
+
+    function setParryConnectionUI(mode, labelText) {
+      const key = `${mode}|${labelText}`;
+      if (parryHudCache.connKey === key) return;
+      parryHudCache.connKey = key;
+
+      const badge = document.getElementById('parryConnBadge');
+      const txt = document.getElementById('parryConnText');
+      if (!badge || !txt) return;
+
+      badge.className = 'parry-conn-pill ' + (
+        mode === 'online' ? 'conn-online' :
+        mode === 'reconnecting' ? 'conn-reconnecting' :
+        mode === 'polling' ? 'conn-polling' : 'conn-offline'
+      );
+      txt.textContent = labelText;
+    }
+
     function getParryStudentIdentity() {
       if (tgUser && tgUser.id) {
         const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || tgUser.username || 'Студент';
@@ -4185,22 +4801,29 @@
       return { id: 'stu_local_' + (cloudCfg.groupId || 'b26bio'), name: 'Боец ' + (state.groupName || 'Б-26БиО') };
     }
 
+    // Оптимизированный расчёт симбиоза с кэшированием и учётом timezoneConfig.offsetHours
     function computeParrySymbiosis() {
+      const tzNow = getTzDateParts();
+      const curMin = tzNow.hours * 60 + tzNow.minutes;
+      const cacheKey = `${tzNow.ymd}_${curMin}_${timezoneConfig.offsetHours}_${cloudCfg.groupId}_${stateRevision}`;
+
+      if (parryLastSymCacheKey === cacheKey && parryLastSymResult) {
+        return parryLastSymResult;
+      }
+
       const ident = getParryStudentIdentity();
-      const now = new Date();
-      const todayStr = now.toISOString().slice(0, 10);
-      const curMin = now.getHours() * 60 + now.getMinutes();
       const bells = getBellSchedule();
 
       let activePair = 1;
-      for (const b of bells) {
+      for (let i = 0; i < bells.length; i++) {
+        const b = bells[i];
         if (curMin >= b.startMin - 15 && curMin <= b.endMin) {
           activePair = b.num;
           break;
         }
       }
 
-      const jKey = `${todayStr}_${activePair}`;
+      const jKey = `${tzNow.ymd}_${activePair}`;
       const recObj = state.attendance && state.attendance[jKey] && state.attendance[jKey].records;
       let attCode = 'P';
       if (recObj) {
@@ -4208,8 +4831,7 @@
         else if (state.students.length && recObj[state.students[0].id]) attCode = recObj[state.students[0].id];
       }
 
-      const jsDay = now.getDay();
-      const dayCode = jsDay === 0 ? 'ПН' : DAYS[jsDay - 1];
+      const dayCode = tzNow.dayOfWeek === 0 ? 'ПН' : DAYS[tzNow.dayOfWeek - 1];
       const curClass = (state.schedule || []).find(
         s => s.week === state.currentWeekType && s.day === dayCode && Number(s.num) === activePair
       );
@@ -4223,7 +4845,8 @@
       if (low.includes('баз') || low.includes('субд') || low.includes('данн')) subjId = 'databases';
       else if (low.includes('информ') || low.includes('програм') || low.includes('алгоритм')) subjId = 'it';
 
-      return {
+      parryLastSymCacheKey = cacheKey;
+      parryLastSymResult = {
         ident,
         attCode,
         maxHp: attCode === 'P' ? 115 : 100,
@@ -4231,6 +4854,7 @@
         subjId,
         subjTitle
       };
+      return parryLastSymResult;
     }
 
     async function initParrySymbiosisUI() {
@@ -4238,44 +4862,54 @@
       parryState.myId = sym.ident.id;
       parryState.myName = sym.ident.name;
       parryState.myMaxHp = sym.maxHp;
-      parryState.myHp = sym.maxHp;
+      if (parryState.finished || !parryState.questions.length) {
+        parryState.myHp = sym.maxHp;
+      }
       parryState.cooldownPenaltyMs = sym.cooldownPenaltyMs;
       parryState.subjectId = sym.subjId;
       parryState.subjectTitle = sym.subjTitle;
 
-      document.getElementById('parrySubjLbl').textContent = sym.subjTitle;
-      document.getElementById('parryMyName').textContent = sym.ident.name;
-      document.getElementById('parryRoomLbl').textContent = `${cloudCfg.groupId}_duel`;
+      const subjEl = document.getElementById('parrySubjLbl');
+      if (subjEl && subjEl.textContent !== sym.subjTitle) subjEl.textContent = sym.subjTitle;
+
+      const nameEl = document.getElementById('parryMyName');
+      if (nameEl && nameEl.textContent !== sym.ident.name) nameEl.textContent = sym.ident.name;
+
+      const roomStr = `${cloudCfg.groupId}_duel`;
+      const roomEl = document.getElementById('parryRoomLbl');
+      if (roomEl && roomEl.textContent !== roomStr) roomEl.textContent = roomStr;
 
       const buffEl = document.getElementById('parryBuffBadge');
-      if (sym.attCode === 'P') {
-        buffEl.textContent = '✓ БЫЛ НА ПАРЕ: +15% HP (115) | +1 AP';
-        buffEl.style.color = '#22c55e';
-      } else if (sym.attCode === 'N') {
-        buffEl.textContent = '⚠️ Н/Б В ЖУРНАЛЕ: ШТРАФ К ПЕРЕЗАРЯДКЕ +1.2s';
-        buffEl.style.color = '#ff2a5f';
-      } else {
-        buffEl.textContent = '• СТАНДАРТНЫЙ РЕЖИМ: 100 HP';
-        buffEl.style.color = '#38bdf8';
+      if (buffEl) {
+        let buffTxt = '• СТАНДАРТ: 100 HP';
+        let buffClr = '#38bdf8';
+        if (sym.attCode === 'P') {
+          buffTxt = '✓ БЫЛ НА ПАРЕ: +15% HP (115) | +1 AP';
+          buffClr = '#4ade80';
+        } else if (sym.attCode === 'N') {
+          buffTxt = '⚠️ Н/Б В ЖУРНАЛЕ: ШТРАФ +1.2s';
+          buffClr = '#fb7185';
+        }
+        if (buffEl.textContent !== buffTxt) buffEl.textContent = buffTxt;
+        if (buffEl.style.color !== buffClr) buffEl.style.color = buffClr;
       }
 
       updateParryHudDOM();
     }
 
     async function preloadParryQuestionsFromCloud() {
+      if (Array.isArray(parryCachedQuestions) && parryCachedQuestions.length >= 3) {
+        return parryCachedQuestions;
+      }
       try {
-        if (!parrySupaClient && window.supabase) {
-          parrySupaClient = window.supabase.createClient(
-            cleanSupabaseUrl(cloudCfg.supabaseUrl),
-            cloudCfg.supabaseKey
-          );
-        }
-        if (parrySupaClient) {
-          const { data } = await parrySupaClient
+        const client = getParrySupaClient();
+        if (client) {
+          const { data } = await client
             .from('parry_questions')
             .select('*')
             .limit(10);
           if (Array.isArray(data) && data.length >= 3) {
+            parryCachedQuestions = data;
             return data;
           }
         }
@@ -4283,65 +4917,135 @@
       return PARRY_FALLBACK_QUESTIONS;
     }
 
-    async function startParryMatch(botMode = true) {
-      haptic(15);
-      stopParryCountdown();
-      if (parryBotTimer) clearTimeout(parryBotTimer);
-
-      await initParrySymbiosisUI();
-      const qPack = await preloadParryQuestionsFromCloud();
-
-      parryState.isBotMode = botMode;
-      parryState.questions = qPack;
-      parryState.qIdx = 0;
-      parryState.blitzIdx = 0;
-      parryState.myHp = parryState.myMaxHp;
-      parryState.oppMaxHp = 100;
-      parryState.oppHp = 100;
-      parryState.mult = 1;
-      parryState.currentDmg = parryState.baseDmg;
-      parryState.locked = false;
-      parryState.finished = false;
-      parryState.matchId = `duel_${cloudCfg.groupId || 'b26bio'}`;
-
-      document.getElementById('parryBlitzOverlay').classList.remove('active');
-
-      if (botMode) {
-        parryState.oppId = 'bot_cyber';
-        parryState.oppName = '🤖 Кибер-Бот';
-        document.getElementById('parryOppName').textContent = parryState.oppName;
-        document.getElementById('parryStatusBanner').textContent = 'БОЙ НАЧАЛСЯ! Ответьте первым для подачи!';
-        renderParryCurrentQuestion();
-        scheduleBotAttack();
-      } else {
-        parryState.oppId = 'waiting';
-        parryState.oppName = 'Ожидание...';
-        document.getElementById('parryOppName').textContent = parryState.oppName;
-        document.getElementById('parryStatusBanner').textContent = '🌐 Ожидание одногруппника в комнате ' + parryState.matchId + '...';
-        connectParryRealtimeChannel();
-        renderParryCurrentQuestion();
+    function stopParryPollingFallback() {
+      if (parryPollingTimer) {
+        clearInterval(parryPollingTimer);
+        parryPollingTimer = null;
       }
-      updateParryHudDOM();
     }
 
-    function connectParryRealtimeChannel() {
-      if (!window.supabase) return toast('Библиотека Supabase Realtime не загружена');
-      if (!parrySupaClient) {
-        parrySupaClient = window.supabase.createClient(
-          cleanSupabaseUrl(cloudCfg.supabaseUrl),
-          cloudCfg.supabaseKey
-        );
+    // Безопасный fallback на REST-polling, если WebSocket в Telegram WebView временно отвалился
+    function startParryPollingFallback() {
+      if (parryPollingTimer || parryState.isBotMode || parryState.finished) return;
+      setParryConnectionUI('polling', 'Polling • Ожидание WS');
+
+      const probeAndRecover = async () => {
+        if (document.hidden || parryState.isBotMode || parryState.finished) {
+          stopParryPollingFallback();
+          return;
+        }
+        try {
+          const baseUrl = cleanSupabaseUrl(cloudCfg.supabaseUrl);
+          const res = await fetch(`${baseUrl}/rest/v1/parry_questions?select=id&limit=1`, {
+            method: 'GET',
+            headers: {
+              'apikey': cloudCfg.supabaseKey,
+              'Authorization': `Bearer ${cloudCfg.supabaseKey}`
+            }
+          });
+          if (res.ok) {
+            // Сеть доступна — пробуем бесшовно вернуть WebSocket Realtime
+            stopParryPollingFallback();
+            connectParryRealtimeChannel(true);
+          } else {
+            setParryConnectionUI('offline', 'Офлайн • Нет связи');
+          }
+        } catch (e) {
+          setParryConnectionUI('offline', 'Офлайн • Проверка сети');
+        }
+      };
+
+      parryPollingTimer = setInterval(probeAndRecover, 4500);
+    }
+
+    function cleanupParryChannel(resetUi = true) {
+      parryConnectSessionId++;
+      if (parryReconnectTimer) {
+        clearTimeout(parryReconnectTimer);
+        parryReconnectTimer = null;
       }
+      stopParryPollingFallback();
+      if (parryBotTimer) {
+        clearTimeout(parryBotTimer);
+        parryBotTimer = null;
+      }
+      stopParryCountdown();
+
       if (parryChannel) {
-        parrySupaClient.removeChannel(parryChannel);
+        const oldCh = parryChannel;
+        parryChannel = null;
+        try {
+          if (parrySupaClient) {
+            parrySupaClient.removeChannel(oldCh);
+          } else if (typeof oldCh.unsubscribe === 'function') {
+            oldCh.unsubscribe();
+          }
+        } catch (e) {}
       }
 
-      parryChannel = parrySupaClient.channel(parryState.matchId, {
+      if (resetUi) {
+        setParryConnectionUI('offline', parryState.isBotMode ? 'Локальный режим • Бот' : 'Офлайн • Отключено');
+      }
+    }
+
+    function scheduleParryReconnect(reason) {
+      if (parryState.isBotMode || parryState.finished || document.hidden) return;
+      if (parryReconnectTimer) return;
+
+      parryReconnectAttempt++;
+      const delayMs = Math.min(16000, 1000 * Math.pow(2, parryReconnectAttempt - 1)) + Math.floor(Math.random() * 400);
+
+      if (parryReconnectAttempt >= 3) {
+        setParryConnectionUI('polling', `Polling • WS (${reason})`);
+        startParryPollingFallback();
+        return;
+      }
+
+      setParryConnectionUI('reconnecting', `Переподкл. (${parryReconnectAttempt})...`);
+      parryReconnectTimer = setTimeout(() => {
+        parryReconnectTimer = null;
+        if (!parryState.isBotMode && !parryState.finished && !document.hidden) {
+          connectParryRealtimeChannel(true);
+        }
+      }, delayMs);
+    }
+
+    function safeParryBroadcast(payload) {
+      if (!parryChannel || parryState.isBotMode) return;
+      try {
+        parryChannel.send({
+          type: 'broadcast',
+          event: 'duel_ev',
+          payload
+        });
+      } catch (e) {}
+    }
+
+    function connectParryRealtimeChannel(isRetry = false) {
+      if (!window.supabase) {
+        setParryConnectionUI('offline', 'Офлайн • Нет SDK');
+        toast('Библиотека Supabase Realtime не загружена');
+        return;
+      }
+
+      const client = getParrySupaClient();
+      if (!client) return;
+
+      // Корректно закрываем старый канал перед созданием нового
+      cleanupParryChannel(false);
+      if (!isRetry) parryReconnectAttempt = 0;
+
+      const sessionId = ++parryConnectSessionId;
+      setParryConnectionUI('reconnecting', isRetry ? 'Переподключение...' : 'Подключение...');
+
+      const ch = client.channel(parryState.matchId, {
         config: { broadcast: { self: false } }
       });
+      parryChannel = ch;
 
-      parryChannel
+      ch
         .on('broadcast', { event: 'duel_ev' }, ({ payload }) => {
+          if (sessionId !== parryConnectSessionId) return;
           if (!payload || payload.u === parryState.myId) return;
 
           if (payload.e === 'SYNC') {
@@ -4355,10 +5059,12 @@
             updateParryHudDOM();
 
             if (wasWaiting) {
-              parryChannel.send({
-                type: 'broadcast',
-                event: 'duel_ev',
-                payload: { e: 'SYNC', u: parryState.myId, name: parryState.myName, hp: parryState.myHp, maxHp: parryState.myMaxHp }
+              safeParryBroadcast({
+                e: 'SYNC',
+                u: parryState.myId,
+                name: parryState.myName,
+                hp: parryState.myHp,
+                maxHp: parryState.myMaxHp
               });
             }
           } else if (payload.e === 'ATTACK') {
@@ -4366,6 +5072,7 @@
             parryState.currentDmg = payload.dmg;
             parryState.mult = payload.mult;
             parryState.blitzIdx = payload.bIdx || 0;
+            renderParryCurrentQuestion();
             animateProjectile('ME', payload.dmg, () => {
               openParryBlitzWindow(3000);
             });
@@ -4384,23 +5091,108 @@
           }
         })
         .subscribe((status) => {
+          if (sessionId !== parryConnectSessionId) return;
+
           if (status === 'SUBSCRIBED') {
-            parryChannel.send({
-              type: 'broadcast',
-              event: 'duel_ev',
-              payload: { e: 'SYNC', u: parryState.myId, name: parryState.myName, hp: parryState.myHp, maxHp: parryState.myMaxHp }
+            parryReconnectAttempt = 0;
+            stopParryPollingFallback();
+            setParryConnectionUI('online', 'Онлайн • Realtime');
+            safeParryBroadcast({
+              e: 'SYNC',
+              u: parryState.myId,
+              name: parryState.myName,
+              hp: parryState.myHp,
+              maxHp: parryState.myMaxHp
             });
+          } else if (status === 'CHANNEL_ERROR') {
+            scheduleParryReconnect('ERR');
+          } else if (status === 'TIMED_OUT') {
+            scheduleParryReconnect('TIMEOUT');
+          } else if (status === 'CLOSED') {
+            if (!parryState.isBotMode && !parryState.finished && !document.hidden) {
+              scheduleParryReconnect('CLOSED');
+            } else {
+              setParryConnectionUI('offline', 'Офлайн');
+            }
           }
         });
     }
 
+    async function startParryMatch(botMode = true) {
+      haptic('medium');
+      cleanupParryChannel(false);
+      parrySuspendedOnHide = false;
+
+      await initParrySymbiosisUI();
+      const qPack = await preloadParryQuestionsFromCloud();
+
+      parryState.isBotMode = botMode;
+      parryState.questions = qPack;
+      parryState.qIdx = 0;
+      parryState.blitzIdx = 0;
+      parryState.myHp = parryState.myMaxHp;
+      parryState.oppMaxHp = 100;
+      parryState.oppHp = 100;
+      parryState.mult = 1;
+      parryState.maxStreak = 1;
+      parryState.currentDmg = parryState.baseDmg;
+      parryState.locked = false;
+      parryState.finished = false;
+      parryState.matchId = `duel_${cloudCfg.groupId || 'b26bio'}`;
+
+      document.getElementById('parryBlitzOverlay').classList.remove('active');
+
+      if (botMode) {
+        setParryConnectionUI('online', 'Бот • Локально');
+        parryState.oppId = 'bot_cyber';
+        parryState.oppName = '🤖 Кибер-Бот';
+        document.getElementById('parryOppName').textContent = parryState.oppName;
+        document.getElementById('parryStatusBanner').textContent = 'БОЙ НАЧАЛСЯ! Ответьте первым для подачи!';
+        renderParryCurrentQuestion();
+        scheduleBotAttack();
+      } else {
+        parryState.oppId = 'waiting';
+        parryState.oppName = 'Ожидание...';
+        document.getElementById('parryOppName').textContent = parryState.oppName;
+        document.getElementById('parryStatusBanner').textContent = '🌐 Ожидание одногруппника в комнате ' + parryState.matchId + '...';
+        connectParryRealtimeChannel(false);
+        renderParryCurrentQuestion();
+      }
+      updateParryHudDOM();
+    }
+
     function updateParryHudDOM() {
-      document.getElementById('parryMyHpTxt').textContent = `${parryState.myHp}/${parryState.myMaxHp}`;
-      document.getElementById('parryOppHpTxt').textContent = `${parryState.oppHp}/${parryState.oppMaxHp}`;
-      document.getElementById('parryMyHpBar').style.width = `${Math.max(0, (parryState.myHp / parryState.myMaxHp) * 100)}%`;
-      document.getElementById('parryOppHpBar').style.width = `${Math.max(0, (parryState.oppHp / parryState.oppMaxHp) * 100)}%`;
-      document.getElementById('parryRoundLbl').textContent = `${Math.min(5, parryState.qIdx + 1)}/5`;
-      document.getElementById('parryMultBadge').textContent = `УРОН x${parryState.mult} (${parryState.currentDmg} HP)`;
+      const myHpTxt = `${parryState.myHp}/${parryState.myMaxHp}`;
+      const oppHpTxt = `${parryState.oppHp}/${parryState.oppMaxHp}`;
+      const myBarW = `${Math.max(0, (parryState.myHp / parryState.myMaxHp) * 100).toFixed(1)}%`;
+      const oppBarW = `${Math.max(0, (parryState.oppHp / parryState.oppMaxHp) * 100).toFixed(1)}%`;
+      const roundTxt = `${Math.min(5, parryState.qIdx + 1)}/5`;
+      const multTxt = `УРОН x${parryState.mult} (${parryState.currentDmg} HP)`;
+
+      if (parryHudCache.myHp !== myHpTxt) {
+        document.getElementById('parryMyHpTxt').textContent = myHpTxt;
+        parryHudCache.myHp = myHpTxt;
+      }
+      if (parryHudCache.oppHp !== oppHpTxt) {
+        document.getElementById('parryOppHpTxt').textContent = oppHpTxt;
+        parryHudCache.oppHp = oppHpTxt;
+      }
+      if (parryHudCache.myBar !== myBarW) {
+        document.getElementById('parryMyHpBar').style.width = myBarW;
+        parryHudCache.myBar = myBarW;
+      }
+      if (parryHudCache.oppBar !== oppBarW) {
+        document.getElementById('parryOppHpBar').style.width = oppBarW;
+        parryHudCache.oppBar = oppBarW;
+      }
+      if (parryHudCache.round !== roundTxt) {
+        document.getElementById('parryRoundLbl').textContent = roundTxt;
+        parryHudCache.round = roundTxt;
+      }
+      if (parryHudCache.mult !== multTxt) {
+        document.getElementById('parryMultBadge').textContent = multTxt;
+        parryHudCache.mult = multTxt;
+      }
     }
 
     function renderParryCurrentQuestion() {
@@ -4420,10 +5212,11 @@
     }
 
     function scheduleBotAttack() {
-      if (!parryState.isBotMode || parryState.finished) return;
+      if (!parryState.isBotMode || parryState.finished || document.hidden) return;
       if (parryBotTimer) clearTimeout(parryBotTimer);
       parryBotTimer = setTimeout(() => {
-        if (parryState.locked || parryState.finished) return;
+        parryBotTimer = null;
+        if (parryState.locked || parryState.finished || document.hidden) return;
         parryState.locked = true;
         parryState.mult = 1;
         parryState.currentDmg = parryState.baseDmg;
@@ -4437,7 +5230,10 @@
 
     function submitParryMainAnswer(selectedIdx) {
       if (parryState.locked || parryState.finished) return;
-      if (parryBotTimer) clearTimeout(parryBotTimer);
+      if (parryBotTimer) {
+        clearTimeout(parryBotTimer);
+        parryBotTimer = null;
+      }
 
       const q = parryState.questions[parryState.qIdx % parryState.questions.length];
       if (!q) return;
@@ -4446,26 +5242,20 @@
       renderParryCurrentQuestion();
 
       if (selectedIdx === Number(q.correct_idx)) {
-        haptic(12);
+        haptic('medium');
         parryState.mult = 1;
         parryState.currentDmg = parryState.baseDmg;
         parryState.blitzIdx = parryState.qIdx % parryState.questions.length;
         updateParryHudDOM();
 
-        if (!parryState.isBotMode && parryChannel) {
-          parryChannel.send({
-            type: 'broadcast',
-            event: 'duel_ev',
-            payload: {
-              e: 'ATTACK',
-              u: parryState.myId,
-              qIdx: parryState.qIdx,
-              dmg: parryState.currentDmg,
-              mult: 1,
-              bIdx: parryState.blitzIdx
-            }
-          });
-        }
+        safeParryBroadcast({
+          e: 'ATTACK',
+          u: parryState.myId,
+          qIdx: parryState.qIdx,
+          dmg: parryState.currentDmg,
+          mult: 1,
+          bIdx: parryState.blitzIdx
+        });
 
         animateProjectile('OPPONENT', parryState.currentDmg, () => {
           if (parryState.isBotMode) {
@@ -4475,6 +5265,7 @@
           }
         });
       } else {
+        haptic('error');
         const waitMs = 1400 + parryState.cooldownPenaltyMs;
         document.getElementById('parryStatusBanner').textContent = `❌ Промах! Перезарядка ${(waitMs / 1000).toFixed(1)}s...`;
         setTimeout(() => {
@@ -4482,6 +5273,7 @@
             parryState.locked = false;
             document.getElementById('parryStatusBanner').textContent = 'Выберите правильный аргумент!';
             renderParryCurrentQuestion();
+            if (parryState.isBotMode) scheduleBotAttack();
           }
         }, waitMs);
       }
@@ -4504,23 +5296,32 @@
       setTimeout(() => {
         proj.className = 'parry-projectile';
         if (onComplete) onComplete();
-      }, 420);
+      }, 390);
     }
 
     function openParryBlitzWindow(durationMs) {
+      stopParryCountdown();
       const blitzQ = parryState.questions[parryState.blitzIdx % parryState.questions.length];
       if (!blitzQ) return;
 
       document.getElementById('parryBlitzStatement').textContent = blitzQ.blitz_statement;
       document.getElementById('parryBlitzOverlay').classList.add('active');
 
+      const timerDisp = document.getElementById('parryTimerDisplay');
+      const timerBar = document.getElementById('parryTimerBar');
+      let lastShownSec = '';
+
       parryState.parryDuration = durationMs;
       parryState.parryDeadline = performance.now() + durationMs;
 
       const tick = (now) => {
         const left = Math.max(0, parryState.parryDeadline - now);
-        document.getElementById('parryTimerDisplay').textContent = (left / 1000).toFixed(1) + 's';
-        document.getElementById('parryTimerBar').style.width = `${(left / durationMs) * 100}%`;
+        const secStr = (left / 1000).toFixed(1) + 's';
+        if (lastShownSec !== secStr) {
+          timerDisp.textContent = secStr;
+          lastShownSec = secStr;
+        }
+        timerBar.style.width = `${((left / durationMs) * 100).toFixed(1)}%`;
 
         if (left <= 0) {
           applyDamageToMe(parryState.currentDmg);
@@ -4546,7 +5347,7 @@
       if (!blitzQ) return;
 
       if (Boolean(userSaidTrue) === Boolean(blitzQ.blitz_is_true)) {
-        haptic(20);
+        haptic('heavy');
         parryState.mult *= 2;
         parryState.currentDmg = parryState.baseDmg * parryState.mult;
         parryState.maxStreak = Math.max(parryState.maxStreak, parryState.mult);
@@ -4555,20 +5356,14 @@
 
         toast(`🛡️ PARRY x${parryState.mult}! Контратака на ${parryState.currentDmg} HP!`);
 
-        if (!parryState.isBotMode && parryChannel) {
-          parryChannel.send({
-            type: 'broadcast',
-            event: 'duel_ev',
-            payload: {
-              e: 'PARRY_HIT',
-              u: parryState.myId,
-              newDmg: parryState.currentDmg,
-              newMult: parryState.mult,
-              nextWindowMs: 2000,
-              bIdx: parryState.blitzIdx
-            }
-          });
-        }
+        safeParryBroadcast({
+          e: 'PARRY_HIT',
+          u: parryState.myId,
+          newDmg: parryState.currentDmg,
+          newMult: parryState.mult,
+          nextWindowMs: 2000,
+          bIdx: parryState.blitzIdx
+        });
 
         animateProjectile('OPPONENT', parryState.currentDmg, () => {
           if (parryState.isBotMode) {
@@ -4582,14 +5377,14 @@
 
     function resolveBotDefense() {
       setTimeout(() => {
-        if (parryState.finished) return;
+        if (parryState.finished || document.hidden) return;
         const botParried = Math.random() < 0.4 && parryState.mult < 4;
         if (botParried) {
           parryState.mult *= 2;
           parryState.currentDmg = parryState.baseDmg * parryState.mult;
           parryState.blitzIdx = (parryState.blitzIdx + 1) % parryState.questions.length;
           updateParryHudDOM();
-          toast(`🤖 Бот спарировал! Урон вырос до ${parryState.currentDmg} HP (Таймер 2.0s)!`);
+          toast(`🤖 Бот спарировал! Урон вырос до ${parryState.currentDmg} HP (2.0s)!`);
           animateProjectile('ME', parryState.currentDmg, () => {
             openParryBlitzWindow(2000);
           });
@@ -4611,24 +5406,19 @@
       updateParryHudDOM();
 
       const nextQ = parryState.qIdx + 1;
-      if (!parryState.isBotMode && parryChannel) {
-        parryChannel.send({
-          type: 'broadcast',
-          event: 'duel_ev',
-          payload: {
-            e: 'DAMAGE_APPLIED',
-            target: parryState.myId,
-            dmg,
-            hpLeft: parryState.myHp,
-            nextQIdx: nextQ
-          }
-        });
-      }
+      safeParryBroadcast({
+        e: 'DAMAGE_APPLIED',
+        u: parryState.myId,
+        target: parryState.myId,
+        dmg,
+        hpLeft: parryState.myHp,
+        nextQIdx: nextQ
+      });
       advanceParryRoundOrFinish(nextQ);
     }
 
     function triggerParryShake() {
-      haptic(25);
+      haptic('heavy');
       const root = document.getElementById('parryArenaRoot');
       if (!root) return;
       root.classList.remove('parry-shake');
@@ -4639,7 +5429,11 @@
     async function advanceParryRoundOrFinish(nextQIdx) {
       if (parryState.myHp <= 0 || parryState.oppHp <= 0 || nextQIdx >= 5) {
         parryState.finished = true;
-        if (parryBotTimer) clearTimeout(parryBotTimer);
+        if (parryBotTimer) {
+          clearTimeout(parryBotTimer);
+          parryBotTimer = null;
+        }
+        stopParryCountdown();
 
         const iWon = parryState.oppHp <= 0 || (parryState.myHp > parryState.oppHp);
         parryState.myElo += iWon ? 25 : -15;
@@ -4647,11 +5441,12 @@
         document.getElementById('parryStatusBanner').textContent = iWon
           ? '🏆 ПОБЕДА В ДУЭЛИ! (+25 ELO)'
           : '💀 ПОРАЖЕНИЕ! (-15 ELO)';
+        haptic(iWon ? 'success' : 'error');
 
-        // ЕДИНСТВЕННАЯ ЗАПИСЬ В БАЗУ ДАННЫХ ПО ОКОНЧАНИИ МАТЧА (Zero-Lag правило)
-        if (parrySupaClient) {
+        const client = getParrySupaClient();
+        if (client) {
           try {
-            await parrySupaClient.rpc('finish_parry_match', {
+            await client.rpc('finish_parry_match', {
               p_match_id: `${parryState.matchId}_${Date.now()}`,
               p_group_id: cloudCfg.groupId || 'b26bio',
               p_subject_id: parryState.subjectId,
@@ -4669,6 +5464,7 @@
       }
 
       setTimeout(() => {
+        if (parryState.finished) return;
         parryState.qIdx = nextQIdx;
         parryState.mult = 1;
         parryState.currentDmg = parryState.baseDmg;
@@ -4676,10 +5472,55 @@
         updateParryHudDOM();
         renderParryCurrentQuestion();
         if (parryState.isBotMode) scheduleBotAttack();
-      }, 1000);
+      }, 950);
     }
 
-    // ================= 16. СТАРТ ПРИЛОЖЕНИЯ =================
+    // ================= 16. ЖИЗНЕННЫЙ ЦИКЛ WEBVIEW И СТАРТ ПРИЛОЖЕНИЯ =================
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopBellRadarTicker();
+        if (!parryState.isBotMode && !parryState.finished && parryChannel) {
+          parrySuspendedOnHide = true;
+          cleanupParryChannel(false);
+          setParryConnectionUI('offline', 'Пауза • Фон');
+        } else if (parryBotTimer) {
+          clearTimeout(parryBotTimer);
+          parryBotTimer = null;
+        }
+      } else {
+        startBellRadarTicker();
+        if (parrySuspendedOnHide && !parryState.isBotMode && !parryState.finished) {
+          parrySuspendedOnHide = false;
+          connectParryRealtimeChannel(true);
+        } else if (parryState.isBotMode && !parryState.finished && !parryState.locked && parryState.questions.length) {
+          scheduleBotAttack();
+        }
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      stopBellRadarTicker();
+      cleanupParryChannel(false);
+    });
+
+    window.addEventListener('pagehide', () => {
+      stopBellRadarTicker();
+      cleanupParryChannel(false);
+    });
+
+    window.addEventListener('online', () => {
+      if (!parryState.isBotMode && !parryState.finished && !document.hidden) {
+        stopParryPollingFallback();
+        connectParryRealtimeChannel(true);
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      if (!parryState.isBotMode && !parryState.finished) {
+        setParryConnectionUI('offline', 'Офлайн • Нет сети');
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', async () => {
       initUserTimezone();
 
@@ -4687,16 +5528,20 @@
         try {
           tgApp.ready();
           tgApp.expand();
-          if (tgApp.setHeaderColor) tgApp.setHeaderColor('#0b0f19');
-          if (tgApp.setBackgroundColor) tgApp.setBackgroundColor('#0b0f19');
+          syncTelegramThemeVars();
+          if (typeof tgApp.onEvent === 'function') {
+            tgApp.onEvent('themeChanged', () => {
+              syncTelegramThemeVars();
+              applyTheme(state.theme || 'indigo');
+            });
+          }
         } catch (e) {}
       }
 
       loadState();
       await initDB();
-      document.getElementById('jDate').value = new Date().toISOString().slice(0, 10);
-      updateLiveBellRadar();
-      setInterval(updateLiveBellRadar, 15000);
+      document.getElementById('jDate').value = getTzYMD(0);
+      startBellRadarTicker();
       refreshDashboard();
       checkBirthdayStartupReminder();
 
