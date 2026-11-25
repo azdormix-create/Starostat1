@@ -1,1 +1,2275 @@
+<!-- ЧАСТЬ 1 ИЗ 2: parry.html — Самостоятельная EdTech-арена PARRY (Head, стили и разметка) -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Parry | Интеллектуальная EdTech-арена</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #09090b;
+      --bg-surface: #111116;
+      --bg-elevated: #181820;
+      --bg-glass: rgba(255, 255, 255, 0.045);
+      --border: rgba(255, 255, 255, 0.085);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent: #ff2a5f;
+      --accent-soft: rgba(255, 42, 95, 0.14);
+      --cyan: #38bdf8;
+      --cyan-soft: rgba(56, 189, 248, 0.14);
+      --success: #22c55e;
+      --success-soft: rgba(34, 197, 94, 0.14);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.14);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px));
+      overflow-x: hidden;
+      line-height: 1.42;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .title-font {
+      font-family: "Unbounded", "Inter", sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    /* ================= ШАПКА ================= */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: rgba(9, 9, 11, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+    }
+
+    .header-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-btn {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-badge {
+      background: var(--accent);
+      color: #fff;
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 7px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Статус подключения */
+    .conn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      font-family: "JetBrains Mono", monospace;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .conn-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #71717a;
+    }
+    .conn-pill.online { color: #4ade80; border-color: rgba(34,197,94,0.35); background: var(--success-soft); }
+    .conn-pill.online .conn-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.8); }
+    .conn-pill.reconnecting { color: #fbbf24; border-color: rgba(245,158,11,0.35); background: var(--warning-soft); }
+    .conn-pill.reconnecting .conn-dot { background: #f59e0b; }
+
+    /* ================= ОСНОВНОЙ КОНТЕЙНЕР ================= */
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 16px;
+    }
+
+    .view-pane {
+      display: none;
+    }
+    .view-pane.active {
+      display: block;
+      animation: fadeUp 0.2s var(--ease-out) both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .card-accent {
+      background: linear-gradient(165deg, #171522 0%, var(--bg-surface) 100%);
+      border-color: rgba(255, 42, 95, 0.35);
+    }
+    .card-cyan {
+      background: linear-gradient(165deg, #111924 0%, var(--bg-surface) 100%);
+      border-color: rgba(56, 189, 248, 0.32);
+    }
+
+    .sec-head {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 16px 2px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .row { display: flex; gap: 8px; align-items: center; }
+    .between { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+    /* ================= КНОПКИ И ИНПУТЫ ================= */
+    button {
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s ease, opacity 0.15s ease, background-color 0.15s ease;
+      color: var(--text-main);
+    }
+    button:active { transform: scale(0.97); }
+    button:disabled { opacity: 0.45; pointer-events: none; }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-cyan { background: var(--cyan); color: #09090b; font-weight: 700; }
+    .btn-success { background: var(--success); color: #052e16; font-weight: 700; }
+    .btn-glass { background: var(--bg-glass); border: 1px solid var(--border); color: var(--text-main); }
+    .btn-sm { padding: 6px 10px; font-size: 0.74rem; border-radius: var(--radius-sm); }
+    .btn-block { width: 100%; }
+
+    input, select {
+      font-family: inherit;
+      width: 100%;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--cyan); }
+
+    label.lbl {
+      display: block;
+      font-size: 0.67rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      font-size: 0.67rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .badge-accent { background: var(--accent-soft); color: #fb7185; border-color: rgba(255,42,95,0.35); }
+    .badge-cyan { background: var(--cyan-soft); color: #7dd3fc; border-color: rgba(56,189,248,0.35); }
+    .badge-ok { background: var(--success-soft); color: #4ade80; border-color: rgba(34,197,94,0.35); }
+    .badge-warn { background: var(--warning-soft); color: #fbbf24; border-color: rgba(245,158,11,0.35); }
+
+    /* ================= КАРТОЧКИ АРХЕТИПОВ И СНАРЯЖЕНИЯ ================= */
+    .archetype-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .arch-card {
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .arch-card.active {
+      border-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.09);
+    }
+
+    .gear-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .gear-btn {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      padding: 8px 9px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      gap: 3px;
+    }
+    .gear-btn.active-buff {
+      border-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    /* ================= КОМНАТЫ ЛОББИ ================= */
+    .room-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .room-item.seminar {
+      border-color: rgba(245, 158, 11, 0.42);
+      background: linear-gradient(165deg, rgba(245, 158, 11, 0.07), var(--bg-surface));
+    }
+
+    /* ================= АРЕНА БОЯ ================= */
+    .arena-shake {
+      animation: arenaShake 0.32s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes arenaShake {
+      0%, 100% { transform: translate3d(0,0,0); }
+      25% { transform: translate3d(-5px, 3px, 0); }
+      50% { transform: translate3d(5px, -3px, 0); }
+      75% { transform: translate3d(-3px, -2px, 0); }
+    }
+
+    .hud-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .fighter-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: var(--radius-md);
+      padding: 9px;
+    }
+    .fighter-card.enemy {
+      border-color: rgba(255, 42, 95, 0.32);
+      text-align: right;
+    }
+    .hp-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      transition: width 0.24s var(--ease-out);
+    }
+    .hp-fill.enemy {
+      background: linear-gradient(90deg, #ff2a5f, #fb7185);
+    }
+
+    .lane-box {
+      position: relative;
+      height: 48px;
+      background: linear-gradient(90deg, rgba(56,189,248,0.06), rgba(255,255,255,0.02) 50%, rgba(255,42,95,0.06));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .projectile {
+      position: absolute;
+      left: 0;
+      padding: 5px 11px;
+      background: var(--accent);
+      color: #fff;
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      border-radius: 7px;
+      display: none;
+      white-space: nowrap;
+      z-index: 5;
+      will-change: transform;
+    }
+    .projectile.fly-right {
+      display: inline-block;
+      animation: flyRight 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .projectile.fly-left {
+      display: inline-block;
+      background: var(--cyan);
+      color: #09090b;
+      animation: flyLeft 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes flyRight {
+      0% { transform: translate3d(12px, 0, 0) scale(0.92); }
+      100% { transform: translate3d(calc(100vw - 190px), 0, 0) scale(1.06); }
+    }
+    @keyframes flyLeft {
+      0% { transform: translate3d(calc(100vw - 190px), 0, 0) scale(0.92); }
+      100% { transform: translate3d(12px, 0, 0) scale(1.08); }
+    }
+    @media (min-width: 580px) {
+      @keyframes flyRight {
+        0% { transform: translate3d(16px, 0, 0) scale(0.92); }
+        100% { transform: translate3d(350px, 0, 0) scale(1.06); }
+      }
+      @keyframes flyLeft {
+        0% { transform: translate3d(350px, 0, 0) scale(0.92); }
+        100% { transform: translate3d(16px, 0, 0) scale(1.08); }
+      }
+    }
+
+    .ans-btn {
+      width: 100%;
+      text-align: left;
+      justify-content: flex-start;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      padding: 11px 12px;
+      margin-bottom: 7px;
+      font-size: 0.84rem;
+    }
+    .ans-btn:active { border-color: var(--accent); }
+
+    .blitz-box {
+      display: none;
+      background: #120d16;
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .blitz-box.active { display: block; }
+
+    /* ================= НИЖНИЙ ДОК ================= */
+    nav.dock {
+      position: fixed;
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      left: 12px;
+      right: 12px;
+      max-width: 560px;
+      margin: 0 auto;
+      background: rgba(17, 17, 22, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 4px;
+      z-index: 100;
+    }
+    .dock-item {
+      background: transparent;
+      color: var(--text-muted);
+      flex-direction: column;
+      gap: 2px;
+      padding: 7px 4px;
+      font-size: 0.68rem;
+      border-radius: 12px;
+    }
+    .dock-item.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 500;
+      white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .empty-box {
+      text-align: center;
+      padding: 18px 12px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-strong);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="row">
+        <a href="index.html" class="back-btn" title="Вернуться в Старостат">← Старостат</a>
+        <div class="brand-wrap">
+          <span class="brand-badge">PARRY</span>
+          <span class="mono" style="font-size:0.74rem; color:var(--cyan); font-weight:700;" id="hdrEloBadge">1000 ELO</span>
+        </div>
+      </div>
+      <div class="conn-pill" id="parryConnBadge">
+        <span class="conn-dot"></span>
+        <span id="parryConnText">Лобби</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ВКЛАДКА 1: ЛОББИ И АРЕНА ДУЭЛЕЙ -->
+    <section id="view-lobby" class="view-pane active">
+      <!-- ЭКРАН ЛОББИ (ПОКАЗЫВАЕТСЯ ДО ВХОДА В КОМНАТУ) -->
+      <div id="lobbyContainer">
+        <!-- Блок верификации присутствия на паре через код преподавателя -->
+        <div class="card card-cyan">
+          <div class="between" style="margin-bottom:6px;">
+            <span style="font-weight:700; font-size:0.84rem;">🛡️ Верификация пары (Live Check-in)</span>
+            <span class="badge badge-ok" id="verifiedStatusBadge">Не подтверждено</span>
+          </div>
+          <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:8px;">
+            Введите 4-значный код с экрана преподавателя (действует 3 мин.), чтобы честно активировать боевой бафф <b>+15% HP</b> без ручных отметок.
+          </p>
+          <div class="row">
+            <input type="text" id="checkinCodeInput" maxlength="4" placeholder="Код пары (напр. 4821)" class="mono" style="margin-bottom:0; text-transform:uppercase; letter-spacing:0.12em;">
+            <button type="button" class="btn-cyan" style="white-space:nowrap;" onclick="verifyTeacherCheckinCode()">✓ Подтвердить</button>
+          </div>
+        </div>
+
+        <!-- Быстрый вход по коду комнаты или бой с ботом -->
+        <div class="card">
+          <div class="between" style="margin-bottom:8px;">
+            <span style="font-weight:700; font-size:0.86rem;">⚡ Быстрый старт</span>
+            <span class="badge badge-accent" id="activeArchetypePill">⚡ Тактик</span>
+          </div>
+          <div class="row" style="margin-bottom:8px;">
+            <input type="text" id="joinCodeInput" maxlength="6" placeholder="Код комнаты (5 символов)" class="mono" style="margin-bottom:0; text-transform:uppercase;">
+            <button type="button" class="btn-glass" style="white-space:nowrap;" onclick="joinRoomByCode()">Войти</button>
+          </div>
+          <button type="button" class="btn-primary btn-block" onclick="startSoloBotMatch()">
+            🤖 Тренировочный бой с Кибер-Ботом
+          </button>
+        </div>
+
+        <!-- Создание новой изолированной комнаты -->
+        <div class="card card-accent">
+          <div style="font-weight:700; font-size:0.88rem; margin-bottom:8px;">➕ Создать комнату дуэли</div>
+          <input type="text" id="newRoomTitle" placeholder="Название (напр. Базы данных • Дуэль на зачёт)">
+          <div class="row">
+            <select id="newRoomSubject" style="flex:1;">
+              <option value="databases">Базы данных (SQL / PostgreSQL)</option>
+              <option value="it">Информационные технологии</option>
+              <option value="general">Бизнес-информатика (Общий)</option>
+            </select>
+            <select id="newRoomType" style="width:140px;">
+              <option value="open">🌐 Открытая</option>
+              <option value="private">🔒 По коду</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary btn-block" onclick="createParryRoom()">Создать и ждать соперника</button>
+        </div>
+
+        <div class="sec-head">
+          <span>🏛️ Активные комнаты в лобби</span>
+          <button type="button" class="btn-glass btn-sm" onclick="loadLobbyRooms(true)">🔄 Обновить</button>
+        </div>
+        <div id="lobbyRoomsList">
+          <div class="empty-box">Загрузка списка комнат...</div>
+        </div>
+      </div>
+
+      <!-- ЭКРАН АКТИВНОЙ КОМНАТЫ / АРЕНЫ (СКРЫТ В ЛОББИ) -->
+      <div id="arenaContainer" style="display:none;">
+        <div class="card" style="padding:10px 12px;">
+          <div class="between" style="flex-wrap:wrap; gap:6px;">
+            <div class="row" style="gap:6px;">
+              <span class="badge badge-cyan mono" id="arenaRoomCodeBadge">КОМНАТА: -----</span>
+              <span class="badge badge-warn" id="arenaRoleBadge">БОЕЦ 1v1</span>
+            </div>
+            <button type="button" class="btn-glass btn-sm" onclick="leaveCurrentRoom()">✕ Выйти в лобби</button>
+          </div>
+          <div id="arenaBonusBanner" style="display:none; margin-top:7px; padding:6px 9px; border-radius:8px; background:var(--warning-soft); border:1px solid rgba(245,158,11,0.3); font-size:0.74rem; color:#fbbf24; font-weight:600;"></div>
+        </div>
+
+        <!-- HUD Бойцов -->
+        <div class="hud-grid">
+          <div class="fighter-card">
+            <div class="between">
+              <span style="font-weight:700; font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="p1NameLbl">Вы</span>
+              <span class="mono" style="font-size:0.74rem; color:#4ade80;" id="p1HpTxt">100/100</span>
+            </div>
+            <div style="font-size:0.65rem; color:var(--cyan); margin-top:2px;" id="p1ArchLbl">⚡ Тактик</div>
+            <div class="hp-track"><div class="hp-fill" id="p1HpBar" style="width:100%;"></div></div>
+          </div>
+
+          <div class="title-font" style="font-size:0.8rem; color:var(--accent); text-align:center;">
+            VS<br><span class="mono" style="font-size:0.68rem; color:var(--text-main);" id="arenaRoundLbl">1/5</span>
+          </div>
+
+          <div class="fighter-card enemy">
+            <div class="between">
+              <span class="mono" style="font-size:0.74rem; color:#fb7185;" id="p2HpTxt">100/100</span>
+              <span style="font-weight:700; font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="p2NameLbl">Ожидание...</span>
+            </div>
+            <div style="font-size:0.65rem; color:#fb7185; margin-top:2px;" id="p2ArchLbl">Соперник</div>
+            <div class="hp-track"><div class="hp-fill enemy" id="p2HpBar" style="width:100%;"></div></div>
+          </div>
+        </div>
+
+        <!-- Линия снаряда -->
+        <div class="lane-box">
+          <span class="mono" style="font-size:0.71rem; color:var(--text-muted);" id="arenaStatusBanner">
+            Ожидание подключения соперника...
+          </span>
+          <div id="arenaProjectileEl" class="projectile">⚡ АРГУМЕНТ (18 HP)</div>
+        </div>
+
+        <!-- Снаряжение за достижения (активируется в бою, тратит заряды) -->
+        <div id="arenaGearBar" class="gear-grid">
+          <button type="button" class="gear-btn" id="btnUseCheatSheet" onclick="useBattleGear('cheat_sheet')">
+            <div class="between" style="width:100%;">
+              <span style="font-size:0.72rem; font-weight:700;">📖 Конспект</span>
+              <span class="badge badge-cyan mono" id="cntCheatSheet">1</span>
+            </div>
+            <span style="font-size:0.63rem; color:var(--text-muted);">Убрать 2 неверных</span>
+          </button>
+
+          <button type="button" class="gear-btn" id="btnUseAppeal" onclick="useBattleGear('appeal')">
+            <div class="between" style="width:100%;">
+              <span style="font-size:0.72rem; font-weight:700;">⚖️ Апелляция</span>
+              <span class="badge badge-cyan mono" id="cntAppeal">1</span>
+            </div>
+            <span style="font-size:0.63rem; color:var(--text-muted);">Сменить блиц</span>
+          </button>
+
+          <button type="button" class="gear-btn" id="btnUseShield" onclick="useBattleGear('shield')">
+            <div class="between" style="width:100%;">
+              <span style="font-size:0.72rem; font-weight:700;">🛡️ Щит</span>
+              <span class="badge badge-cyan mono" id="cntShield">0</span>
+            </div>
+            <span style="font-size:0.63rem; color:var(--text-muted);">Блок 1 удара</span>
+          </button>
+        </div>
+
+        <!-- Вопрос подачи -->
+        <div id="arenaQuestionCard" class="card">
+          <div class="between" style="margin-bottom:6px;">
+            <span class="badge badge-accent" id="arenaTopicBadge">ПОДАЧА</span>
+            <span class="mono" style="font-size:0.71rem; color:var(--cyan);" id="arenaDmgBadge">УРОН x1 (18 HP)</span>
+          </div>
+          <div style="font-weight:600; font-size:0.9rem; line-height:1.4; margin-bottom:10px;" id="arenaQuestionText">
+            Ожидание начала раунда...
+          </div>
+          <div id="arenaAnswersBox"></div>
+        </div>
+
+        <!-- Окно парирования -->
+        <div id="arenaBlitzBox" class="blitz-box">
+          <div class="title-font" style="color:var(--accent); font-size:0.88rem;">🛡️ ОКНО ПАРИРОВАНИЯ!</div>
+          <div class="mono" style="font-size:1.55rem; font-weight:800; margin:4px 0;" id="arenaBlitzTimerTxt">3.0s</div>
+          <div class="hp-track" style="margin-bottom:10px;">
+            <div id="arenaBlitzBar" style="height:100%; width:100%; background:var(--cyan);"></div>
+          </div>
+          <div style="font-size:0.86rem; font-weight:600; padding:10px; background:var(--bg-elevated); border-radius:8px; margin-bottom:10px;" id="arenaBlitzStmt">
+            Утверждение...
+          </div>
+          <div class="row">
+            <button type="button" class="btn-success btn-block title-font" onclick="handleBlitzAnswer(true)">ПРАВДА</button>
+            <button type="button" class="btn-primary btn-block title-font" onclick="handleBlitzAnswer(false)">ЛОЖЬ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 2: ПРОФИЛЬ, ПАССИВКИ И СНАРЯЖЕНИЕ -->
+    <section id="view-profile" class="view-pane">
+      <div class="card">
+        <div class="between">
+          <div>
+            <div style="font-weight:800; font-size:1rem;" id="profNameLbl">Студент</div>
+            <div style="font-size:0.74rem; color:var(--text-muted);" id="profMetaLbl">Группа Б-26БиО • Ранг навыка: 1</div>
+          </div>
+          <span class="badge badge-warn" id="profTeacherBadge">⏳ Ожидает валидации</span>
+        </div>
+        <div class="row" style="margin-top:10px; justify-content:space-between;">
+          <span class="badge badge-cyan mono">ELO: <strong id="profEloVal">1000</strong></span>
+          <span class="badge badge-ok mono">Побед: <strong id="profWinsVal">0</strong></span>
+          <span class="badge mono">Посещений: <strong id="profCheckinsVal">0</strong></span>
+        </div>
+      </div>
+
+      <div class="sec-head"><span>🧠 Выбор стиля игры (Пассивный навык)</span></div>
+      <div class="archetype-grid">
+        <div class="arch-card active" id="archCardTactician" onclick="selectArchetype('tactician')">
+          <div class="between" style="margin-bottom:4px;">
+            <strong style="font-size:0.84rem;">⚡ Тактик</strong>
+            <span class="badge badge-accent">Скорость</span>
+          </div>
+          <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.35;">
+            Ответ быстрее <b>4.0 сек</b> даёт <b>+20% к урону</b>. Базовое HP: 95. Для тех, кто мгновенно схватывает суть.
+          </p>
+        </div>
+
+        <div class="arch-card" id="archCardAnalyst" onclick="selectArchetype('analyst')">
+          <div class="between" style="margin-bottom:4px;">
+            <strong style="font-size:0.84rem;">🧠 Аналитик</strong>
+            <span class="badge badge-cyan">Глубина</span>
+          </div>
+          <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.35;">
+            Раздумье <b>5–12 сек</b> даёт <b>броню -40%</b> по входящему урону, крит за точный ответ и окно парирования <b>4.5s</b>.
+          </p>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <span>🎒 Снаряжение за достижения (нельзя купить)</span>
+      </div>
+      <div class="card">
+        <div class="between" style="padding:7px 0; border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-weight:700; font-size:0.83rem;">📖 Конспект отличника</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Убирает 2 неверных ответа • Награда за 3 победы подряд</div>
+          </div>
+          <span class="badge badge-cyan mono" id="invCheatSheetLbl">1 зар.</span>
+        </div>
+        <div class="between" style="padding:7px 0; border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-weight:700; font-size:0.83rem;">⚖️ Апелляция</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Меняет вопрос в окне парирования • Награда за 3 чек-ина</div>
+          </div>
+          <span class="badge badge-cyan mono" id="invAppealLbl">1 зар.</span>
+        </div>
+        <div class="between" style="padding-top:7px;">
+          <div>
+            <div style="font-weight:700; font-size:0.83rem;">🛡️ Кафедральный щит</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">Поглощает 1 удар • Награда за серию парирований x4</div>
+          </div>
+          <span class="badge badge-cyan mono" id="invShieldLbl">0 зар.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 3: КАБИНЕТ ПРЕПОДАВАТЕЛЯ И РАБОТОДАТЕЛЯ -->
+    <section id="view-teacher" class="view-pane">
+      <div id="teacherAuthBox" class="card card-cyan">
+        <div style="font-weight:800; font-size:0.92rem; margin-bottom:4px;">👨‍🏫 Вход для Преподавателя / Партнёра</div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
+          Преподаватель управляет честной верификацией посещений, назначает академические бонусы за дуэли и подтверждает прокачку навыков студентов.
+        </p>
+        <input type="text" id="teacherNameInput" placeholder="Ваше ФИО (напр. Борисова Т. Ю.)">
+        <input type="password" id="teacherPinInput" placeholder="Код доступа кафедры (по умолчанию: ngieu2026)">
+        <button type="button" class="btn-cyan btn-block" onclick="unlockTeacherPanel()">Войти в режим Преподавателя</button>
+      </div>
+
+      <div id="teacherWorkspace" style="display:none;">
+        <!-- Генератор 3-минутного кода пары -->
+        <div class="card card-cyan">
+          <div class="between" style="margin-bottom:6px;">
+            <span style="font-weight:700; font-size:0.86rem;">🔑 Код присутствия на паре (3 мин.)</span>
+            <span class="badge badge-ok" id="activeCodeTimerBadge">Готов</span>
+          </div>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px;">
+            Продиктуйте код аудитории. Студенты получат верифицированный бафф и прогресс к снаряжению без участия старосты.
+          </p>
+          <div class="row">
+            <select id="teacherCheckinSubject" style="margin-bottom:0;">
+              <option value="databases">Базы данных</option>
+              <option value="it">Информационные технологии</option>
+              <option value="general">Экономика / Бизнес-информатика</option>
+            </select>
+            <button type="button" class="btn-cyan" style="white-space:nowrap;" onclick="generateTeacherCheckinCode()">Сгенерировать</button>
+          </div>
+          <div id="generatedCodeDisplay" style="display:none; margin-top:10px; padding:12px; background:var(--bg-main); border-radius:10px; text-align:center; border:1px solid var(--cyan);">
+            <div style="font-size:0.7rem; color:var(--text-muted);">КОД ДЛЯ АУДИТОРИИ (ДЕЙСТВУЕТ 3 МИНУТЫ):</div>
+            <div class="mono" style="font-size:2rem; font-weight:800; color:var(--cyan); letter-spacing:0.18em; margin:4px 0;" id="generatedCodeVal">0000</div>
+          </div>
+        </div>
+
+        <!-- Создание бонусного семинара или кейс-турнира от работодателя -->
+        <div class="card card-accent">
+          <div style="font-weight:700; font-size:0.86rem; margin-bottom:8px;">🏆 Бонусная комната / Кейс работодателя</div>
+          <input type="text" id="tRoomTitle" placeholder="Название (напр. Семинар: Зачётный спарринг)">
+          <input type="text" id="tRoomBonus" placeholder="Бонус за победу (напр. +5 баллов к рейтингу / автомат)">
+          <input type="text" id="tRoomEmployer" placeholder="Партнёр / Работодатель (необязательно, напр. Сбер / Росатом)">
+          <button type="button" class="btn-primary btn-block" onclick="createTeacherBonusRoom()">Опубликовать комнату с бонусом</button>
+        </div>
+
+        <!-- Валидация прокачки навыков студентов -->
+        <div class="sec-head">
+          <span>🎓 Подтверждение навыков студентов</span>
+          <button type="button" class="btn-glass btn-sm" onclick="loadStudentsForTeacher()">🔄 Обновить</button>
+        </div>
+        <div id="teacherStudentsList">
+          <div class="empty-box">Нажмите «Обновить» для загрузки профилей группы.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast">Готово</div>
+
+  <nav class="dock">
+    <button type="button" class="dock-item active" data-v="lobby" onclick="switchParryView('lobby', this)">
+      <span style="font-size:1.05rem;">⚔️</span>
+      <span>Лобби</span>
+    </button>
+    <button type="button" class="dock-item" data-v="profile" onclick="switchParryView('profile', this)">
+      <span style="font-size:1.05rem;">🎒</span>
+      <span>Навыки</span>
+    </button>
+    <button type="button" class="dock-item" data-v="teacher" onclick="switchParryView('teacher', this)">
+      <span style="font-size:1.05rem;">👨‍🏫</span>
+      <span>Препод</span>
+    </button>
+  </nav>
+<!-- КОНЕЦ ЧАСТИ 1 --><!-- ЧАСТЬ 2 ИЗ 2: parry.html — Логика лобби, верификации, пассивок Тактик/Аналитик, снаряжения и кабинета преподавателя -->
+  <script>
+    // ================= 0. КОНФИГУРАЦИЯ И ИНИЦИАЛИЗАЦИЯ =================
+    const SUPA_URL = 'https://grkefffovuisfvqgwugj.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya2VmZmZvdnVpc2Z2cWd3dWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTYxMjgsImV4cCI6MjEwOTEzMjEyOH0.gjIuCZfb6ICu9BtFLl59rFyE7XaS_ZIrH5wy-HSe5yU';
+    const TEACHER_PINS = ['ngieu2026', 'kafedra26', 'starostat'];
+    const PROFILE_LOCAL_KEY = 'parry_standalone_profile_v2';
+    const CHECKIN_LOCAL_KEY = 'parry_verified_checkin_v2';
+
+    const SUBJECT_LABELS = {
+      databases: 'Базы данных (SQL)',
+      it: 'Информационные технологии',
+      general: 'Бизнес-информатика'
+    };
+
+    const FALLBACK_QUESTIONS = [
+      {
+        subject_id: 'databases',
+        subject_title: 'Базы данных',
+        question_text: 'Какая нормальная форма требует отсутствия транзитивных зависимостей неключевых атрибутов от первичного ключа?',
+        answers_json: ['Первая (1NF)', 'Вторая (2NF)', 'Третья (3NF)', 'Бойса-Кодда (BCNF)'],
+        correct_idx: 2,
+        blitz_statement: 'Оператор TRUNCATE в SQL удаляет строки по одной так же медленно, как DELETE без WHERE.',
+        blitz_is_true: false
+      },
+      {
+        subject_id: 'databases',
+        subject_title: 'Базы данных',
+        question_text: 'Какой тип индекса в PostgreSQL создаётся по умолчанию командой CREATE INDEX?',
+        answers_json: ['Hash', 'B-Tree', 'GIN', 'GiST'],
+        correct_idx: 1,
+        blitz_statement: 'Индекс GIN эффективно ускоряет поиск по ключам и значениям внутри полей JSONB.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'it',
+        subject_title: 'Информационные технологии',
+        question_text: 'Какова временная сложность поиска элемента в сбалансированном бинарном дереве поиска?',
+        answers_json: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+        correct_idx: 1,
+        blitz_statement: 'WebSocket-соединение устанавливается поверх TCP через механизм HTTP Upgrade.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'it',
+        subject_title: 'Информационные технологии',
+        question_text: 'Какой HTTP-код статуса означает, что сервер понял запрос, но отказывается его авторизовать (нет прав доступа)?',
+        answers_json: ['401 Unauthorized', '403 Forbidden', '404 Not Found', '502 Bad Gateway'],
+        correct_idx: 1,
+        blitz_statement: 'HTTP-метод PUT является идемпотентным, в отличие от стандартного POST.',
+        blitz_is_true: true
+      },
+      {
+        subject_id: 'general',
+        subject_title: 'Бизнес-информатика',
+        question_text: 'Что означает буква «I» в базовых требованиях к транзакциям БД (ACID)?',
+        answers_json: ['Integrity (Целостность)', 'Isolation (Изолированность)', 'Indexing (Индексация)', 'Idempotency'],
+        correct_idx: 1,
+        blitz_statement: 'UNION ALL выполняется быстрее UNION, так как не тратит ресурсы на сортировку и удаление дубликатов.',
+        blitz_is_true: true
+      }
+    ];
+
+    const tgApp = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+    const tgUser = (tgApp && tgApp.initDataUnsafe && tgApp.initDataUnsafe.user) ? tgApp.initDataUnsafe.user : null;
+    const supa = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+      realtime: { params: { eventsPerSecond: 10 } }
+    }) : null;
+
+    let playerProfile = {
+      id: 'stu_guest',
+      name: 'Студент НГИЭУ',
+      groupId: 'b26bio',
+      groupName: 'Б-26БиО',
+      elo: 1000,
+      wins: 0,
+      losses: 0,
+      winStreak: 0,
+      verifiedCheckins: 0,
+      archetype: 'tactician', // 'tactician' | 'analyst'
+      skillRank: 1,
+      teacherApproved: false,
+      inventory: { cheat_sheet: 1, appeal: 1, shield: 0 }
+    };
+
+    let verifiedCheckin = null; // { code, subjectId, subjectTitle, teacherName, expiresAtMs }
+    let teacherSession = { unlocked: false, name: '' };
+    let teacherCodeTimer = null;
+
+    let parryChannel = null;
+    let connectSessionId = 0;
+    let reconnectTimer = null;
+    let reconnectAttempt = 0;
+    let lobbyRefreshTimer = null;
+    let botTimer = null;
+    let blitzRafId = null;
+    let questionsPool = FALLBACK_QUESTIONS;
+
+    let matchState = {
+      active: false,
+      isBot: false,
+      isSpectator: false,
+      roomId: '',
+      roomCode: '',
+      subjectId: 'general',
+      subjectTitle: 'Бизнес-информатика',
+      teacherBonus: '',
+      startedAtMs: 0,
+      qIdx: 0,
+      blitzIdx: 0,
+      questionShownAtMs: 0,
+      myHp: 95,
+      myMaxHp: 95,
+      oppId: '',
+      oppName: 'Соперник',
+      oppArchetype: 'tactician',
+      oppHp: 100,
+      oppMaxHp: 100,
+      baseDmg: 18,
+      currentDmg: 18,
+      mult: 1,
+      maxStreak: 1,
+      locked: false,
+      finished: false,
+      shieldActive: false,
+      blitzDeadline: 0
+    };
+
+    // ================= УТИЛИТЫ =================
+    function esc(s) {
+      if (s === null || s === undefined) return '';
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function escJs(s) {
+      if (s === null || s === undefined) return '';
+      return String(s)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function haptic(style = 'light') {
+      if (tgApp && tgApp.HapticFeedback) {
+        try {
+          if (style === 'success' || style === 'warning' || style === 'error') {
+            tgApp.HapticFeedback.notificationOccurred(style);
+            return;
+          }
+          tgApp.HapticFeedback.impactOccurred(style === 'heavy' ? 'heavy' : (style === 'medium' ? 'medium' : 'light'));
+          return;
+        } catch (e) {}
+      }
+      if (navigator.vibrate) {
+        try { navigator.vibrate(style === 'heavy' ? 24 : 10); } catch (e) {}
+      }
+    }
+
+    let toastTimer = null;
+    function toast(msg) {
+      haptic('light');
+      const el = document.getElementById('toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+    }
+
+    function setConnStatus(mode, text) {
+      const pill = document.getElementById('parryConnBadge');
+      const lbl = document.getElementById('parryConnText');
+      if (!pill || !lbl) return;
+      pill.className = 'conn-pill ' + (mode === 'online' ? 'online' : (mode === 'reconnecting' ? 'reconnecting' : ''));
+      lbl.textContent = text;
+    }
+
+    // ================= 1. ПРОФИЛЬ, SSO ИЗ СТАРОСТАТА И АРХЕТИПЫ =================
+    async function initPlayerIdentityAndProfile() {
+      // 1. Читаем локальный профиль
+      try {
+        const saved = JSON.parse(localStorage.getItem(PROFILE_LOCAL_KEY) || 'null');
+        if (saved && saved.id) playerProfile = Object.assign(playerProfile, saved);
+      } catch (e) {}
+
+      // 2. Читаем контекст, переданный из Старостата (URL params или sessionStorage)
+      const params = new URLSearchParams(window.location.search);
+      let sso = null;
+      try {
+        sso = JSON.parse(sessionStorage.getItem('starostat_parry_sso') || 'null');
+      } catch (e) {}
+
+      const pUid = params.get('uid') || (sso && sso.uid) || (tgUser ? 'tg_' + tgUser.id : '');
+      const pName = params.get('name') || (sso && sso.name) || (tgUser ? [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') : '');
+      const pGrpId = params.get('gid') || (sso && sso.gid) || 'b26bio';
+      const pGrpName = params.get('gname') || (sso && sso.gname) || 'Б-26БиО';
+      const pSubj = params.get('subj') || (sso && sso.subj) || '';
+
+      if (pUid) playerProfile.id = pUid;
+      else if (playerProfile.id === 'stu_guest') {
+        playerProfile.id = 'stu_' + Math.random().toString(36).slice(2, 9);
+      }
+      if (pName) playerProfile.name = pName;
+      if (pGrpId) playerProfile.groupId = pGrpId;
+      if (pGrpName) playerProfile.groupName = pGrpName;
+
+      if (pSubj && document.getElementById('newRoomSubject')) {
+        document.getElementById('newRoomSubject').value = pSubj;
+      }
+
+      // 3. Проверяем активный верифицированный чек-ин преподавателя
+      try {
+        const savedCheckin = JSON.parse(localStorage.getItem(CHECKIN_LOCAL_KEY) || 'null');
+        if (savedCheckin && savedCheckin.expiresAtMs > Date.now()) {
+          verifiedCheckin = savedCheckin;
+        } else {
+          localStorage.removeItem(CHECKIN_LOCAL_KEY);
+        }
+      } catch (e) {}
+
+      // 4. Синхронизируем профиль с Supabase (parry_profiles)
+      if (supa) {
+        try {
+          const { data } = await supa
+            .from('parry_profiles')
+            .select('*')
+            .eq('id', playerProfile.id)
+            .maybeSingle();
+
+          if (data) {
+            playerProfile.elo = data.elo ?? playerProfile.elo;
+            playerProfile.wins = data.wins ?? 0;
+            playerProfile.losses = data.losses ?? 0;
+            playerProfile.winStreak = data.win_streak ?? 0;
+            playerProfile.verifiedCheckins = data.verified_checkins ?? 0;
+            playerProfile.archetype = data.archetype || playerProfile.archetype;
+            playerProfile.skillRank = data.skill_rank ?? 1;
+            playerProfile.teacherApproved = Boolean(data.teacher_approved);
+            if (data.inventory_json) {
+              playerProfile.inventory = Object.assign({ cheat_sheet: 1, appeal: 1, shield: 0 }, data.inventory_json);
+            }
+          } else {
+            await supa.from('parry_profiles').upsert({
+              id: playerProfile.id,
+              display_name: playerProfile.name,
+              group_id: playerProfile.groupId,
+              elo: playerProfile.elo,
+              archetype: playerProfile.archetype,
+              inventory_json: playerProfile.inventory
+            });
+          }
+        } catch (e) {}
+      }
+
+      saveLocalProfile();
+      renderProfileUI();
+    }
+
+    function saveLocalProfile() {
+      localStorage.setItem(PROFILE_LOCAL_KEY, JSON.stringify(playerProfile));
+    }
+
+    function renderProfileUI() {
+      document.getElementById('hdrEloBadge').textContent = `${playerProfile.elo} ELO`;
+      document.getElementById('profNameLbl').textContent = playerProfile.name;
+      document.getElementById('profMetaLbl').textContent = `Группа ${playerProfile.groupName} • Ранг навыка: ${playerProfile.skillRank}`;
+      document.getElementById('profEloVal').textContent = playerProfile.elo;
+      document.getElementById('profWinsVal').textContent = playerProfile.wins;
+      document.getElementById('profCheckinsVal').textContent = playerProfile.verifiedCheckins;
+
+      const tBadge = document.getElementById('profTeacherBadge');
+      if (playerProfile.teacherApproved) {
+        tBadge.textContent = '✓ Подтверждено кафедрой';
+        tBadge.className = 'badge badge-ok';
+      } else {
+        tBadge.textContent = '⏳ Ожидает валидации';
+        tBadge.className = 'badge badge-warn';
+      }
+
+      const isTact = playerProfile.archetype === 'tactician';
+      document.getElementById('archCardTactician').classList.toggle('active', isTact);
+      document.getElementById('archCardAnalyst').classList.toggle('active', !isTact);
+      document.getElementById('activeArchetypePill').textContent = isTact ? '⚡ Тактик' : '🧠 Аналитик';
+
+      const inv = playerProfile.inventory || { cheat_sheet: 0, appeal: 0, shield: 0 };
+      document.getElementById('invCheatSheetLbl').textContent = `${inv.cheat_sheet || 0} зар.`;
+      document.getElementById('invAppealLbl').textContent = `${inv.appeal || 0} зар.`;
+      document.getElementById('invShieldLbl').textContent = `${inv.shield || 0} зар.`;
+
+      const vBadge = document.getElementById('verifiedStatusBadge');
+      if (verifiedCheckin && verifiedCheckin.expiresAtMs > Date.now()) {
+        vBadge.textContent = `✓ Пара подтверждена (+15% HP)`;
+        vBadge.className = 'badge badge-ok';
+      } else {
+        vBadge.textContent = 'Базовый режим (без баффа)';
+        vBadge.className = 'badge';
+      }
+    }
+
+    async function selectArchetype(arch) {
+      haptic('medium');
+      playerProfile.archetype = arch;
+      saveLocalProfile();
+      renderProfileUI();
+      toast(arch === 'tactician' ? '⚡ Выбран стиль: Тактик (бонус за скорость)' : '🧠 Выбран стиль: Аналитик (броня + крит)');
+      if (supa) {
+        try {
+          await supa.from('parry_profiles').update({ archetype: arch, updated_at: new Date().toISOString() }).eq('id', playerProfile.id);
+        } catch (e) {}
+      }
+    }
+
+    // ================= 2. ВЕРИФИКАЦИЯ ЧЕСТНОСТИ ЧЕРЕЗ КОД ПРЕПОДАВАТЕЛЯ =================
+    async function verifyTeacherCheckinCode() {
+      const code = document.getElementById('checkinCodeInput').value.trim().toUpperCase();
+      if (code.length < 4) return toast('Введите 4-значный код преподавателя');
+      if (!supa) return toast('Нет подключения к базе Supabase');
+
+      try {
+        const nowIso = new Date().toISOString();
+        const { data, error } = await supa
+          .from('parry_checkins')
+          .select('*')
+          .eq('code', code)
+          .gt('expires_at', nowIso)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (error || !data) {
+          haptic('error');
+          return toast('❌ Код не найден или его 3 минуты истекли');
+        }
+
+        const usedIds = Array.isArray(data.used_by_ids) ? data.used_by_ids : [];
+        if (!usedIds.includes(playerProfile.id)) {
+          usedIds.push(playerProfile.id);
+          await supa.from('parry_checkins').update({ used_by_ids: usedIds }).eq('id', data.id);
+
+          playerProfile.verifiedCheckins = (playerProfile.verifiedCheckins || 0) + 1;
+          // За каждые 3 честных посещения пары — выдаём 1 заряд «Апелляции»
+          let rewardMsg = '';
+          if (playerProfile.verifiedCheckins % 3 === 0) {
+            playerProfile.inventory.appeal = Math.min(5, (playerProfile.inventory.appeal || 0) + 1);
+            rewardMsg = ' +1 заряд «Апелляции»!';
+          }
+          saveLocalProfile();
+          await supa.from('parry_profiles').upsert({
+            id: playerProfile.id,
+            display_name: playerProfile.name,
+            group_id: playerProfile.groupId,
+            verified_checkins: playerProfile.verifiedCheckins,
+            inventory_json: playerProfile.inventory
+          });
+          if (rewardMsg) toast('🎁 Достижение за посещаемость:' + rewardMsg);
+        }
+
+        verifiedCheckin = {
+          code: data.code,
+          subjectId: data.subject_id || 'general',
+          subjectTitle: data.subject_title || 'Пара НГИЭУ',
+          teacherName: data.teacher_name || 'Преподаватель',
+          expiresAtMs: Date.now() + 90 * 60 * 1000 // Бафф действует всю пару (90 мин)
+        };
+        localStorage.setItem(CHECKIN_LOCAL_KEY, JSON.stringify(verifiedCheckin));
+        document.getElementById('checkinCodeInput').value = '';
+        renderProfileUI();
+        haptic('success');
+        toast(`✅ Присутствие подтверждено (${verifiedCheckin.teacherName})! +15% HP в дуэлях`);
+      } catch (e) {
+        toast('Ошибка проверки кода');
+      }
+    }
+
+    // ================= 3. ЛОББИ И ИЗОЛИРОВАННЫЕ КОМНАТЫ (>2 ИГРОКОВ = ЗРИТЕЛЬ) =================
+    async function loadLobbyRooms(showMsg = false) {
+      const box = document.getElementById('lobbyRoomsList');
+      if (!supa) {
+        box.innerHTML = '<div class="empty-box">Офлайн-режим: доступен бой с ботом.</div>';
+        return;
+      }
+      try {
+        const cutoff = new Date(Date.now() - 45 * 60 * 1000).toISOString();
+        const { data, error } = await supa
+          .from('parry_rooms')
+          .select('*')
+          .in('status', ['waiting', 'playing'])
+          .gt('updated_at', cutoff)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (error) throw error;
+        const rooms = Array.isArray(data) ? data : [];
+
+        if (!rooms.length) {
+          box.innerHTML = '<div class="empty-box">Открытых комнат пока нет. Создайте первую дуэль выше!</div>';
+          if (showMsg) toast('Лобби обновлено');
+          return;
+        }
+
+        box.innerHTML = rooms.map(r => {
+          const isWaiting = r.status === 'waiting' && !r.guest_id;
+          const isSeminar = Boolean(r.teacher_bonus || r.employer_tag);
+          const archIcon = r.host_archetype === 'analyst' ? '🧠 Аналитик' : '⚡ Тактик';
+          return `
+            <div class="room-item ${isSeminar ? 'seminar' : ''}">
+              <div class="between" style="margin-bottom:5px;">
+                <div style="font-weight:700; font-size:0.88rem;">${esc(r.title)}</div>
+                <span class="badge ${isWaiting ? 'badge-ok' : 'badge-warn'} mono">
+                  ${isWaiting ? '1/2 • Ждёт' : `2/2 • Идёт бой (${r.spectators_count || 0} зрит.)`}
+                </span>
+              </div>
+              <div class="row" style="flex-wrap:wrap; gap:5px; margin-bottom:8px;">
+                <span class="badge badge-cyan">${esc(r.subject_title || 'Дисциплина')}</span>
+                <span class="badge">Хост: ${esc(r.host_name)} (${archIcon})</span>
+                ${r.teacher_bonus ? `<span class="badge badge-warn">🎁 ${esc(r.teacher_bonus)}</span>` : ''}
+                ${r.employer_tag ? `<span class="badge badge-accent">💼 ${esc(r.employer_tag)}</span>` : ''}
+              </div>
+              <div class="row">
+                ${isWaiting ? `
+                  <button type="button" class="btn-primary btn-sm btn-block" onclick="joinLobbyRoom('${escJs(r.id)}', false)">
+                    ⚔️ Принять вызов (1v1)
+                  </button>
+                ` : `
+                  <button type="button" class="btn-glass btn-sm btn-block" onclick="joinLobbyRoom('${escJs(r.id)}', true)">
+                    👁️ Войти зрителем (без наложения)
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        if (showMsg) toast(`Найдено комнат: ${rooms.length}`);
+      } catch (e) {
+        box.innerHTML = '<div class="empty-box">Не удалось загрузить лобби. Проверьте интернет.</div>';
+      }
+    }
+
+    function generateRoomCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let res = '';
+      for (let i = 0; i < 5; i++) res += chars[Math.floor(Math.random() * chars.length)];
+      return res;
+    }
+
+    async function createParryRoom() {
+      if (!supa) return toast('Нет связи с Supabase');
+      haptic('medium');
+
+      const subjId = document.getElementById('newRoomSubject').value || 'general';
+      const subjTitle = SUBJECT_LABELS[subjId] || 'Бизнес-информатика';
+      const rType = document.getElementById('newRoomType').value || 'open';
+      const customTitle = document.getElementById('newRoomTitle').value.trim();
+      const title = customTitle || `${subjTitle} • Вызов от ${playerProfile.name}`;
+      const roomCode = generateRoomCode();
+      const roomId = `room_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+
+      try {
+        const { error } = await supa.from('parry_rooms').insert({
+          id: roomId,
+          room_code: roomCode,
+          title,
+          room_type: rType,
+          group_id: playerProfile.groupId,
+          subject_id: subjId,
+          subject_title: subjTitle,
+          host_id: playerProfile.id,
+          host_name: playerProfile.name,
+          host_archetype: playerProfile.archetype,
+          status: 'waiting'
+        });
+
+        if (error) throw error;
+        document.getElementById('newRoomTitle').value = '';
+        await enterRoomArena({
+          id: roomId,
+          room_code: roomCode,
+          subject_id: subjId,
+          subject_title: subjTitle,
+          host_id: playerProfile.id,
+          host_name: playerProfile.name,
+          host_archetype: playerProfile.archetype,
+          status: 'waiting'
+        }, 'host');
+      } catch (e) {
+        toast('Ошибка создания комнаты');
+      }
+    }
+
+    async function joinRoomByCode() {
+      const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+      if (code.length < 4) return toast('Введите код комнаты');
+      if (!supa) return toast('Нет связи с базой');
+
+      try {
+        const { data } = await supa
+          .from('parry_rooms')
+          .select('*')
+          .eq('room_code', code)
+          .in('status', ['waiting', 'playing'])
+          .maybeSingle();
+
+        if (!data) return toast('❌ Комната с таким кодом не найдена');
+        const asSpectator = (data.status !== 'waiting' || (data.guest_id && data.guest_id !== playerProfile.id && data.host_id !== playerProfile.id));
+        await joinLobbyRoom(data.id, asSpectator);
+      } catch (e) {
+        toast('Ошибка поиска комнаты');
+      }
+    }
+
+    async function joinLobbyRoom(roomId, forceSpectator = false) {
+      if (!supa) return;
+      haptic('medium');
+      try {
+        const { data: room } = await supa.from('parry_rooms').select('*').eq('id', roomId).maybeSingle();
+        if (!room || room.status === 'finished') {
+          toast('Эта дуэль уже завершилась');
+          return loadLobbyRooms();
+        }
+
+        // Защита от наложения >2 игроков: если слоты заняты, 3-й игрок строго становится Зрителем
+        const canBeGuest = !forceSpectator && room.status === 'waiting' && !room.guest_id && room.host_id !== playerProfile.id;
+
+        if (canBeGuest) {
+          const { error } = await supa
+            .from('parry_rooms')
+            .update({
+              guest_id: playerProfile.id,
+              guest_name: playerProfile.name,
+              guest_archetype: playerProfile.archetype,
+              status: 'playing',
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', room.id)
+            .is('guest_id', null);
+
+          if (!error) {
+            room.guest_id = playerProfile.id;
+            room.guest_name = playerProfile.name;
+            room.guest_archetype = playerProfile.archetype;
+            room.status = 'playing';
+            await enterRoomArena(room, 'guest');
+            return;
+          }
+        }
+
+        // Иначе подключаем как Зрителя (Spectator)
+        await supa.from('parry_rooms').update({
+          spectators_count: (room.spectators_count || 0) + 1
+        }).eq('id', room.id);
+
+        await enterRoomArena(room, 'spectator');
+      } catch (e) {
+        toast('Ошибка входа в комнату');
+      }
+    }
+
+    // ================= 4. ДВИЖОК АРЕНЫ, ПАССИВКИ И СНАРЯЖЕНИЕ =================
+    async function loadQuestionsForSubject(subjId) {
+      if (supa) {
+        try {
+          const { data } = await supa.from('parry_questions').select('*').limit(15);
+          if (Array.isArray(data) && data.length >= 3) {
+            const filtered = data.filter(q => q.subject_id === subjId);
+            questionsPool = filtered.length >= 3 ? filtered : data;
+            return;
+          }
+        } catch (e) {}
+      }
+      const fb = FALLBACK_QUESTIONS.filter(q => q.subject_id === subjId);
+      questionsPool = fb.length >= 2 ? fb : FALLBACK_QUESTIONS;
+    }
+
+    function calcStartingHp(archetype, hasVerifiedCheckin) {
+      let base = archetype === 'tactician' ? 95 : 105;
+      if (hasVerifiedCheckin) base = Math.round(base * 1.15);
+      return base;
+    }
+
+    async function startSoloBotMatch() {
+      haptic('medium');
+      const subjId = document.getElementById('newRoomSubject').value || 'general';
+      await enterRoomArena({
+        id: `bot_${Date.now()}`,
+        room_code: 'BOT1V1',
+        subject_id: subjId,
+        subject_title: SUBJECT_LABELS[subjId] || 'Бизнес-информатика',
+        host_id: playerProfile.id,
+        host_name: playerProfile.name,
+        host_archetype: playerProfile.archetype,
+        guest_id: 'bot_cyber',
+        guest_name: '🤖 Кибер-Бот',
+        guest_archetype: 'analyst',
+        status: 'playing'
+      }, 'bot');
+    }
+
+    async function enterRoomArena(room, role) {
+      cleanupRealtime();
+      await loadQuestionsForSubject(room.subject_id || 'general');
+
+      const hasBuff = Boolean(verifiedCheckin && verifiedCheckin.expiresAtMs > Date.now());
+      const myMaxHp = calcStartingHp(playerProfile.archetype, hasBuff);
+
+      matchState = {
+        active: true,
+        isBot: role === 'bot',
+        isSpectator: role === 'spectator',
+        roomId: room.id,
+        roomCode: room.room_code,
+        subjectId: room.subject_id || 'general',
+        subjectTitle: room.subject_title || 'Бизнес-информатика',
+        teacherBonus: room.teacher_bonus || '',
+        startedAtMs: Date.now(),
+        qIdx: 0,
+        blitzIdx: 0,
+        questionShownAtMs: performance.now(),
+        myHp: myMaxHp,
+        myMaxHp,
+        oppId: role === 'guest' ? room.host_id : (room.guest_id || ''),
+        oppName: role === 'guest' ? room.host_name : (room.guest_name || 'Ожидание...'),
+        oppArchetype: role === 'guest' ? (room.host_archetype || 'tactician') : (room.guest_archetype || 'tactician'),
+        oppHp: 100,
+        oppMaxHp: 100,
+        baseDmg: 18,
+        currentDmg: 18,
+        mult: 1,
+        maxStreak: 1,
+        locked: role === 'spectator',
+        finished: false,
+        shieldActive: false,
+        blitzDeadline: 0
+      };
+
+      document.getElementById('lobbyContainer').style.display = 'none';
+      document.getElementById('arenaContainer').style.display = 'block';
+      document.getElementById('arenaBlitzBox').classList.remove('active');
+
+      document.getElementById('arenaRoomCodeBadge').textContent = `КОД: ${room.room_code}`;
+      const rBadge = document.getElementById('arenaRoleBadge');
+      if (role === 'spectator') {
+        rBadge.textContent = '👁️ ЗРИТЕЛЬ';
+        rBadge.className = 'badge badge-warn';
+        document.getElementById('arenaGearBar').style.display = 'none';
+      } else {
+        rBadge.textContent = role === 'bot' ? '🤖 ТРЕНИРОВКА' : '⚔️ БОЕЦ 1v1';
+        rBadge.className = 'badge badge-accent';
+        document.getElementById('arenaGearBar').style.display = 'grid';
+      }
+
+      const bonusEl = document.getElementById('arenaBonusBanner');
+      if (room.teacher_bonus) {
+        bonusEl.style.display = 'block';
+        bonusEl.textContent = `🎁 Ставка преподавателя: ${room.teacher_bonus}`;
+      } else {
+        bonusEl.style.display = 'none';
+      }
+
+      document.getElementById('p1NameLbl').textContent = role === 'spectator' ? room.host_name : playerProfile.name;
+      document.getElementById('p1ArchLbl').textContent = (role === 'spectator' ? room.host_archetype : playerProfile.archetype) === 'analyst' ? '🧠 Аналитик' : '⚡ Тактик';
+      document.getElementById('p2NameLbl').textContent = matchState.oppName;
+      document.getElementById('p2ArchLbl').textContent = matchState.oppId ? (matchState.oppArchetype === 'analyst' ? '🧠 Аналитик' : '⚡ Тактик') : 'Ожидание игрока';
+
+      updateGearButtonsUI();
+      updateArenaHud();
+
+      if (role === 'bot') {
+        setConnStatus('online', 'Бот • Локально');
+        document.getElementById('arenaStatusBanner').textContent = 'Бой начался! Используйте пассивку и снаряжение!';
+        renderArenaQuestion();
+        scheduleBotTurn();
+      } else {
+        document.getElementById('arenaStatusBanner').textContent = role === 'host'
+          ? `Ждём соперника в комнате ${room.room_code} (делитесь кодом)...`
+          : (role === 'spectator' ? '👁️ Режим зрителя: вы наблюдаете за дуэлью' : 'Подключение к арене...');
+        connectRoomChannel(room.id);
+        renderArenaQuestion();
+      }
+    }
+
+    async function leaveCurrentRoom() {
+      haptic('light');
+      const wasHostWaiting = matchState.active && !matchState.isBot && !matchState.isSpectator && !matchState.oppId && supa;
+      const oldRoomId = matchState.roomId;
+
+      cleanupRealtime();
+      matchState.active = false;
+      document.getElementById('arenaContainer').style.display = 'none';
+      document.getElementById('lobbyContainer').style.display = 'block';
+      setConnStatus('', 'Лобби');
+
+      if (wasHostWaiting && oldRoomId) {
+        try {
+          await supa.from('parry_rooms').update({ status: 'finished' }).eq('id', oldRoomId);
+        } catch (e) {}
+      }
+      loadLobbyRooms();
+    }
+
+    // Стабильный Realtime-канал, привязанный строго к room.id (изоляция матчей)
+    function connectRoomChannel(roomId, isRetry = false) {
+      if (!supa) return;
+      cleanupRealtime();
+      const sess = ++connectSessionId;
+      setConnStatus('reconnecting', isRetry ? 'Переподкл...' : 'Подключение...');
+
+      const ch = supa.channel(`parry_isolated_${roomId}`, {
+        config: { broadcast: { self: false } }
+      });
+      parryChannel = ch;
+
+      ch
+        .on('broadcast', { event: 'room_ev' }, ({ payload }) => {
+          if (sess !== connectSessionId || !payload) return;
+          if (!matchState.isSpectator && payload.u === playerProfile.id) return;
+
+          if (payload.e === 'JOIN_SYNC') {
+            if (!matchState.isSpectator) {
+              const needReply = !matchState.oppId;
+              matchState.oppId = payload.u;
+              matchState.oppName = payload.name;
+              matchState.oppArchetype = payload.arch || 'tactician';
+              matchState.oppHp = payload.hp || 100;
+              matchState.oppMaxHp = payload.maxHp || 100;
+              document.getElementById('p2NameLbl').textContent = matchState.oppName;
+              document.getElementById('p2ArchLbl').textContent = matchState.oppArchetype === 'analyst' ? '🧠 Аналитик' : '⚡ Тактик';
+              document.getElementById('arenaStatusBanner').textContent = '⚔️ Соперник на арене! Подавайте аргумент!';
+              updateArenaHud();
+              if (needReply) {
+                broadcastRoomEvent({
+                  e: 'JOIN_SYNC',
+                  u: playerProfile.id,
+                  name: playerProfile.name,
+                  arch: playerProfile.archetype,
+                  hp: matchState.myHp,
+                  maxHp: matchState.myMaxHp
+                });
+              }
+            }
+          } else if (payload.e === 'ATTACK') {
+            if (matchState.isSpectator) {
+              document.getElementById('arenaStatusBanner').textContent = `⚡ ${payload.name} атакует на ${payload.dmg} HP!`;
+              return;
+            }
+            matchState.locked = true;
+            matchState.currentDmg = payload.dmg;
+            matchState.mult = payload.mult;
+            matchState.blitzIdx = payload.bIdx || 0;
+            renderArenaQuestion();
+            animateShot('ME', payload.dmg, () => {
+              // Пассивка Аналитика: увеличенное окно парирования 4.5 сек вместо 3.0 сек
+              const windowMs = playerProfile.archetype === 'analyst' ? 4500 : 3000;
+              openBlitzModal(windowMs);
+            });
+          } else if (payload.e === 'PARRY_HIT') {
+            if (matchState.isSpectator) {
+              document.getElementById('arenaStatusBanner').textContent = `🛡️ ${payload.name} ПАРИРОВАЛ удар! Ответка ${payload.newDmg} HP!`;
+              return;
+            }
+            matchState.currentDmg = payload.newDmg;
+            matchState.mult = payload.newMult;
+            matchState.blitzIdx = payload.bIdx || 0;
+            animateShot('ME', payload.newDmg, () => {
+              const baseWin = payload.nextWindowMs || 2200;
+              const windowMs = playerProfile.archetype === 'analyst' ? baseWin + 1000 : baseWin;
+              openBlitzModal(windowMs);
+            });
+          } else if (payload.e === 'DAMAGE') {
+            triggerShake();
+            if (matchState.isSpectator) {
+              document.getElementById('arenaStatusBanner').textContent = `💥 ${payload.victimName} получает -${payload.dmg} HP!`;
+              if (payload.isHost) matchState.myHp = payload.hpLeft;
+              else matchState.oppHp = payload.hpLeft;
+              updateArenaHud();
+              return;
+            }
+            matchState.oppHp = payload.hpLeft;
+            updateArenaHud();
+            checkRoundOrFinish(payload.nextQIdx);
+          }
+        })
+        .subscribe((status) => {
+          if (sess !== connectSessionId) return;
+          if (status === 'SUBSCRIBED') {
+            reconnectAttempt = 0;
+            setConnStatus('online', 'Онлайн • Комната');
+            if (!matchState.isSpectator) {
+              broadcastRoomEvent({
+                e: 'JOIN_SYNC',
+                u: playerProfile.id,
+                name: playerProfile.name,
+                arch: playerProfile.archetype,
+                hp: matchState.myHp,
+                maxHp: matchState.myMaxHp
+              });
+            }
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            if (matchState.active && !matchState.finished && !document.hidden) {
+              reconnectAttempt++;
+              const delay = Math.min(12000, 1000 * Math.pow(2, reconnectAttempt - 1));
+              setConnStatus('reconnecting', `Реконнект (${reconnectAttempt})...`);
+              reconnectTimer = setTimeout(() => connectRoomChannel(roomId, true), delay);
+            }
+          }
+        });
+    }
+
+    function broadcastRoomEvent(payload) {
+      if (!parryChannel || matchState.isBot || matchState.isSpectator) return;
+      try {
+        parryChannel.send({ type: 'broadcast', event: 'room_ev', payload });
+      } catch (e) {}
+    }
+
+    function cleanupRealtime() {
+      connectSessionId++;
+      if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+      if (botTimer) { clearTimeout(botTimer); botTimer = null; }
+      stopBlitzTimer();
+      if (parryChannel) {
+        const old = parryChannel;
+        parryChannel = null;
+        try {
+          if (supa) supa.removeChannel(old);
+          else if (typeof old.unsubscribe === 'function') old.unsubscribe();
+        } catch (e) {}
+      }
+    }
+
+    function updateArenaHud() {
+      document.getElementById('p1HpTxt').textContent = `${matchState.myHp}/${matchState.myMaxHp}`;
+      document.getElementById('p2HpTxt').textContent = `${matchState.oppHp}/${matchState.oppMaxHp}`;
+      document.getElementById('p1HpBar').style.width = `${Math.max(0, (matchState.myHp / matchState.myMaxHp) * 100).toFixed(1)}%`;
+      document.getElementById('p2HpBar').style.width = `${Math.max(0, (matchState.oppHp / matchState.oppMaxHp) * 100).toFixed(1)}%`;
+      document.getElementById('arenaRoundLbl').textContent = `${Math.min(5, matchState.qIdx + 1)}/5`;
+      document.getElementById('arenaDmgBadge').textContent = `УРОН x${matchState.mult} (${matchState.currentDmg} HP)`;
+    }
+
+    function renderArenaQuestion() {
+      const q = questionsPool[matchState.qIdx % questionsPool.length];
+      if (!q) return;
+
+      matchState.questionShownAtMs = performance.now();
+      document.getElementById('arenaTopicBadge').textContent = q.subject_title || matchState.subjectTitle;
+      document.getElementById('arenaQuestionText').textContent = q.question_text;
+
+      const answers = Array.isArray(q.answers_json) ? q.answers_json : JSON.parse(q.answers_json || '[]');
+      const box = document.getElementById('arenaAnswersBox');
+      box.innerHTML = answers.map((ans, idx) => `
+        <button type="button" class="ans-btn" data-ans-idx="${idx}" ${matchState.locked ? 'disabled' : ''} onclick="submitMainQuestionAnswer(${idx})">
+          <span class="mono" style="color:var(--accent); margin-right:6px;">[${idx + 1}]</span> ${esc(ans)}
+        </button>
+      `).join('');
+    }
+
+    // Расчёт урона с учётом пассивных навыков Тактика и Аналитика
+    function calculatePassiveAttackDamage(thinkTimeSec) {
+      let dmg = matchState.baseDmg;
+      let passiveNote = '';
+
+      if (playerProfile.archetype === 'tactician') {
+        if (thinkTimeSec <= 4.0) {
+          dmg = Math.round(dmg * 1.2);
+          passiveNote = '⚡ Пассивка Тактика (+20% за скорость)!';
+        }
+      } else if (playerProfile.archetype === 'analyst') {
+        if (thinkTimeSec >= 5.0) {
+          dmg = Math.round(dmg * 1.35);
+          passiveNote = '🧠 Бронебойный крит Аналитика (+35% за глубокий анализ)!';
+        }
+      }
+      return { dmg, passiveNote };
+    }
+
+    function submitMainQuestionAnswer(idx) {
+      if (matchState.locked || matchState.finished || matchState.isSpectator) return;
+      if (botTimer) { clearTimeout(botTimer); botTimer = null; }
+
+      const q = questionsPool[matchState.qIdx % questionsPool.length];
+      if (!q) return;
+
+      const thinkTimeSec = (performance.now() - matchState.questionShownAtMs) / 1000;
+      matchState.locked = true;
+      renderArenaQuestion();
+
+      if (idx === Number(q.correct_idx)) {
+        haptic('medium');
+        const { dmg, passiveNote } = calculatePassiveAttackDamage(thinkTimeSec);
+        matchState.mult = 1;
+        matchState.currentDmg = dmg;
+        matchState.blitzIdx = matchState.qIdx % questionsPool.length;
+        updateArenaHud();
+
+        if (passiveNote) toast(passiveNote);
+
+        broadcastRoomEvent({
+          e: 'ATTACK',
+          u: playerProfile.id,
+          name: playerProfile.name,
+          dmg: matchState.currentDmg,
+          mult: 1,
+          bIdx: matchState.blitzIdx
+        });
+
+        animateShot('OPP', matchState.currentDmg, () => {
+          if (matchState.isBot) resolveBotDefense();
+          else document.getElementById('arenaStatusBanner').textContent = '⚡ Аргумент летит в соперника! Ждём реакцию...';
+        });
+      } else {
+        haptic('error');
+        // Тактик получает более долгую перезарядку при ошибке, Аналитик — короткую
+        const cdMs = playerProfile.archetype === 'tactician' ? 2200 : 1300;
+        document.getElementById('arenaStatusBanner').textContent = `❌ Ошибка! Перезарядка ${(cdMs / 1000).toFixed(1)}s...`;
+        setTimeout(() => {
+          if (!matchState.finished) {
+            matchState.locked = false;
+            document.getElementById('arenaStatusBanner').textContent = 'Выберите правильный аргумент!';
+            renderArenaQuestion();
+            if (matchState.isBot) scheduleBotTurn();
+          }
+        }, cdMs);
+      }
+    }
+
+    // ================= 5. СНАРЯЖЕНИЕ ЗА ДОСТИЖЕНИЯ (ТРАТИТ ЗАРЯДЫ) =================
+    function updateGearButtonsUI() {
+      const inv = playerProfile.inventory || { cheat_sheet: 0, appeal: 0, shield: 0 };
+      document.getElementById('cntCheatSheet').textContent = inv.cheat_sheet || 0;
+      document.getElementById('cntAppeal').textContent = inv.appeal || 0;
+      document.getElementById('cntShield').textContent = inv.shield || 0;
+
+      document.getElementById('btnUseCheatSheet').disabled = (inv.cheat_sheet || 0) <= 0 || matchState.locked;
+      document.getElementById('btnUseAppeal').disabled = (inv.appeal || 0) <= 0;
+      document.getElementById('btnUseShield').disabled = (inv.shield || 0) <= 0 || matchState.shieldActive;
+      document.getElementById('btnUseShield').classList.toggle('active-buff', matchState.shieldActive);
+    }
+
+    async function consumeGearCharge(gearKey) {
+      const cur = playerProfile.inventory[gearKey] || 0;
+      if (cur <= 0) return false;
+      playerProfile.inventory[gearKey] = cur - 1;
+      saveLocalProfile();
+      renderProfileUI();
+      updateGearButtonsUI();
+      if (supa) {
+        try {
+          await supa.from('parry_profiles').update({
+            inventory_json: playerProfile.inventory
+          }).eq('id', playerProfile.id);
+        } catch (e) {}
+      }
+      return true;
+    }
+
+    async function useBattleGear(gearKey) {
+      if (!matchState.active || matchState.finished || matchState.isSpectator) return;
+
+      if (gearKey === 'cheat_sheet') {
+        if (matchState.locked) return toast('Дождитесь своего хода');
+        const q = questionsPool[matchState.qIdx % questionsPool.length];
+        if (!q) return;
+        const ok = await consumeGearCharge('cheat_sheet');
+        if (!ok) return;
+
+        // Убираем 2 неверных варианта ответа
+        let hidden = 0;
+        document.querySelectorAll('#arenaAnswersBox .ans-btn').forEach(btn => {
+          const aIdx = Number(btn.dataset.ansIdx);
+          if (aIdx !== Number(q.correct_idx) && hidden < 2) {
+            btn.disabled = true;
+            btn.style.opacity = '0.25';
+            hidden++;
+          }
+        });
+        haptic('success');
+        toast('📖 Конспект отличника: убраны 2 неверных варианта!');
+      } else if (gearKey === 'appeal') {
+        const blitzOpen = document.getElementById('arenaBlitzBox').classList.contains('active');
+        if (!blitzOpen) return toast('Апелляцию можно применить во время блиц-парирования!');
+        const ok = await consumeGearCharge('appeal');
+        if (!ok) return;
+
+        matchState.blitzIdx = (matchState.blitzIdx + 1) % questionsPool.length;
+        const nextBlitz = questionsPool[matchState.blitzIdx];
+        document.getElementById('arenaBlitzStmt').textContent = nextBlitz.blitz_statement;
+        haptic('success');
+        toast('⚖️ Апелляция принята: вопрос блица заменён!');
+      } else if (gearKey === 'shield') {
+        if (matchState.shieldActive) return;
+        const ok = await consumeGearCharge('shield');
+        if (!ok) return;
+
+        matchState.shieldActive = true;
+        updateGearButtonsUI();
+        haptic('success');
+        toast('🛡️ Кафедральный щит активирован: следующий удар будет поглощён!');
+      }
+    }
+
+    // ================= 6. АНИМАЦИЯ ВЫСТРЕЛА, БЛИЦ-ПАРИРОВАНИЕ И ЗАВЕРШЕНИЕ =================
+    function animateShot(target, dmg, onDone) {
+      const proj = document.getElementById('arenaProjectileEl');
+      proj.className = 'projectile';
+      proj.textContent = `⚡ АРГУМЕНТ (${dmg} HP)`;
+      void proj.offsetWidth;
+
+      if (target === 'OPP') {
+        document.getElementById('arenaStatusBanner').textContent = '🚀 Подача аргумента в соперника!';
+        proj.classList.add('fly-right');
+      } else {
+        document.getElementById('arenaStatusBanner').textContent = '⚠️ Входящий аргумент! Парируйте блиц!';
+        proj.classList.add('fly-left');
+      }
+
+      setTimeout(() => {
+        proj.className = 'projectile';
+        if (onDone) onDone();
+      }, 390);
+    }
+
+    function openBlitzModal(durationMs) {
+      stopBlitzTimer();
+      const bq = questionsPool[matchState.blitzIdx % questionsPool.length];
+      if (!bq) return;
+
+      document.getElementById('arenaBlitzStmt').textContent = bq.blitz_statement;
+      document.getElementById('arenaBlitzBox').classList.add('active');
+
+      const tTxt = document.getElementById('arenaBlitzTimerTxt');
+      const tBar = document.getElementById('arenaBlitzBar');
+      matchState.blitzDeadline = performance.now() + durationMs;
+
+      const step = (now) => {
+        const left = Math.max(0, matchState.blitzDeadline - now);
+        tTxt.textContent = (left / 1000).toFixed(1) + 's';
+        tBar.style.width = `${((left / durationMs) * 100).toFixed(1)}%`;
+        if (left <= 0) {
+          receiveDamage(matchState.currentDmg);
+          return;
+        }
+        blitzRafId = requestAnimationFrame(step);
+      };
+      blitzRafId = requestAnimationFrame(step);
+    }
+
+    function stopBlitzTimer() {
+      if (blitzRafId) { cancelAnimationFrame(blitzRafId); blitzRafId = null; }
+      const el = document.getElementById('arenaBlitzBox');
+      if (el) el.classList.remove('active');
+    }
+
+    function handleBlitzAnswer(saidTrue) {
+      stopBlitzTimer();
+      const bq = questionsPool[matchState.blitzIdx % questionsPool.length];
+      if (!bq) return;
+
+      if (Boolean(saidTrue) === Boolean(bq.blitz_is_true)) {
+        haptic('heavy');
+        matchState.mult *= 2;
+        matchState.currentDmg = matchState.baseDmg * matchState.mult;
+        matchState.maxStreak = Math.max(matchState.maxStreak, matchState.mult);
+        matchState.blitzIdx = (matchState.blitzIdx + 1) % questionsPool.length;
+        updateArenaHud();
+        toast(`🛡️ PARRY x${matchState.mult}! Контрудар на ${matchState.currentDmg} HP!`);
+
+        broadcastRoomEvent({
+          e: 'PARRY_HIT',
+          u: playerProfile.id,
+          name: playerProfile.name,
+          newDmg: matchState.currentDmg,
+          newMult: matchState.mult,
+          nextWindowMs: 2200,
+          bIdx: matchState.blitzIdx
+        });
+
+        animateShot('OPP', matchState.currentDmg, () => {
+          if (matchState.isBot) resolveBotDefense();
+        });
+      } else {
+        receiveDamage(matchState.currentDmg);
+      }
+    }
+
+    function receiveDamage(rawDmg) {
+      stopBlitzTimer();
+      let finalDmg = rawDmg;
+
+      // Проверяем Кафедральный щит
+      if (matchState.shieldActive) {
+        matchState.shieldActive = false;
+        updateGearButtonsUI();
+        finalDmg = 0;
+        toast('🛡️ Кафедральный щит полностью заблокировал удар!');
+      } else if (playerProfile.archetype === 'analyst') {
+        // Пассивка Аналитика: броня -40% при размышлении над вопросом
+        const thinkSec = (performance.now() - matchState.questionShownAtMs) / 1000;
+        if (thinkSec >= 4.5 && thinkSec <= 15.0) {
+          finalDmg = Math.max(4, Math.round(rawDmg * 0.6));
+          toast(`🧠 Глубокий фокус Аналитика: урон снижен на 40% (-${finalDmg} HP)!`);
+        }
+      }
+
+      if (finalDmg > 0) triggerShake();
+      matchState.myHp = Math.max(0, matchState.myHp - finalDmg);
+      document.getElementById('arenaStatusBanner').textContent = finalDmg === 0
+        ? '🛡️ Удар заблокирован щитом!'
+        : `💥 Пробитие! Вы получили -${finalDmg} HP!`;
+      updateArenaHud();
+
+      const nextQ = matchState.qIdx + 1;
+      broadcastRoomEvent({
+        e: 'DAMAGE',
+        u: playerProfile.id,
+        victimName: playerProfile.name,
+        dmg: finalDmg,
+        hpLeft: matchState.myHp,
+        nextQIdx: nextQ
+      });
+      checkRoundOrFinish(nextQ);
+    }
+
+    function scheduleBotTurn() {
+      if (!matchState.isBot || matchState.finished || document.hidden) return;
+      if (botTimer) clearTimeout(botTimer);
+      botTimer = setTimeout(() => {
+        if (matchState.locked || matchState.finished) return;
+        matchState.locked = true;
+        matchState.mult = 1;
+        matchState.currentDmg = matchState.baseDmg;
+        matchState.blitzIdx = matchState.qIdx % questionsPool.length;
+        renderArenaQuestion();
+        animateShot('ME', matchState.currentDmg, () => {
+          const winMs = playerProfile.archetype === 'analyst' ? 4500 : 3000;
+          openBlitzModal(winMs);
+        });
+      }, 5200);
+    }
+
+    function resolveBotDefense() {
+      setTimeout(() => {
+        if (matchState.finished) return;
+        const botParried = Math.random() < 0.38 && matchState.mult < 4;
+        if (botParried) {
+          matchState.mult *= 2;
+          matchState.currentDmg = matchState.baseDmg * matchState.mult;
+          matchState.blitzIdx = (matchState.blitzIdx + 1) % questionsPool.length;
+          updateArenaHud();
+          toast(`🤖 Бот парировал! Контратака на ${matchState.currentDmg} HP!`);
+          animateShot('ME', matchState.currentDmg, () => {
+            const winMs = playerProfile.archetype === 'analyst' ? 3200 : 2200;
+            openBlitzModal(winMs);
+          });
+        } else {
+          triggerShake();
+          matchState.oppHp = Math.max(0, matchState.oppHp - matchState.currentDmg);
+          document.getElementById('arenaStatusBanner').textContent = `💥 Попадание! Соперник потерял ${matchState.currentDmg} HP!`;
+          updateArenaHud();
+          checkRoundOrFinish(matchState.qIdx + 1);
+        }
+      }, 650);
+    }
+
+    function triggerShake() {
+      haptic('heavy');
+      const root = document.getElementById('arenaContainer');
+      if (!root) return;
+      root.classList.remove('arena-shake');
+      void root.offsetWidth;
+      root.classList.add('arena-shake');
+    }
+
+    async function checkRoundOrFinish(nextQIdx) {
+      if (matchState.myHp <= 0 || matchState.oppHp <= 0 || nextQIdx >= 5) {
+        matchState.finished = true;
+        if (botTimer) { clearTimeout(botTimer); botTimer = null; }
+        stopBlitzTimer();
+
+        const iWon = matchState.oppHp <= 0 || matchState.myHp > matchState.oppHp;
+        const durationSec = Math.round((Date.now() - matchState.startedAtMs) / 1000);
+        let delta = iWon ? 25 : -15;
+
+        if (supa && !matchState.isSpectator) {
+          try {
+            const { data } = await supa.rpc('finish_parry_match_v2', {
+              p_match_id: `${matchState.roomId}_${Date.now()}`,
+              p_room_id: matchState.isBot ? '' : matchState.roomId,
+              p_group_id: playerProfile.groupId,
+              p_subject_id: matchState.subjectId,
+              p_player1_id: playerProfile.id,
+              p_player2_id: matchState.oppId || 'bot_cyber',
+              p_winner_id: iWon ? playerProfile.id : (matchState.oppId || 'bot_cyber'),
+              p_p1_hp: matchState.myHp,
+              p_p2_hp: matchState.oppHp,
+              p_max_streak: matchState.maxStreak,
+              p_duration_sec: durationSec,
+              p_delta: 25
+            });
+
+            if (data) {
+              if (data.anti_abuse_blocked) {
+                delta = 0;
+                toast('🛡️ Анти-абуз ФРП: слишком быстрый или повторный спарринг (0 ELO)');
+              } else if (data.reward) {
+                toast(`🎁 Достижение! Получено: ${data.reward}`);
+              }
+            }
+          } catch (e) {}
+        }
+
+        playerProfile.elo = Math.max(100, playerProfile.elo + delta);
+        if (iWon) playerProfile.wins += 1;
+        else playerProfile.losses += 1;
+        saveLocalProfile();
+        renderProfileUI();
+
+        document.getElementById('arenaStatusBanner').textContent = iWon
+          ? `🏆 ПОБЕДА В ДУЭЛИ! (${delta >= 0 ? '+' + delta : delta} ELO)`
+          : `💀 ПОРАЖЕНИЕ (${delta} ELO)`;
+        haptic(iWon ? 'success' : 'error');
+        return;
+      }
+
+      setTimeout(() => {
+        if (matchState.finished) return;
+        matchState.qIdx = nextQIdx;
+        matchState.mult = 1;
+        matchState.currentDmg = matchState.baseDmg;
+        matchState.locked = false;
+        updateGearButtonsUI();
+        updateArenaHud();
+        renderArenaQuestion();
+        if (matchState.isBot) scheduleBotTurn();
+      }, 950);
+    }
+
+    // ================= 7. КАБИНЕТ ПРЕПОДАВАТЕЛЯ И РАБОТОДАТЕЛЯ =================
+    function unlockTeacherPanel() {
+      const name = document.getElementById('teacherNameInput').value.trim();
+      const pin = document.getElementById('teacherPinInput').value.trim().toLowerCase();
+      if (!name) return toast('Укажите ваше ФИО');
+      if (!TEACHER_PINS.includes(pin)) {
+        haptic('error');
+        return toast('❌ Неверный код доступа кафедры');
+      }
+      teacherSession = { unlocked: true, name };
+      document.getElementById('teacherAuthBox').style.display = 'none';
+      document.getElementById('teacherWorkspace').style.display = 'block';
+      haptic('success');
+      toast(`👨‍🏫 Добро пожаловать, ${name}`);
+      loadStudentsForTeacher();
+    }
+
+    async function generateTeacherCheckinCode() {
+      if (!teacherSession.unlocked || !supa) return;
+      const subjId = document.getElementById('teacherCheckinSubject').value || 'general';
+      const subjTitle = SUBJECT_LABELS[subjId] || 'Занятие НГИЭУ';
+      const code = String(Math.floor(1000 + Math.random() * 9000));
+      const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+
+      try {
+        const { error } = await supa.from('parry_checkins').insert({
+          code,
+          group_id: playerProfile.groupId,
+          subject_id: subjId,
+          subject_title: subjTitle,
+          teacher_name: teacherSession.name,
+          expires_at: expiresAt
+        });
+        if (error) throw error;
+
+        document.getElementById('generatedCodeDisplay').style.display = 'block';
+        document.getElementById('generatedCodeVal').textContent = code;
+        haptic('success');
+        toast(`🔑 Код ${code} активен 3 минуты!`);
+
+        if (teacherCodeTimer) clearInterval(teacherCodeTimer);
+        let secLeft = 180;
+        const badge = document.getElementById('activeCodeTimerBadge');
+        teacherCodeTimer = setInterval(() => {
+          secLeft--;
+          if (secLeft <= 0) {
+            clearInterval(teacherCodeTimer);
+            badge.textContent = 'Истёк';
+            badge.className = 'badge';
+          } else {
+            const m = Math.floor(secLeft / 60);
+            const s = secLeft % 60;
+            badge.textContent = `Активен ${m}:${String(s).padStart(2, '0')}`;
+            badge.className = 'badge badge-ok';
+          }
+        }, 1000);
+      } catch (e) {
+        toast('Ошибка генерации кода');
+      }
+    }
+
+    async function createTeacherBonusRoom() {
+      if (!teacherSession.unlocked || !supa) return;
+      const title = document.getElementById('tRoomTitle').value.trim();
+      const bonus = document.getElementById('tRoomBonus').value.trim();
+      const employer = document.getElementById('tRoomEmployer').value.trim();
+      if (!title || !bonus) return toast('Укажите название и бонус за победу');
+
+      const subjId = document.getElementById('teacherCheckinSubject').value || 'general';
+      const roomCode = generateRoomCode();
+      const roomId = `sem_${Date.now()}`;
+
+      try {
+        const { error } = await supa.from('parry_rooms').insert({
+          id: roomId,
+          room_code: roomCode,
+          title,
+          room_type: 'seminar',
+          group_id: playerProfile.groupId,
+          subject_id: subjId,
+          subject_title: SUBJECT_LABELS[subjId] || 'Семинар',
+          host_id: 'teacher_' + Date.now(),
+          host_name: teacherSession.name,
+          teacher_bonus: bonus,
+          employer_tag: employer,
+          status: 'waiting'
+        });
+        if (error) throw error;
+
+        document.getElementById('tRoomTitle').value = '';
+        document.getElementById('tRoomBonus').value = '';
+        document.getElementById('tRoomEmployer').value = '';
+        haptic('success');
+        toast(`🏆 Бонусная комната создана (код: ${roomCode})`);
+      } catch (e) {
+        toast('Ошибка публикации комнаты');
+      }
+    }
+
+    async function loadStudentsForTeacher() {
+      const box = document.getElementById('teacherStudentsList');
+      if (!supa) return;
+      try {
+        const { data } = await supa
+          .from('parry_profiles')
+          .select('*')
+          .eq('group_id', playerProfile.groupId)
+          .order('elo', { ascending: false })
+          .limit(40);
+
+        const list = Array.isArray(data) ? data : [];
+        if (!list.length) {
+          box.innerHTML = '<div class="empty-box">В этой группе пока нет зарегистрированных бойцов.</div>';
+          return;
+        }
+
+        box.innerHTML = list.map(st => `
+          <div class="card" style="padding:10px 12px; margin-bottom:7px;">
+            <div class="between">
+              <div>
+                <div style="font-weight:700; font-size:0.86rem;">${esc(st.display_name)}</div>
+                <div style="font-size:0.71rem; color:var(--text-muted);">
+                  ELO: <b>${st.elo}</b> • Побед: <b>${st.wins}</b> • Посещений: <b>${st.verified_checkins || 0}</b> • Ранг: <b>${st.skill_rank || 1}</b>
+                </div>
+              </div>
+              <button type="button" class="btn-sm ${st.teacher_approved ? 'btn-success' : 'btn-cyan'}" onclick="approveStudentSkill('${escJs(st.id)}', ${Number(st.skill_rank || 1)})">
+                ${st.teacher_approved ? `✓ Ранг ${st.skill_rank || 1} (+1)` : '✓ Подтвердить навык'}
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        box.innerHTML = '<div class="empty-box">Ошибка загрузки студентов.</div>';
+      }
+    }
+
+    async function approveStudentSkill(studentId, curRank) {
+      if (!teacherSession.unlocked || !supa) return;
+      haptic('success');
+      try {
+        await supa.from('parry_profiles').update({
+          teacher_approved: true,
+          skill_rank: curRank + 1,
+          updated_at: new Date().toISOString()
+        }).eq('id', studentId);
+        toast('✅ Навык студента подтверждён и повышен кафедрой!');
+        loadStudentsForTeacher();
+      } catch (e) {
+        toast('Ошибка обновления профиля');
+      }
+    }
+
+    // ================= 8. НАВИГАЦИЯ И ЖИЗНЕННЫЙ ЦИКЛ =================
+    function switchParryView(viewName, btnEl) {
+      haptic('light');
+      document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+      const pane = document.getElementById('view-' + viewName);
+      if (pane) pane.classList.add('active');
+
+      document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      if (viewName === 'lobby' && !matchState.active) loadLobbyRooms();
+      if (viewName === 'profile') renderProfileUI();
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (lobbyRefreshTimer) { clearInterval(lobbyRefreshTimer); lobbyRefreshTimer = null; }
+        cleanupRealtime();
+      } else {
+        if (matchState.active && !matchState.isBot && !matchState.finished) {
+          connectRoomChannel(matchState.roomId, true);
+        } else if (!matchState.active) {
+          loadLobbyRooms();
+          lobbyRefreshTimer = setInterval(() => {
+            if (!matchState.active && !document.hidden) loadLobbyRooms();
+          }, 8000);
+        }
+      }
+    });
+
+    window.addEventListener('beforeunload', cleanupRealtime);
+    window.addEventListener('pagehide', cleanupRealtime);
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (tgApp) {
+        try {
+          tgApp.ready();
+          tgApp.expand();
+          if (tgApp.setHeaderColor) tgApp.setHeaderColor('#09090b');
+          if (tgApp.setBackgroundColor) tgApp.setBackgroundColor('#09090b');
+        } catch (e) {}
+      }
+
+      await initPlayerIdentityAndProfile();
+      await loadLobbyRooms();
+
+      lobbyRefreshTimer = setInterval(() => {
+        if (!matchState.active && !document.hidden) loadLobbyRooms();
+      }, 8000);
+    });
+  </script>
+</body>
+</html>
+<!-- КОНЕЦ ЧАСТИ 2 -->
