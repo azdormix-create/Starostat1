@@ -3735,7 +3735,29 @@
     }
 
     // ================= 10. КАРТОЧКИ ПАР И ДАШБОРД =================
+    function launchStandaloneParry() {
+      haptic('medium');
+      const sym = computeParrySymbiosis();
+      const ssoPayload = {
+        uid: sym.ident.id,
+        name: sym.ident.name,
+        gid: cloudCfg.groupId || 'b26bio',
+        gname: state.groupName || 'Б-26БиО',
+        subj: sym.subjId || 'general'
+      };
+      try {
+        sessionStorage.setItem('starostat_parry_sso', JSON.stringify(ssoPayload));
+      } catch (e) {}
+
+      const qs = new URLSearchParams(ssoPayload).toString();
+      window.location.href = `parry.html?${qs}`;
+    }
+
     function openTab(tabName, btnEl) {
+      if (tabName === 'parry') {
+        launchStandaloneParry();
+        return;
+      }
       haptic('select');
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       const pane = document.getElementById('pane-' + tabName);
@@ -3748,7 +3770,6 @@
       if (tabName === 'schedule') renderScheduleView();
       if (tabName === 'lab') renderCollections();
       if (tabName === 'vault') { renderVaultGroup(); renderVaultNotes(); renderVaultFiles(); }
-      if (tabName === 'parry') initParrySymbiosisUI();
     }
 
     function buildClassCardHTML(c, allowDelete = false) {
